@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+    frontend:
+        container_name: ace2-gui-frontend
+        build:
+            context: .
+            dockerfile: ./frontend/Dockerfile.dev
+        volumes:
+            - "./frontend/app:/app"
+            - "/app/node_modules"
+        ports:
+            - 8888:8080
