@@ -1,0 +1,13 @@
+# BUILD STAGE
+FROM node:lts-alpine as builder
+WORKDIR /app
+COPY app/package*.json ./
+RUN npm install
+COPY app/ ./
+RUN npm run build
+
+# PRODUCTION STAGE
+FROM nginx:stable-alpine as production
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
