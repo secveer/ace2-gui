@@ -1,6 +1,17 @@
 version: "3.9"
 
 services:
+    backend:
+        container_name: ace2-gui-backend
+        build:
+            context: .
+            dockerfile: ./backend/Dockerfile
+        volumes:
+            - "./backend/app:/app"
+        ports:
+            - 8888:80
+        command: /start-reload.sh
+
     frontend:
         container_name: ace2-gui-frontend
         build:
@@ -10,4 +21,4 @@ services:
             - "./frontend/app:/app"
             - "/app/node_modules"
         ports:
-            - 8888:8080
+            - 9999:8080
