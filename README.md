@@ -14,32 +14,32 @@ Once the development environment is built and started, you can access the compon
 * Backend documentation: http://localhost:8888/docs
 * Frontend application: http://localhost:9999
 
-## Backend (FastAPI) commands
-### Run unit tests
+### Backend (FastAPI) commands
+#### Run unit tests
 ```
 docker-compose run backend pytest
 ```
 
-## Frontend (Vue.js) commands
-### Compile and minify for production
+### Frontend (Vue.js) commands
+#### Compile and minify for production
 ```
 docker-compose run frontend npm run build
 ```
 
-### Run unit tests
+#### Run unit tests
 ```
 docker-compose run frontend npm run test:unit
 ```
 
-### Run end-to-end tests
+#### Run end-to-end tests
 ```
 docker-compose run frontend npm run test:e2e
 ```
 
-### Lint and fix files
+#### Lint and fix files
 ```
 docker-compose run frontend npm run lint
 ```
 
-### Customize configuration
+#### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
