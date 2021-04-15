@@ -1,22 +1,42 @@
-# ace2-gui
+# ACE2 GUI
+The ACE2 GUI is comprised of three main components: a PostgreSQL database, a FastAPI backend, and a Vue.js frontend.
 
-### Compiles and hot-reloads for development
+## Project setup for development
+The included `docker-compose.yml` file runs the full application in development mode. This uses volumes to your local source code directories and enables hot-reload for the Vue.js and FastAPI applications.
 ```
 docker-compose build
 docker-compose up
 ```
 
-### Run your unit tests
+Once the development environment is built and started, you can access the components:
+
+* Backend test endpoint: http://localhost:8888/ping
+* Backend documentation: http://localhost:8888/docs
+* Frontend application: http://localhost:9999
+
+## Backend (FastAPI) commands
+### Run unit tests
+```
+docker-compose run backend pytest
+```
+
+## Frontend (Vue.js) commands
+### Compile and minify for production
+```
+docker-compose run frontend npm run build
+```
+
+### Run unit tests
 ```
 docker-compose run frontend npm run test:unit
 ```
 
-### Run your end-to-end tests
+### Run end-to-end tests
 ```
 docker-compose run frontend npm run test:e2e
 ```
 
-### Lints and fixes files
+### Lint and fix files
 ```
 docker-compose run frontend npm run lint
 ```
