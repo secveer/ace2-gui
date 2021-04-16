@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+    db:
+        container_name: ace2-gui-db
+        build:
+            context: .
+            dockerfile: ./db/Dockerfile
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
+        env_file:
+            - ./db/.env
+        ports:
+            - 6666:5432
+
+    dbadmin:
+        depends_on:
+            - db
+        image: dpage/pgadmin4
+        container_name: ace2-gui-db-admin
+        env_file:
+            - ./db/.env
+        ports:
+            - 7777:80
+
+    backend:
+        depends_on:
+            - db
+        container_name: ace2-gui-backend
+        build:
+            context: .
+            dockerfile: ./backend/Dockerfile
+        volumes:
+            - "./backend/app:/app"
+        env_file:
+            - ./backend/.env
+        ports:
+            - 8888:80
+        command: /start-reload.sh
+
+    frontend:
+        depends_on:
+            - backend
+        container_name: ace2-gui-frontend
+        build:
+            context: .
+            dockerfile: ./frontend/Dockerfile.dev
+        volumes:
+            - "./frontend/app:/app"
+            - "/app/node_modules"
+        ports:
+            - 9999:8080
+
+volumes:
+    postgres_data:

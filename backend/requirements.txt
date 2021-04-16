@@ -1,2 +1,6 @@
+# alembic 1.5.8 has a bug: alembic: error: invalid choice: 'revision\u200a--autogenerate'
+alembic==1.5.7
+psycopg2-binary==2.8.6
 pytest==6.2.3
 requests==2.25.1
+SQLAlchemy==1.4.8
