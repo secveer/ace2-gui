@@ -4,6 +4,7 @@ dist/
 venv/
 __pycache__/
 .pytest_cache/
+frontend/app/package-lock.json
 
 tests/e2e/videos/
 tests/e2e/screenshots/
