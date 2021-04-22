@@ -5,7 +5,9 @@ import os
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
-from db import models
+# Load the database schemas so that Alembic knows what it needs to create/update
+from db import schemas
+from db.database import Base
 
 # Alembic Config object, which provides access to values within the .ini file
 config = alembic.context.config
@@ -32,7 +34,7 @@ def run_migrations_online() -> None:
     with connectable.connect() as connection:
         alembic.context.configure(
             connection=connection,
-            target_metadata=models.Base.metadata
+            target_metadata=Base.metadata
         )
 
         with alembic.context.begin_transaction():

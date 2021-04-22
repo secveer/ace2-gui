@@ -1,6 +1,7 @@
 # Enable the required extensions
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<EOF
 create extension pg_trgm;
+create extension pgcrypto;
 EOF
 
 # Create the "ace" database if it does not already exist
