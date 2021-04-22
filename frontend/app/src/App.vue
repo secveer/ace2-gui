@@ -1,9 +1,9 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/manage_alerts">Manage Alerts</router-link>
-  </div>
+  <TheNavigation></TheNavigation>
+<!--  <div id="nav">-->
+<!--    <router-link to="/manage_alerts">Manage Alerts</router-link>-->
+<!--    <router-link to="/about">About</router-link> |-->
+<!--  </div>-->
   <router-view />
 </template>
 
@@ -29,3 +29,9 @@
   }
 }
 </style>
+<script>
+import TheNavigation from "@/components/UserInterface/TheNavigation";
+export default {
+  components: { TheNavigation}
+}
+</script>
