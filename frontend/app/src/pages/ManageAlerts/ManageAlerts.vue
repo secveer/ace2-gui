@@ -158,7 +158,7 @@
             <span>
             <Tag v-for="tag in data.tags" :key="tag" class="p-mr-2" rounded>{{ tag }}</Tag>
             </span></div>
-          <span v-else> {{ data.name }}</span>
+          <span v-else> {{ data[col.field] }}</span>
         </template>
         <template #filter="{filterModel}">
           <InputText v-if="col.field === 'name'" InputText type="text" v-model="filterModel.value"
