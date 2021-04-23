@@ -12,7 +12,6 @@ import SplitButton from 'primevue/splitbutton';
 import Menubar from 'primevue/menubar';
 import Tag from 'primevue/tag';
 import Badge from 'primevue/badge';
-import FunctionalCalendar from 'vue-functional-calendar';
 import Calendar from 'primevue/calendar';
 import Checkbox from 'primevue/checkbox';
 import Dropdown from 'primevue/dropdown';
@@ -53,7 +52,6 @@ app.component('Tag', Tag);
 app.component('Textarea', Textarea);
 app.component('Toolbar', Toolbar);
 app.component('Badge', Badge);
-app.component('FunctionalCalendar', FunctionalCalendar);
 app.component('Column', Column);
 
 app.mount("#app");
