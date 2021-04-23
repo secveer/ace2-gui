@@ -14,6 +14,16 @@ import Tag from 'primevue/tag';
 import Badge from 'primevue/badge';
 import FunctionalCalendar from 'vue-functional-calendar';
 import Calendar from 'primevue/calendar';
+import Checkbox from 'primevue/checkbox';
+import Dropdown from 'primevue/dropdown';
+import RadioButton from 'primevue/radiobutton';
+import Divider from 'primevue/divider';
+import Textarea from 'primevue/textarea';
+import Chips from 'primevue/chips';
+
+import AutoComplete from 'primevue/autocomplete';
+
+
 
 import router from "./router";
 import store from "./store";
@@ -32,8 +42,15 @@ app.component('DataTable', DataTable);
 app.component('SplitButton', SplitButton);
 app.component('Dialog', Dialog);
 app.component('Menubar', Menubar);
+app.component('Checkbox', Checkbox);
+app.component('AutoComplete', AutoComplete);
+app.component('RadioButton', RadioButton);
+app.component('Chips', Chips);
+app.component('Dropdown', Dropdown);
 app.component('Calendar', Calendar);
+app.component('Divider', Divider);
 app.component('Tag', Tag);
+app.component('Textarea', Textarea);
 app.component('Toolbar', Toolbar);
 app.component('Badge', Badge);
 app.component('FunctionalCalendar', FunctionalCalendar);

@@ -4,62 +4,103 @@
     <template #left>
       <Button class="p-m-1 p-button-normal p-button-success" icon="pi pi-thumbs-up" label="Disposition"
               @click="openDispositionModal"/>
-      <Dialog header="Header" v-model:visible="displayDispositionModal" :style="{width: '50vw'}" :modal="true">
-        <p class="p-m-0">Disposition</p>
+      <Dialog header="Set Disposition" v-model:visible="displayDispositionModal" :style="{width: '50vw'}" :modal="true">
+        <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">
+          <div class="p-field p-col">
+            <div v-for="disposition of dispositions" :key="disposition" class="p-field-radiobutton p-inputgroup">
+              <RadioButton :id="disposition" name="disposition" :value="disposition" v-model="appliedDisposition"/>
+              <label :for="disposition">{{ disposition }}</label>
+            </div>
+          </div>
+          <div class="p-field p-col">
+            <Textarea v-model="appliedComment" :autoResize="true" rows="5" cols="30" placeholder="Add a comment..."/>
+            <Dropdown v-model="appliedComment" :options="suggestedComments" :showClear="true" placeholder="Select from a past comment" />
+          </div>
+          </div>
         <template #footer>
-          <Button label="No" icon="pi pi-times" @click="closeDispositionModal" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeDispositionModal" autofocus/>
+          <Button label="Save" class="p-button-outlined" @click="closeDispositionModal"/>
+          <Button v-if="showAddToEventButton" label="Save to Event" class="p-button-raised" @click="closeDispositionModal();openSaveToEventModal();" autofocus/>
         </template>
       </Dialog>
-      <Dialog header="Header" v-model:visible="displaySaveToEventModal" :style="{width: '50vw'}" :modal="true" @click="openSaveToEventModal">
-        <p class="p-m-0">Disposition</p>
+      <Dialog header="Save to Event" v-model:visible="displaySaveToEventModal" :style="{width: '50vw'}" :modal="true">
+        <p class="p-m-0">Add event tab menu here!</p>
         <template #footer>
-          <Button label="No" icon="pi pi-times" @click="closeSaveToEventModal" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeSaveToEventModal" autofocus/>
+          <Button label="Nevermind" icon="pi pi-times" @click="closeSaveToEventModal" class="p-button-text"/>
+          <Button label="Save" icon="pi pi-check" @click="closeSaveToEventModal" autofocus/>
         </template>
       </Dialog>
       <Button class="p-m-1 p-button-sm" icon="pi pi-comment" label="Comment" @click="openCommentModal"/>
-      <Dialog header="Header" v-model:visible="displayCommentModal" :style="{width: '50vw'}" :modal="true">
-        <p class="p-m-0">Comment.</p>
+      <Dialog header="Add Comment" v-model:visible="displayCommentModal" :style="{width: '50vw'}" :modal="true">
+        <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">
+          <div class="p-field p-col">
+            <Textarea v-model="appliedComment" :autoResize="true" rows="5" cols="30" placeholder="Add a comment..."/>
+            <Dropdown v-model="appliedComment" :options="suggestedComments" :showClear="true"
+                      placeholder="Select from a past comment"/>
+          </div>
+        </div>
         <template #footer>
-          <Button label="No" icon="pi pi-times" @click="closeCommentModal" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeCommentModal" autofocus/>
+          <Button label="Nevermind" icon="pi pi-times" @click="closeCommentModal" class="p-button-text"/>
+          <Button label="Add" icon="pi pi-check" @click="closeCommentModal" autofocus/>
         </template>
       </Dialog>
       <Button class="p-m-1 p-button-sm" icon="pi pi-briefcase" label="Take Ownership"/>
       <Button class="p-m-1 p-button-sm" icon="pi pi-user" label="Assign" @click="openAssignModal"/>
-      <Dialog header="Header" v-model:visible="displayAssignModal" :style="{width: '50vw'}" :modal="true">
-        <p class="p-m-0">Assign.</p>
+      <Dialog header="Assign Ownership" v-model:visible="displayAssignModal" :style="{width: '50vw'}" :modal="true">
+        <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">
+          <div class="p-field p-col">
+        <Dropdown v-model="selectedUser" :options="users"
+                  placeholder="Select a user"/>
+          </div>
+        </div>
         <template #footer>
-          <Button label="No" icon="pi pi-times" @click="closeAssignModal" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeAssignModal" autofocus/>
+          <Button label="Nevermind" icon="pi pi-times" @click="closeAssignModal" class="p-button-text"/>
+          <Button label="Assign" icon="pi pi-check" @click="closeAssignModal" autofocus/>
         </template>
       </Dialog>
       <Button class="p-m-1 p-button-sm" icon="pi pi-tags" label="Tag" @click="openTagModal"/>
-      <Dialog header="Header" v-model:visible="displayTagModal" :style="{width: '50vw'}" :modal="true">
-        <p class="p-m-0">Tag.</p>
+      <Dialog header="Add Tags" v-model:visible="displayTagModal" :style="{width: '50vw'}" :modal="true">
+        <span class="p-fluid">
+              <Chips v-model="newTags" />
+              <Dropdown @change="addExistingTag" :options="tags" :filter="true" placeholder="Select from existing tags"
+                        filterPlaceholder="Search tags" filterFields="options.value"/>
+          </span>
         <template #footer>
-          <Button label="No" icon="pi pi-times" @click="closeTagModal" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeTagModal" autofocus/>
+          <Button label="Nevermind" icon="pi pi-times" @click="closeTagModal" class="p-button-text"/>
+          <Button label="Add" icon="pi pi-check" @click="closeTagModal" autofocus/>
         </template>
       </Dialog>
       <Button class="p-m-1 p-button-sm" icon="pi pi-times-circle" label="Remediate" @click="openRemediateModal"/>
-      <Dialog header="Header" v-model:visible="displayRemediateModal" :style="{width: '50vw'}" :modal="true">
-        <p class="p-m-0">Remediate.</p>
+      <Dialog header="Remediate" v-model:visible="displayRemediateModal" :style="{width: '50vw'}" :modal="true">
+        <DataTable :value="remediation_targets"
+                   responsiveLayout="scroll"
+                   :rows="10"
+                   sortField="type"
+                   :sortOrder="1"
+                   removableSort
+                   dataKey="id"
+                   v-model:selection="selectedRemediations"
+                   stripedRows
+                   columnResizeMode="fit">
+          <Column id="remediation-select" selectionMode="multiple" headerStyle="width: 3em"/>
+          <Column field="type" header="Type" :sortable="true"></Column>
+          <Column field="target" header="Target" :sortable="true"></Column>
+          <Column field="status" header="Status" :sortable="true"></Column>
+        </DataTable>
         <template #footer>
-          <Button label="No" icon="pi pi-times" @click="closeRemediateModal" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeRemediateModal" autofocus/>
+          <Button label="Stop" class="p-button-text"/>
+          <Button label="Remove" icon="pi pi-times" autofocus/>
+          <Button label="Restore" icon="pi pi-check" autofocus/>
         </template>
       </Dialog>
       <Button class="p-m-1 p-button-sm p-button-danger" icon="pi pi-trash" label="Delete" @click="openConfirmation"/>
       <Dialog header="Confirmation" v-model:visible="displayConfirmation" :style="{width: '350px'}" :modal="true">
         <div class="confirmation-content">
           <i class="pi pi-exclamation-triangle p-mr-3" style="font-size: 2rem"/>
-          <span>Are you sure you want to proceed?</span>
+          <span>Are you sure you want to delete this alert?</span>
         </div>
         <template #footer>
-          <Button label="No" icon="pi pi-times" @click="closeConfirmation" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeConfirmation" class="p-button-text" autofocus/>
+          <Button label="Actually, no" icon="pi pi-times" @click="closeConfirmation" class="p-button-text"/>
+          <Button label="Do it!" icon="pi pi-check" @click="closeConfirmation" class="p-button-text" autofocus/>
         </template>
       </Dialog>
 
@@ -77,7 +118,7 @@
                 :showSeconds="true" :showIcon="true" style="width: 375px"/>
       <Button type="button" icon="pi pi-filter"
               label="Edit" class="p-button-outlined p-m-1" style="float: right" @click="openEditFilterModal"/>
-      <Dialog header="Header" v-model:visible="displayEditFilterModal" :style="{width: '50vw'}" :modal="true">
+      <Dialog header="Edit Filters" v-model:visible="displayEditFilterModal" :style="{width: '50vw'}" :modal="true">
         <p class="p-m-0">Edit Filters.</p>
         <template #footer>
           <Button label="No" icon="pi pi-times" @click="closeEditFilterModal" class="p-button-text"/>
@@ -97,7 +138,7 @@
     <DataTable :value="alerts"
                responsiveLayout="scroll"
                :paginator="true"
-               :rows="5"
+               :rows="10"
                paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
                :rowsPerPageOptions="[5,10,50]"
                currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
@@ -116,10 +157,10 @@
                                       'remediated_by',
                                       'remediated_date',
                                       'remediation_status']"
-               v-model:filters="alertNarrowFilters"
+               v-model:filters="narrowFilters"
                filterDisplay="menu"
                v-model:selection="selectedAlerts"
-               dataKey="code"
+               dataKey="id"
                v-model:expandedRows="expandedRows"
                ref="dt"
                :resizableColumns="true"
@@ -137,7 +178,7 @@
           <template #right>
             <span class="p-input-icon-left p-m-1">
               <i class="pi pi-search"/>
-              <InputText v-model="alertNarrowFilters['global'].value" placeholder="Search in table"/>
+              <InputText v-model="narrowFilters['global'].value" placeholder="Search in table"/>
           </span>
             <Button icon="pi pi-refresh" class="p-button-rounded p-m-1" @click="clearFilter1()"/>
             <Button class="p-button-rounded p-m-1" icon="pi pi-download" @click="exportCSV($event)"/>
@@ -180,13 +221,13 @@
           <MultiSelect v-else-if="col.field === 'disposition'" v-model="filterModel.value" :options="dispositions"
                        optionLabel="col.header" placeholder="Any" class="p-column-filter">
             <template #option="slotProps">
-              <span>{{ slotProps.option }}</span>
+              <span>{{ slotProps.option  }}</span>
             </template>
           </MultiSelect>
           <MultiSelect v-else-if="col.field === 'type'" v-model="filterModel.value" :options="types"
                        optionLabel="col.header" placeholder="Any" class="p-column-filter">
             <template #option="slotProps">
-              <span>{{ slotProps.option }}</span>
+              <span>{{ slotProps.option  }}</span>
             </template>
           </MultiSelect>
           <MultiSelect v-else-if="col.field === 'queue'" v-model="filterModel.value" :options="queues"
@@ -199,7 +240,7 @@
                        :options="remediation_statuses" optionLabel="col.header" placeholder="Any"
                        class="p-column-filter">
             <template #option="slotProps">
-              <span>{{ slotProps.option }}</span>
+              <span>{{ slotProps.option  }}</span>
             </template>
           </MultiSelect>
         </template>
@@ -224,12 +265,21 @@ import {FilterMatchMode, FilterOperator} from 'primevue/api';
 export default {
   data() {
     return {
+      suggestedComments: ['this is an old comment', 'and another'],
+      appliedDisposition: null,
+      appliedComment: null,
+      selectedRemediations: null,
+      narrowFilters: null,
       calendarData: null,
+      selectedUser: null,
       selectedOwners: null,
+      newTags: [],
+      filteredTags: null,
       users: ['Holly', 'Analyst', 'none'],
       selectedQueues: null,
       queues: ['external', 'internal', 'intel'],
       dispositions: ['FALSE_POSITIVE', 'WEAPONIZATION', 'COMMAND_AND_CONTROL'],
+      elevated_dispositions: ['COMMAND_AND_CONTROL'],
       types: ['splunk_hunter'],
       remediation_statuses: ['remediated', 'remediation_failed', 'remediating'],
       columns: [
@@ -247,7 +297,126 @@ export default {
       ],
       alerts: [
         {
-          "id": "1000",
+          "id": "1234",
+          "alert_date": "04/20/2020 T2:00:00",
+          "name": "Splunk Hunt: Example",
+          "type": "splunk_hunter",
+          "disposition": "FALSE_POSITIVE",
+          "disposition_by": "Holly",
+          "event_date": "04/20/2020 T2:00:00",
+          "owner": "Holly",
+          "queue": "default",
+          "remediated_by": "Holly",
+          "remediated_date": "04/20/2020 T2:00:00",
+          "remediation_status": "remediated",
+          "tags": ['bad', 'malware', 'oh_no'],
+          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
+            {'type': 'FQDN', 'value': 'google.com'},]
+        },
+        {
+          "id": "2345",
+          "alert_date": "04/20/2020 T2:00:00",
+          "name": "Splunk Hunt: Example",
+          "type": "splunk_hunter",
+          "disposition": "FALSE_POSITIVE",
+          "disposition_by": "Holly",
+          "event_date": "04/20/2020 T2:00:00",
+          "owner": "Holly",
+          "queue": "default",
+          "remediated_by": "Holly",
+          "remediated_date": "04/20/2020 T2:00:00",
+          "remediation_status": "remediated",
+          "tags": ['bad', 'malware', 'oh_no'],
+          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
+            {'type': 'FQDN', 'value': 'google.com'},]
+        },
+        {
+          "id": "3456",
+          "alert_date": "04/20/2020 T2:00:00",
+          "name": "Splunk Hunt: Example",
+          "type": "splunk_hunter",
+          "disposition": "FALSE_POSITIVE",
+          "disposition_by": "Holly",
+          "event_date": "04/20/2020 T2:00:00",
+          "owner": "Holly",
+          "queue": "default",
+          "remediated_by": "Holly",
+          "remediated_date": "04/20/2020 T2:00:00",
+          "remediation_status": "remediated",
+          "tags": ['bad', 'malware', 'oh_no'],
+          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
+            {'type': 'FQDN', 'value': 'google.com'},]
+        },
+        {
+          "id": "4567",
+          "alert_date": "04/20/2020 T2:00:00",
+          "name": "Splunk Hunt: Example",
+          "type": "splunk_hunter",
+          "disposition": "FALSE_POSITIVE",
+          "disposition_by": "Holly",
+          "event_date": "04/20/2020 T2:00:00",
+          "owner": "Holly",
+          "queue": "default",
+          "remediated_by": "Holly",
+          "remediated_date": "04/20/2020 T2:00:00",
+          "remediation_status": "remediated",
+          "tags": ['bad', 'malware', 'oh_no'],
+          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
+            {'type': 'FQDN', 'value': 'google.com'},]
+        },
+        {
+          "id": "5678",
+          "alert_date": "04/20/2020 T2:00:00",
+          "name": "Splunk Hunt: Example",
+          "type": "splunk_hunter",
+          "disposition": "FALSE_POSITIVE",
+          "disposition_by": "Holly",
+          "event_date": "04/20/2020 T2:00:00",
+          "owner": "Holly",
+          "queue": "default",
+          "remediated_by": "Holly",
+          "remediated_date": "04/20/2020 T2:00:00",
+          "remediation_status": "remediated",
+          "tags": ['bad', 'malware', 'oh_no'],
+          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
+            {'type': 'FQDN', 'value': 'google.com'},]
+        },
+        {
+          "id": "6789",
+          "alert_date": "04/20/2020 T2:00:00",
+          "name": "Splunk Hunt: Example",
+          "type": "splunk_hunter",
+          "disposition": "FALSE_POSITIVE",
+          "disposition_by": "Holly",
+          "event_date": "04/20/2020 T2:00:00",
+          "owner": "Holly",
+          "queue": "default",
+          "remediated_by": "Holly",
+          "remediated_date": "04/20/2020 T2:00:00",
+          "remediation_status": "remediated",
+          "tags": ['bad', 'malware', 'oh_no'],
+          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
+            {'type': 'FQDN', 'value': 'google.com'},]
+        },
+        {
+          "id": "7890",
+          "alert_date": "04/20/2020 T2:00:00",
+          "name": "Splunk Hunt: Example",
+          "type": "splunk_hunter",
+          "disposition": "FALSE_POSITIVE",
+          "disposition_by": "Holly",
+          "event_date": "04/20/2020 T2:00:00",
+          "owner": "Holly",
+          "queue": "default",
+          "remediated_by": "Holly",
+          "remediated_date": "04/20/2020 T2:00:00",
+          "remediation_status": "remediated",
+          "tags": ['bad', 'malware', 'oh_no'],
+          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
+            {'type': 'FQDN', 'value': 'google.com'},]
+        },
+        {
+          "id": "0978",
           "alert_date": "04/20/2020 T2:00:00",
           "name": "Splunk Hunt: Example",
           "type": "splunk_hunter",
@@ -264,9 +433,34 @@ export default {
             {'type': 'FQDN', 'value': 'google.com'},]
         },
       ],
+      remediation_targets: [
+        {
+          'type': 'zerofox',
+          'target': 'bad_url',
+          'status': 'remediation failed',
+          'id': '123'
+        },
+        {
+          'type': 'email',
+          'target': 'msgID|email.com',
+          'status': 'remediating',
+          'id': '124'
+        },
+        {
+          'type': 'email',
+          'target': 'msgID|email2.com',
+          'status': 'removed',
+          'id': '125'
+        },
+        {
+          'type': 'email',
+          'target': 'msgID|email3.com',
+          'status': 'restored',
+          'id': '126'
+        },
+      ],
       selectedColumns: null,
       selectedAlerts: null,
-      alertNarrowFilters: null,
       displayCommentModal: false,
       displayDispositionModal: false,
       displaySaveToEventModal: false,
@@ -282,53 +476,53 @@ export default {
     this.initAlertNarrowFilters();
     this.selectedColumns = this.columns.slice(0, 5);
   },
+  computed: {
+    showAddToEventButton: function () {
+      return this.elevated_dispositions.includes(this.appliedDisposition);
+    },
+    tags: function () {
+      let tags = [];
+      let unique_tags = [];
+      this.alerts.forEach(function(alert) {
+        tags = tags.concat(alert.tags);
+      });
+      tags.forEach((tag) => {
+        if (!unique_tags.includes(tag)) {
+          unique_tags.push(tag);
+        }
+      });
+      return unique_tags;
+    }
+  },
   methods: {
     clearFilter1() {
       this.initAlertNarrowFilters();
+      this.selectedColumns = this.columns.slice(0, 5);
     },
     resetFilters() {
       this.initAlertNarrowFilters();
     },
     initAlertNarrowFilters() {
-      this.alertNarrowFilters = {
+      this.narrowFilters = {
         'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
         'name': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
-        'alert_date': {
-          operator: FilterOperator.AND,
-          constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
-        },
-        'type': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
-        'disposition': {
-          operator: FilterOperator.AND,
-          constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
-        },
-        'disposition_by': {
-          operator: FilterOperator.AND,
-          constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
-        },
-        'event_date': {
-          operator: FilterOperator.AND,
-          constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
-        },
-        'owner': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
-        'queue': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
-        'remediated_by': {
-          operator: FilterOperator.AND,
-          constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
-        },
-        'remediated_date': {
-          operator: FilterOperator.AND,
-          constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
-        },
-        'remediation_status': {
-          operator: FilterOperator.AND,
-          constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]
-        },
-        'tag': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
+        'alert_date': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.DATE_IS}]},
+        'type': {value: null, matchMode: FilterMatchMode.IN},
+        'disposition': {value: null, matchMode: FilterMatchMode.IN},
+        'disposition_by': {value: null, matchMode: FilterMatchMode.IN},
+        'event_date': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.DATE_IS}]},
+        'owner': {value: null, matchMode: FilterMatchMode.IN},
+        'queue': {value: null, matchMode: FilterMatchMode.IN},
+        'remediated_by': {value: null, matchMode: FilterMatchMode.IN},
+        'remediated_date': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.DATE_IS}]},
+        'remediation_status': {value: null, matchMode: FilterMatchMode.IN},
       }
     },
     onToggle(value) {
       this.selectedColumns = this.columns.filter(col => value.includes(col));
+    },
+    addExistingTag(event) {
+      this.newTags.push(event.value);
     },
     exportCSV() {
       this.$refs.dt.exportCSV();
