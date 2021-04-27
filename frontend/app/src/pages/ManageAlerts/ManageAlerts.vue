@@ -146,9 +146,13 @@
   <br>
   <Toolbar>
     <template #left>
-      <Calendar class="p-m-1" id="time24" v-model="calendarData" :manualInput="false" :showTime="true"
-                selectionMode="range"
-                :showSeconds="true" :showIcon="true" style="width: 375px"/>
+<!--      DATE PICKER -->
+      <i class="pi pi-calendar"></i>
+      <Calendar class="p-m-1" id="startTimeFilter" v-model="startTimeFilterData" :manualInput="true" :showTime="true"
+                selectionMode="single" style="width: 180px"/> to
+      <Calendar class="p-m-1" id="endTimeFilter" v-model="endTimeFilterData" :manualInput="true" :showTime="true"
+                selectionMode="single" style="width: 180px"/>
+<!--      EDIT FILTERS -->
       <Button type="button" icon="pi pi-filter"
               label="Edit" class="p-button-outlined p-m-1" style="float: right" @click="openEditFilterModal"/>
       <Dialog header="Edit Filters" v-model:visible="displayEditFilterModal" :style="{width: '50vw'}" :modal="true">
@@ -267,7 +271,8 @@ export default {
       appliedComment: null,
       selectedRemediations: null,
       narrowFilters: null,
-      calendarData: null,
+      startTimeFilterData: null,
+      endTimeFilterData: null,
       selectedUser: null,
       chosenEvent: null,
       newEventName: null,
