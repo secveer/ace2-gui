@@ -21,15 +21,38 @@
           </div>
         <template #footer>
           <Button label="Save" class="p-button-outlined" @click="closeDispositionModal"/>
-          <Button v-if="showAddToEventButton" label="Save to Event" class="p-button-raised" @click="closeDispositionModal();openSaveToEventModal();" autofocus/>
+          <Button v-if="showAddToEventButton" label="Save to Event" class="p-button-raised" @click="closeDispositionModal();openSaveToEventModal();autoSetEventName();" autofocus/>
         </template>
       </Dialog>
 <!--      SAVE TO EVENT -->
       <Dialog header="Save to Event" v-model:visible="displaySaveToEventModal" :style="{width: '50vw'}" :modal="true">
-        <p class="p-m-0">Add event tab menu here!</p>
+        <TabView class="p-m-1">
+          <TabPanel v-for="event of events" :key="event.title" :header="event.title">
+            <div v-for="eventItem of event.events" :key="eventItem" class="p-field-radiobutton p-inputgroup">
+              <RadioButton :id="eventItem" name="eventItem" :value="eventItem" v-model="chosenEvent"/>
+              <label :for="eventItem">{{ eventItem }}</label>
+            </div>
+            <div class="p-field-radiobutton p-inputgroup">
+              <RadioButton id="newEventItem" name="newEventItem" value="New Event" v-model="chosenEvent"/>
+              <label for="newEventItem">New Event</label>
+            </div>
+            <div v-if="newEventSelected" class="p-m-1 p-grid p-fluid p-formgrid">
+              <div class="p-field p-col p-m-1">
+              <InputText id="newEventName" type="text" v-model="newEventName"/>
+              <Textarea v-model="newEventComment" :autoResize="true" rows="5" cols="30" id="newEventComment" placeholder="Add a comment..."/>
+                <Dropdown v-model="newEventComment" :options="suggestedComments" :showClear="true"
+                          placeholder="Select from a past comment"/>
+              </div>
+              <div class="p-col-1 p-m-1">
+                <Button type="button" icon="pi pi-refresh"
+                        class="p-button-outlined p-m-1" @click="autoSetEventName"/>
+              </div>
+            </div>
+          </TabPanel>
+        </TabView>
         <template #footer>
-          <Button label="Nevermind" icon="pi pi-times" @click="closeSaveToEventModal" class="p-button-text"/>
-          <Button label="Save" icon="pi pi-check" @click="closeSaveToEventModal" autofocus/>
+          <Button label="Back" icon="pi pi-arrow-left" @click="closeSaveToEventModal();openDispositionModal()" class="p-button-text"/>
+          <Button label="Save" icon="pi pi-check" @click="closeSaveToEventModal" autofocus :disabled="!anyEventSelected"/>
         </template>
       </Dialog>
 <!--      COMMENT -->
@@ -246,6 +269,9 @@ export default {
       narrowFilters: null,
       calendarData: null,
       selectedUser: null,
+      chosenEvent: null,
+      newEventName: null,
+      newEventComment: null,
       selectedOwners: null,
       newTags: [],
       filteredTags: null,
@@ -451,6 +477,13 @@ export default {
     this.selectedColumns = this.columns.slice(0, 5);
   },
   computed: {
+    anyEventSelected: function () {
+      return Boolean(this.chosenEvent);
+    },
+    newEventSelected: function () {
+      console.log(this.chosenEvent);
+      return this.chosenEvent === "New Event";
+    },
     showAddToEventButton: function () {
       return this.elevated_dispositions.includes(this.appliedDisposition);
     },
@@ -538,6 +571,9 @@ export default {
     closeConfirmation() {
       this.displayConfirmation = false;
     },
+    autoSetEventName() {
+      this.newEventName = "this is a placeholder";
+    }
   }
 }
 </script>
