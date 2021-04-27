@@ -171,8 +171,6 @@
                                       'remediated_by',
                                       'remediated_date',
                                       'remediation_status']"
-               v-model:filters="narrowFilters"
-               filterDisplay="menu"
                v-model:selection="selectedAlerts"
                dataKey="id"
                v-model:expandedRows="expandedRows"
@@ -222,50 +220,6 @@
             </span></div>
           <span v-else> {{ data[col.field] }}</span>
         </template>
-        <template #filter="{filterModel}">
-          <InputText v-if="col.field === 'name'" InputText type="text" v-model="filterModel.value"
-                     class="p-column-filter" placeholder="Search by name"/>
-          <InputText v-if="col.field === 'tag'" InputText type="text" v-model="filterModel.value"
-                     class="p-column-filter" placeholder="Search by tag"/>
-          <Calendar
-              v-else-if="col.field === 'alert_date' || col.field === 'event_date' || col.field === 'remediated_date'"
-              v-model="filterModel.value" dateFormat="mm/dd/yy" placeholder="mm/dd/yyyy HH:MM:SS" :showTime="true"
-              :showSeconds="true"/>
-          <MultiSelect
-              v-else-if="col.field === 'disposition_by' || col.field === 'owner' || col.field === 'remediated_by'"
-              v-model="filterModel.value" :options="users" optionLabel="col.header" placeholder="Any"
-              class="p-column-filter">
-            <template #option="slotProps">
-              <span>{{ slotProps.option }}</span>
-            </template>
-          </MultiSelect>
-          <MultiSelect v-else-if="col.field === 'disposition'" v-model="filterModel.value" :options="dispositions"
-                       optionLabel="col.header" placeholder="Any" class="p-column-filter">
-            <template #option="slotProps">
-              <span>{{ slotProps.option  }}</span>
-            </template>
-          </MultiSelect>
-          <MultiSelect v-else-if="col.field === 'type'" v-model="filterModel.value" :options="types"
-                       optionLabel="col.header" placeholder="Any" class="p-column-filter">
-            <template #option="slotProps">
-              <span>{{ slotProps.option  }}</span>
-            </template>
-          </MultiSelect>
-          <MultiSelect v-else-if="col.field === 'queue'" v-model="filterModel.value" :options="queues"
-                       optionLabel="col.header" placeholder="Any" class="p-column-filter">
-            <template #option="slotProps">
-              <span>{{ slotProps.option }}</span>
-            </template>
-          </MultiSelect>
-          <MultiSelect v-else-if="col.field === 'remediation_status'" v-model="filterModel.value"
-                       :options="remediation_statuses" optionLabel="col.header" placeholder="Any"
-                       class="p-column-filter">
-            <template #option="slotProps">
-              <span>{{ slotProps.option  }}</span>
-            </template>
-          </MultiSelect>
-        </template>
-
       </Column>
 <!--      ALERT ROW DROPDOWN -->
       <template #expansion="slotProps">
@@ -524,18 +478,7 @@ export default {
     },
     initAlertNarrowFilters() {
       this.narrowFilters = {
-        'global': {value: null, matchMode: FilterMatchMode.CONTAINS},
-        'name': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.STARTS_WITH}]},
-        'alert_date': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.DATE_IS}]},
-        'type': {value: null, matchMode: FilterMatchMode.IN},
-        'disposition': {value: null, matchMode: FilterMatchMode.IN},
-        'disposition_by': {value: null, matchMode: FilterMatchMode.IN},
-        'event_date': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.DATE_IS}]},
-        'owner': {value: null, matchMode: FilterMatchMode.IN},
-        'queue': {value: null, matchMode: FilterMatchMode.IN},
-        'remediated_by': {value: null, matchMode: FilterMatchMode.IN},
-        'remediated_date': {operator: FilterOperator.AND, constraints: [{value: null, matchMode: FilterMatchMode.DATE_IS}]},
-        'remediation_status': {value: null, matchMode: FilterMatchMode.IN},
+        'global': {value: null, matchMode: FilterMatchMode.CONTAINS}
       }
     },
     onToggle(value) {
