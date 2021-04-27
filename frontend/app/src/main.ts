@@ -19,10 +19,12 @@ import RadioButton from 'primevue/radiobutton';
 import Divider from 'primevue/divider';
 import Textarea from 'primevue/textarea';
 import Chips from 'primevue/chips';
+import TabView from 'primevue/tabview';
+import InputSwitch from 'primevue/inputswitch';
+import OverlayPanel from 'primevue/overlaypanel';
 
+import TabPanel from 'primevue/tabpanel';
 import AutoComplete from 'primevue/autocomplete';
-
-
 
 import router from "./router";
 import store from "./store";
@@ -45,7 +47,11 @@ app.component('Checkbox', Checkbox);
 app.component('AutoComplete', AutoComplete);
 app.component('RadioButton', RadioButton);
 app.component('Chips', Chips);
+app.component('InputSwitch', InputSwitch);
 app.component('Dropdown', Dropdown);
+app.component('OverlayPanel', OverlayPanel);
+app.component('TabView', TabView);
+app.component('TabPanel', TabPanel);
 app.component('Calendar', Calendar);
 app.component('Divider', Divider);
 app.component('Tag', Tag);

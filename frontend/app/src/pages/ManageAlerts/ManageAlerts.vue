@@ -1,7 +1,9 @@
 <template>
   <br>
+<!--  ALERT ACTION TOOLBAR -->
   <Toolbar>
     <template #left>
+<!--      DISPOSITION -->
       <Button class="p-m-1 p-button-normal p-button-success" icon="pi pi-thumbs-up" label="Disposition"
               @click="openDispositionModal"/>
       <Dialog header="Set Disposition" v-model:visible="displayDispositionModal" :style="{width: '50vw'}" :modal="true">
@@ -22,6 +24,7 @@
           <Button v-if="showAddToEventButton" label="Save to Event" class="p-button-raised" @click="closeDispositionModal();openSaveToEventModal();" autofocus/>
         </template>
       </Dialog>
+<!--      SAVE TO EVENT -->
       <Dialog header="Save to Event" v-model:visible="displaySaveToEventModal" :style="{width: '50vw'}" :modal="true">
         <p class="p-m-0">Add event tab menu here!</p>
         <template #footer>
@@ -29,6 +32,7 @@
           <Button label="Save" icon="pi pi-check" @click="closeSaveToEventModal" autofocus/>
         </template>
       </Dialog>
+<!--      COMMENT -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-comment" label="Comment" @click="openCommentModal"/>
       <Dialog header="Add Comment" v-model:visible="displayCommentModal" :style="{width: '50vw'}" :modal="true">
         <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">
@@ -43,7 +47,9 @@
           <Button label="Add" icon="pi pi-check" @click="closeCommentModal" autofocus/>
         </template>
       </Dialog>
+<!--      TAKE OWNERSHIP -- NO MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-briefcase" label="Take Ownership"/>
+<!--      ASSIGN -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-user" label="Assign" @click="openAssignModal"/>
       <Dialog header="Assign Ownership" v-model:visible="displayAssignModal" :style="{width: '50vw'}" :modal="true">
         <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">
@@ -57,6 +63,7 @@
           <Button label="Assign" icon="pi pi-check" @click="closeAssignModal" autofocus/>
         </template>
       </Dialog>
+<!--      TAG MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-tags" label="Tag" @click="openTagModal"/>
       <Dialog header="Add Tags" v-model:visible="displayTagModal" :style="{width: '50vw'}" :modal="true">
         <span class="p-fluid">
@@ -69,6 +76,7 @@
           <Button label="Add" icon="pi pi-check" @click="closeTagModal" autofocus/>
         </template>
       </Dialog>
+<!--      REMEDIATE MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-times-circle" label="Remediate" @click="openRemediateModal"/>
       <Dialog header="Remediate" v-model:visible="displayRemediateModal" :style="{width: '50vw'}" :modal="true">
         <DataTable :value="remediation_targets"
@@ -92,6 +100,7 @@
           <Button label="Restore" icon="pi pi-check" autofocus/>
         </template>
       </Dialog>
+<!--      DELETE ALERT -->
       <Button class="p-m-1 p-button-sm p-button-danger" icon="pi pi-trash" label="Delete" @click="openConfirmation"/>
       <Dialog header="Confirmation" v-model:visible="displayConfirmation" :style="{width: '350px'}" :modal="true">
         <div class="confirmation-content">
@@ -110,6 +119,7 @@
 
     </template>
   </Toolbar>
+  <!--    FILTER ALERTS TOOLBAR -->
   <br>
   <Toolbar>
     <template #left>
@@ -126,14 +136,18 @@
         </template>
       </Dialog>
     </template>
+<!--    TODO: SHOW APPLIED FILTERS -->
     <template #right>
+<!--      CLEAR FILTERS-->
       <Button type="button" icon="pi pi-filter-slash"
               label="Clear" class="p-button-outlined p-m-1"/>
+<!--      RESET FILTERS-->
       <Button type="button" icon="pi pi-refresh"
               label="Reset" class="p-button-outlined p-m-1"/>
     </template>
   </Toolbar>
   <br>
+<!--  ALERTS DATA TABLE-->
   <div class="card">
     <DataTable :value="alerts"
                responsiveLayout="scroll"
@@ -166,6 +180,7 @@
                :resizableColumns="true"
                columnResizeMode="fit">
 
+      <!--        ALERT TABLE TOOLBAR-->
       <template #header>
         <Toolbar style="border: none">
           <template #left>
@@ -180,19 +195,25 @@
               <i class="pi pi-search"/>
               <InputText v-model="narrowFilters['global'].value" placeholder="Search in table"/>
           </span>
+<!--            CLEAR TABLE FILTERS -->
             <Button icon="pi pi-refresh" class="p-button-rounded p-m-1" @click="clearFilter1()"/>
+<!--            EXPORT TABLE -->
             <Button class="p-button-rounded p-m-1" icon="pi pi-download" @click="exportCSV($event)"/>
 
           </template>
 
         </Toolbar>
       </template>
-
+<!-- DROPDOWN COLUMN-->
       <Column id="alert-expand" :expander="true" headerStyle="width: 3rem"/>
+<!--      CHECKBOX COLUMN -->
       <Column id="alert-select" selectionMode="multiple" headerStyle="width: 3em"/>
+<!--      DATA COLUMN -->
       <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
               :key="col.field + '_' + index" :sortable="true">
+<!--        DATA COLUMN BODY-->
         <template #body="{data}">
+<!--          NAME COLUMN - HAS TAGS AND TODO: ALERT ICONS-->
           <div v-if="col.field === 'name'">
             <span class="p-m-1"> {{ data.name }}</span>
             <br>
@@ -246,13 +267,13 @@
         </template>
 
       </Column>
+<!--      ALERT ROW DROPDOWN -->
       <template #expansion="slotProps">
         <h5>Observables:</h5>
         <ul>
           <li v-for="obs of slotProps.data.observables" :key="obs.value">{{ obs.type }} - {{ obs.value }}</li>
         </ul>
       </template>
-
     </DataTable>
   </div>
 </template>
@@ -260,7 +281,6 @@
 <script>
 
 import {FilterMatchMode, FilterOperator} from 'primevue/api';
-
 
 export default {
   data() {
