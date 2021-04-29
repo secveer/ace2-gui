@@ -1,0 +1,54 @@
+# Project information
+site_name: ACE2 - GUI
+site_description: Documentation for Analysis Correlation Engine 2.0 - GUI
+site_author: Matthew Wilson
+site_url: 
+
+# Repository
+repo_name: ace2-gui
+repo_url: 
+edit_uri: ""
+
+theme:
+  name: null
+  custom_dir: 'material'
+  feature:
+    tabs: true
+
+  # 404 page
+  static_templates:
+    - 404.html
+
+  # Don't include MkDocs' JavaScript
+  include_search_page: false
+  search_index_only: true
+
+  # Default values, taken from mkdocs_theme.yml
+  language: en
+  feature:
+    tabs: true
+  palette:
+    primary: indigo
+    accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
+  favicon: assets/images/favicon.png
+  logo:
+    icon: "\uE80C"
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - fenced_code
+  - tables
+
+# Plugins
+plugins:
+  - search
+  - awesome-pages
+

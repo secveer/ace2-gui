@@ -36,5 +36,9 @@ PGADMIN_DEFAULT_PASSWORD={database_admin_password}"""
         text = f"DATABASE_URL={database_url}"
         f.write(text)
 
+    # Write the frontend .env.development.local file
+    with open("frontend/app/.env.development.local", "w") as f:
+        f.write("VUE_APP_BACKEND_URL=http://localhost:8888/api")
+
 if __name__ == "__main__":
     main()
