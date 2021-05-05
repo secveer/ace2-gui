@@ -261,6 +261,8 @@
 
 <script>
 
+import axios from 'axios';
+
 import {FilterMatchMode, FilterOperator} from 'primevue/api';
 
 export default {
@@ -300,170 +302,7 @@ export default {
         {field: 'remediated_date', header: 'Remediated Date'},
         {field: 'remediation_status', header: 'Remediation Status'},
       ],
-      alerts: [
-        {
-          "id": "1234",
-          "alert_date": "04/20/2020 T2:00:00",
-          "name": "Splunk Hunt: Example",
-          "type": "splunk_hunter",
-          "disposition": "FALSE_POSITIVE",
-          "disposition_by": "Holly",
-          "event_date": "04/20/2020 T2:00:00",
-          "owner": "Holly",
-          "queue": "default",
-          "remediated_by": "Holly",
-          "remediated_date": "04/20/2020 T2:00:00",
-          "remediation_status": "remediated",
-          "tags": ['bad', 'malware', 'oh_no'],
-          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
-            {'type': 'FQDN', 'value': 'google.com'},]
-        },
-        {
-          "id": "2345",
-          "alert_date": "04/20/2020 T2:00:00",
-          "name": "Splunk Hunt: Example",
-          "type": "splunk_hunter",
-          "disposition": "FALSE_POSITIVE",
-          "disposition_by": "Holly",
-          "event_date": "04/20/2020 T2:00:00",
-          "owner": "Holly",
-          "queue": "default",
-          "remediated_by": "Holly",
-          "remediated_date": "04/20/2020 T2:00:00",
-          "remediation_status": "remediated",
-          "tags": ['bad', 'malware', 'oh_no'],
-          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
-            {'type': 'FQDN', 'value': 'google.com'},]
-        },
-        {
-          "id": "3456",
-          "alert_date": "04/20/2020 T2:00:00",
-          "name": "Splunk Hunt: Example",
-          "type": "splunk_hunter",
-          "disposition": "FALSE_POSITIVE",
-          "disposition_by": "Holly",
-          "event_date": "04/20/2020 T2:00:00",
-          "owner": "Holly",
-          "queue": "default",
-          "remediated_by": "Holly",
-          "remediated_date": "04/20/2020 T2:00:00",
-          "remediation_status": "remediated",
-          "tags": ['bad', 'malware', 'oh_no'],
-          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
-            {'type': 'FQDN', 'value': 'google.com'},]
-        },
-        {
-          "id": "4567",
-          "alert_date": "04/20/2020 T2:00:00",
-          "name": "Splunk Hunt: Example",
-          "type": "splunk_hunter",
-          "disposition": "FALSE_POSITIVE",
-          "disposition_by": "Holly",
-          "event_date": "04/20/2020 T2:00:00",
-          "owner": "Holly",
-          "queue": "default",
-          "remediated_by": "Holly",
-          "remediated_date": "04/20/2020 T2:00:00",
-          "remediation_status": "remediated",
-          "tags": ['bad', 'malware', 'oh_no'],
-          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
-            {'type': 'FQDN', 'value': 'google.com'},]
-        },
-        {
-          "id": "5678",
-          "alert_date": "04/20/2020 T2:00:00",
-          "name": "Splunk Hunt: Example",
-          "type": "splunk_hunter",
-          "disposition": "FALSE_POSITIVE",
-          "disposition_by": "Holly",
-          "event_date": "04/20/2020 T2:00:00",
-          "owner": "Holly",
-          "queue": "default",
-          "remediated_by": "Holly",
-          "remediated_date": "04/20/2020 T2:00:00",
-          "remediation_status": "remediated",
-          "tags": ['bad', 'malware', 'oh_no'],
-          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
-            {'type': 'FQDN', 'value': 'google.com'},]
-        },
-        {
-          "id": "6789",
-          "alert_date": "04/20/2020 T2:00:00",
-          "name": "Splunk Hunt: Example",
-          "type": "splunk_hunter",
-          "disposition": "FALSE_POSITIVE",
-          "disposition_by": "Holly",
-          "event_date": "04/20/2020 T2:00:00",
-          "owner": "Holly",
-          "queue": "default",
-          "remediated_by": "Holly",
-          "remediated_date": "04/20/2020 T2:00:00",
-          "remediation_status": "remediated",
-          "tags": ['bad', 'malware', 'oh_no'],
-          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
-            {'type': 'FQDN', 'value': 'google.com'},]
-        },
-        {
-          "id": "7890",
-          "alert_date": "04/20/2020 T2:00:00",
-          "name": "Splunk Hunt: Example",
-          "type": "splunk_hunter",
-          "disposition": "FALSE_POSITIVE",
-          "disposition_by": "Holly",
-          "event_date": "04/20/2020 T2:00:00",
-          "owner": "Holly",
-          "queue": "default",
-          "remediated_by": "Holly",
-          "remediated_date": "04/20/2020 T2:00:00",
-          "remediation_status": "remediated",
-          "tags": ['bad', 'malware', 'oh_no'],
-          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
-            {'type': 'FQDN', 'value': 'google.com'},]
-        },
-        {
-          "id": "0978",
-          "alert_date": "04/20/2020 T2:00:00",
-          "name": "Splunk Hunt: Example",
-          "type": "splunk_hunter",
-          "disposition": "FALSE_POSITIVE",
-          "disposition_by": "Holly",
-          "event_date": "04/20/2020 T2:00:00",
-          "owner": "Holly",
-          "queue": "default",
-          "remediated_by": "Holly",
-          "remediated_date": "04/20/2020 T2:00:00",
-          "remediation_status": "remediated",
-          "tags": ['bad', 'malware', 'oh_no'],
-          "observables": [{'type': 'URL', 'value': 'http://www.google.com'},
-            {'type': 'FQDN', 'value': 'google.com'},]
-        },
-      ],
-      remediation_targets: [
-        {
-          'type': 'zerofox',
-          'target': 'bad_url',
-          'status': 'remediation failed',
-          'id': '123'
-        },
-        {
-          'type': 'email',
-          'target': 'msgID|email.com',
-          'status': 'remediating',
-          'id': '124'
-        },
-        {
-          'type': 'email',
-          'target': 'msgID|email2.com',
-          'status': 'removed',
-          'id': '125'
-        },
-        {
-          'type': 'email',
-          'target': 'msgID|email3.com',
-          'status': 'restored',
-          'id': '126'
-        },
-      ],
+      alerts: [],
       selectedColumns: null,
       selectedAlerts: null,
       displayCommentModal: false,
@@ -477,7 +316,16 @@ export default {
       expandedRows: []
     }
   },
-  created() {
+  async created() {
+    // Fetch alerts from the backend API
+    const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/alert`).catch(error => {
+      console.error(error);
+    });
+
+    if (response && response.status === 200) {
+      this.alerts = response.data;
+    }
+
     this.initAlertNarrowFilters();
     this.selectedColumns = this.columns.slice(0, 5);
   },

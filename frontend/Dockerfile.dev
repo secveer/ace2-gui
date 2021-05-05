@@ -3,4 +3,5 @@ WORKDIR /app
 COPY frontend/app/package*.json ./
 RUN npm install
 COPY frontend/app/ ./
+ENV VUE_APP_BACKEND_URL=http://localhost:8888/api
 CMD ["npm", "run", "serve"]
