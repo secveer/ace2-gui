@@ -202,6 +202,7 @@
                responsiveLayout="scroll"
                sortField="name"
                v-model:expandedRows="expandedRows"
+               v-model:filters="alertTableFilters"
                v-model:selection="selectedAlerts">
 
       <!--        ALERT TABLE TOOLBAR-->
