@@ -21,7 +21,7 @@
           </div>
         <template #footer>
           <Button label="Save" class="p-button-outlined" @click="closeDispositionModal"/>
-          <Button v-if="showAddToEventButton" label="Save to Event" class="p-button-raised" @click="closeDispositionModal();openSaveToEventModal();autoSetEventName();" autofocus/>
+          <Button v-if="showAddToEventButton" label="Save to Event" class="p-button-raised" @click="closeDispositionModal();openSaveToEventModal();autoSetEventName();" />
         </template>
       </Dialog>
 <!--      SAVE TO EVENT -->
@@ -52,7 +52,7 @@
         </TabView>
         <template #footer>
           <Button label="Back" icon="pi pi-arrow-left" @click="closeSaveToEventModal();openDispositionModal()" class="p-button-text"/>
-          <Button label="Save" icon="pi pi-check" @click="closeSaveToEventModal" autofocus :disabled="!anyEventSelected"/>
+          <Button label="Save" icon="pi pi-check" @click="closeSaveToEventModal"  :disabled="!anyEventSelected"/>
         </template>
       </Dialog>
 <!--      COMMENT -->
@@ -67,7 +67,7 @@
         </div>
         <template #footer>
           <Button label="Nevermind" icon="pi pi-times" @click="closeCommentModal" class="p-button-text"/>
-          <Button label="Add" icon="pi pi-check" @click="closeCommentModal" autofocus/>
+          <Button label="Add" icon="pi pi-check" @click="closeCommentModal" />
         </template>
       </Dialog>
 <!--      TAKE OWNERSHIP -- NO MODAL -->
@@ -83,7 +83,7 @@
         </div>
         <template #footer>
           <Button label="Nevermind" icon="pi pi-times" @click="closeAssignModal" class="p-button-text"/>
-          <Button label="Assign" icon="pi pi-check" @click="closeAssignModal" autofocus/>
+          <Button label="Assign" icon="pi pi-check" @click="closeAssignModal" />
         </template>
       </Dialog>
 <!--      TAG MODAL -->
@@ -96,7 +96,7 @@
           </span>
         <template #footer>
           <Button label="Nevermind" icon="pi pi-times" @click="closeTagModal" class="p-button-text"/>
-          <Button label="Add" icon="pi pi-check" @click="closeTagModal" autofocus/>
+          <Button label="Add" icon="pi pi-check" @click="closeTagModal" />
         </template>
       </Dialog>
 <!--      REMEDIATE MODAL -->
@@ -119,8 +119,8 @@
         </DataTable>
         <template #footer>
           <Button label="Stop" class="p-button-text"/>
-          <Button label="Remove" icon="pi pi-times" autofocus/>
-          <Button label="Restore" icon="pi pi-check" autofocus/>
+          <Button label="Remove" icon="pi pi-times" />
+          <Button label="Restore" icon="pi pi-check" />
         </template>
       </Dialog>
 <!--      DELETE ALERT -->
@@ -132,7 +132,7 @@
         </div>
         <template #footer>
           <Button label="Actually, no" icon="pi pi-times" @click="closeConfirmation" class="p-button-text"/>
-          <Button label="Do it!" icon="pi pi-check" @click="closeConfirmation" class="p-button-text" autofocus/>
+          <Button label="Do it!" icon="pi pi-check" @click="closeConfirmation" class="p-button-text" />
         </template>
       </Dialog>
 
@@ -159,7 +159,7 @@
         <p class="p-m-0">Edit Filters.</p>
         <template #footer>
           <Button label="No" icon="pi pi-times" @click="closeEditFilterModal" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeEditFilterModal" autofocus/>
+          <Button label="Yes" icon="pi pi-check" @click="closeEditFilterModal" />
         </template>
       </Dialog>
     </template>
