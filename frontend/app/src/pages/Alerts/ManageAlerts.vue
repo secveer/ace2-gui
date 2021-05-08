@@ -92,7 +92,7 @@
         <span class="p-fluid">
               <Chips v-model="newTags" />
               <Dropdown @change="addExistingTag" :options="tags" :filter="true" placeholder="Select from existing tags"
-                        filterPlaceholder="Search tags" filterFields="options.value"/>
+                        filterPlaceholder="Search tags" />
           </span>
         <template #footer>
           <Button label="Nevermind" icon="pi pi-times" @click="closeTagModal" class="p-button-text"/>
@@ -376,6 +376,8 @@ export default {
           unique_tags.push(tag);
         }
       });
+      // todo: modify tags in alert object to be objects rather than a string
+      // this will allow for proper filtering
       return unique_tags;
     }
   },
