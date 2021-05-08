@@ -1,7 +1,7 @@
 <template>
   <Menubar>
     <template #start>
-      <router-link class="p-m-1" to="/manage_alerts"><img alt="ACE logo" src="../../assets/logo.jpg"></router-link>
+      <router-link class="p-m-1" to="/manage_alerts"><img alt="ACE logo" src="../assets/logo.jpg"></router-link>
       <router-link class="p-m-1" to="/"><Button label="New Analysis" class="p-button-raised"/></router-link>
       <router-link class="p-m-1" to="/"><Button label="Events" class="p-button-raised" /></router-link>
     </template>
@@ -17,7 +17,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "TheNavigation",
+  name: "TheHeader",
 });
 </script>
 

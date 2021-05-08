@@ -1,5 +1,5 @@
 <template>
-  <TheNavigation></TheNavigation>
+  <TheHeader></TheHeader>
 <!--  <div id="nav">-->
 <!--    <router-link to="/manage_alerts">Manage Alerts</router-link>-->
 <!--    <router-link to="/about">About</router-link> |-->
@@ -30,8 +30,8 @@
 }
 </style>
 <script>
-import TheNavigation from "@/components/UserInterface/TheNavigation";
+import TheHeader from "@/components/TheHeader";
 export default {
-  components: { TheNavigation}
+  components: { TheHeader}
 }
 </script>
