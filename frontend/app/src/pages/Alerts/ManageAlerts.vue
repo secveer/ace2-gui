@@ -103,15 +103,15 @@
       <Button class="p-m-1 p-button-sm" icon="pi pi-times-circle" label="Remediate" @click="openRemediateModal"/>
       <Dialog header="Remediate" v-model:visible="displayRemediateModal" :style="{width: '50vw'}" :modal="true">
         <DataTable :value="remediation_targets"
-                   responsiveLayout="scroll"
                    :rows="10"
-                   sortField="type"
                    :sortOrder="1"
-                   removableSort
+                   columnResizeMode="fit"
                    dataKey="id"
-                   v-model:selection="selectedRemediations"
+                   removableSort
+                   responsiveLayout="scroll"
+                   sortField="type"
                    stripedRows
-                   columnResizeMode="fit">
+                   v-model:selection="selectedRemediations">
           <Column id="remediation-select" selectionMode="multiple" headerStyle="width: 3em"/>
           <Column field="type" header="Type" :sortable="true"></Column>
           <Column field="target" header="Target" :sortable="true"></Column>
@@ -177,33 +177,33 @@
 <!--  ALERTS DATA TABLE-->
   <div class="card">
     <DataTable :value="alerts"
-               responsiveLayout="scroll"
-               :paginator="true"
-               :rows="10"
-               paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-               :rowsPerPageOptions="[5,10,50]"
-               currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-               sortField="name"
-               :sortOrder="1"
-               removableSort
                :globalFilterFields="['global',
-                                      'name',
                                       'alert_date',
-                                      'type',
                                       'disposition',
                                       'disposition_by',
                                       'event_date',
+                                      'name',
                                       'owner',
                                       'queue',
                                       'remediated_by',
                                       'remediated_date',
-                                      'remediation_status']"
-               v-model:selection="selectedAlerts"
-               dataKey="id"
-               v-model:expandedRows="expandedRows"
-               ref="dt"
+                                      'remediation_status',
+                                      'type']"
+               :paginator="true"
                :resizableColumns="true"
-               columnResizeMode="fit">
+               :rows="10"
+               :rowsPerPageOptions="[5,10,50]"
+               :sortOrder="1"
+               columnResizeMode="fit"
+               currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+               dataKey="id"
+               paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+               ref="dt"
+               removableSort
+               responsiveLayout="scroll"
+               sortField="name"
+               v-model:expandedRows="expandedRows"
+               v-model:selection="selectedAlerts">
 
       <!--        ALERT TABLE TOOLBAR-->
       <template #header>
@@ -268,52 +268,51 @@ import {FilterMatchMode, FilterOperator} from 'primevue/api';
 export default {
   data() {
     return {
-      suggestedComments: ['this is an old comment', 'and another'],
-      appliedDisposition: null,
+      alerts: [],
       appliedComment: null,
-      selectedRemediations: null,
-      narrowFilters: null,
-      startTimeFilterData: null,
-      endTimeFilterData: null,
-      selectedUser: null,
+      appliedDisposition: null,
       chosenEvent: null,
-      newEventName: null,
-      newEventComment: null,
-      selectedOwners: null,
-      newTags: [],
-      filteredTags: null,
-      users: ['Holly', 'Analyst', 'none'],
-      selectedQueues: null,
-      queues: ['external', 'internal', 'intel'],
-      dispositions: ['FALSE_POSITIVE', 'WEAPONIZATION', 'COMMAND_AND_CONTROL'],
-      elevated_dispositions: ['COMMAND_AND_CONTROL'],
-      types: ['splunk_hunter'],
-      remediation_statuses: ['remediated', 'remediation_failed', 'remediating'],
-      columns: [
-        {field: 'alert_date', header: 'Alert Date'},
-        {field: 'name', header: 'Name'},
-        {field: 'type', header: 'Type'},
-        {field: 'owner', header: 'Owner'},
+      columns: [{field: 'alert_date', header: 'Alert Date'},
         {field: 'disposition', header: 'Disposition'},
         {field: 'disposition_by', header: 'Dispositioned By'},
         {field: 'event_date', header: 'Event Date'},
+        {field: 'name', header: 'Name'},
+        {field: 'owner', header: 'Owner'},
         {field: 'queue', header: 'Queue'},
         {field: 'remediated_by', header: 'Remediated By'},
         {field: 'remediated_date', header: 'Remediated Date'},
         {field: 'remediation_status', header: 'Remediation Status'},
+        {field: 'type', header: 'Type'},
       ],
-      alerts: [],
-      selectedColumns: null,
-      selectedAlerts: null,
-      displayCommentModal: false,
-      displayDispositionModal: false,
-      displaySaveToEventModal: false,
       displayAssignModal: false,
-      displayTagModal: false,
+      displayCommentModal: false,
+      displayConfirmation: false,
+      displayDispositionModal: false,
       displayEditFilterModal: false,
       displayRemediateModal: false,
-      displayConfirmation: false,
-      expandedRows: []
+      displaySaveToEventModal: false,
+      displayTagModal: false,
+      dispositions: ['FALSE_POSITIVE', 'WEAPONIZATION', 'COMMAND_AND_CONTROL'],
+      elevated_dispositions: ['COMMAND_AND_CONTROL'],
+      endTimeFilterData: null,
+      expandedRows: [],
+      filteredTags: null,
+      narrowFilters: null,
+      newEventComment: null,
+      newEventName: null,
+      newTags: [],
+      queues: ['external', 'internal', 'intel'],
+      remediation_statuses: ['remediated', 'remediation_failed', 'remediating'],
+      selectedAlerts: null,
+      selectedColumns: null,
+      selectedOwners: null,
+      selectedQueues: null,
+      selectedRemediations: null,
+      selectedUser: null,
+      startTimeFilterData: null,
+      suggestedComments: ['this is an old comment', 'and another'],
+      types: ['splunk_hunter'],
+      users: ['Holly', 'Analyst', 'none'],
     }
   },
   async created() {
@@ -359,9 +358,7 @@ export default {
       this.initAlertNarrowFilters();
       this.selectedColumns = this.columns.slice(0, 5);
     },
-    resetFilters() {
-      this.initAlertNarrowFilters();
-    },
+
     initAlertNarrowFilters() {
       this.narrowFilters = {
         'global': {value: null, matchMode: FilterMatchMode.CONTAINS}
@@ -402,9 +399,6 @@ export default {
     },
     openRemediateModal() {
       this.displayRemediateModal = true;
-    },
-    closeRemediateModal() {
-      this.displayRemediateModal = false;
     },
     openEditFilterModal() {
       this.displayEditFilterModal = true;
