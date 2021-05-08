@@ -149,6 +149,13 @@ import {FilterMatchMode} from 'primevue/api';
 export default {
   name: "TheAlertActionToolbar",
 
+  props: {
+    selectedAlerts: {
+      type: Array[Object],
+      required: true
+    },
+  },
+
   data() {
     return {
       alerts: [],
@@ -214,7 +221,6 @@ export default {
           'id': '126'
         },
       ],
-      selectedAlerts: null,
       selectedColumns: null,
       selectedOwners: null,
       selectedRemediations: null,

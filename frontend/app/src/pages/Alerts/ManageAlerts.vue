@@ -1,10 +1,14 @@
 <template>
   <br>
 <!--  ALERT ACTION TOOLBAR -->
-  <TheAlertActionToolbar></TheAlertActionToolbar>
+  <TheAlertActionToolbar
+  :selected-alerts="selectedAlerts">
+  </TheAlertActionToolbar>
   <br>
 <!--    FILTER ALERTS TOOLBAR -->
-  <TheFiltersToolbar></TheFiltersToolbar>
+  <TheFiltersToolbar
+  :applied-filters="appliedFilters">
+  </TheFiltersToolbar>
   <br>
 <!--  ALERTS DATA TABLE-->
   <div class="card">
@@ -13,8 +17,8 @@
         @alert-select="alertSelect"
         @alert-unselect="alertUnselect"
         @alert-select-all="alertSelectAll"
-        @alert-unselect-all="alertUnselectAll"
-    ></TheAlertsTable>
+        @alert-unselect-all="alertUnselectAll">
+    </TheAlertsTable>
   </div>
 </template>
 

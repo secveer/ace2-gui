@@ -37,6 +37,13 @@ import {FilterMatchMode} from 'primevue/api';
 export default {
   name: "TheFiltersToolbar",
 
+  props: {
+    appliedFilters: {
+      type: Array[Object],
+      required: true
+    },
+  },
+
   data() {
     return {
       alerts: [],
