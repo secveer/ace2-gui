@@ -1,11 +1,14 @@
 <template>
   <TheHeader></TheHeader>
-<!--  <div id="nav">-->
-<!--    <router-link to="/manage_alerts">Manage Alerts</router-link>-->
-<!--    <router-link to="/about">About</router-link> |-->
-<!--  </div>-->
   <router-view />
 </template>
+
+<script>
+import TheHeader from "@/components/TheHeader";
+export default {
+  components: { TheHeader}
+}
+</script>
 
 <style lang="scss">
 #app {
@@ -29,9 +32,3 @@
   }
 }
 </style>
-<script>
-import TheHeader from "@/components/TheHeader";
-export default {
-  components: { TheHeader}
-}
-</script>

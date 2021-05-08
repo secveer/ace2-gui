@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import ManageAlerts from "../pages/ManageAlerts/ManageAlerts.vue";
+import ManageAlerts from "../pages/Alerts/ManageAlerts.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -7,15 +7,10 @@ const routes: Array<RouteRecordRaw> = [
     name: "Manage Alerts",
     component: ManageAlerts,
   },
-  // {
-  //   path: "/about",
-  //   name: "About",
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../pages/About.vue"),
-  // },
+  {
+    path: "/",
+    redirect: "/manage_alerts"
+  }
 ];
 
 const router = createRouter({
