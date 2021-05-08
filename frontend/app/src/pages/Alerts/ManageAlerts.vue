@@ -177,8 +177,7 @@
 <!--  ALERTS DATA TABLE-->
   <div class="card">
     <DataTable :value="alerts"
-               :globalFilterFields="['global',
-                                      'alert_date',
+               :globalFilterFields="[ 'alert_date',
                                       'disposition',
                                       'disposition_by',
                                       'event_date',
@@ -218,10 +217,10 @@
           <template #right>
             <span class="p-input-icon-left p-m-1">
               <i class="pi pi-search"/>
-              <InputText v-model="narrowFilters['global'].value" placeholder="Search in table"/>
+              <InputText v-model="alertTableFilters['global'].value" placeholder="Search in table"/>
           </span>
 <!--            CLEAR TABLE FILTERS -->
-            <Button icon="pi pi-refresh" class="p-button-rounded p-m-1" @click="clearFilter1()"/>
+            <Button icon="pi pi-refresh" class="p-button-rounded p-m-1" @click="resetAlertTableFilters()"/>
 <!--            EXPORT TABLE -->
             <Button class="p-button-rounded p-m-1" icon="pi pi-download" @click="exportCSV($event)"/>
 
@@ -269,6 +268,7 @@ export default {
   data() {
     return {
       alerts: [],
+      alertTableFilters: null,
       appliedComment: null,
       appliedDisposition: null,
       chosenEvent: null,
@@ -297,7 +297,6 @@ export default {
       endTimeFilterData: null,
       expandedRows: [],
       filteredTags: null,
-      narrowFilters: null,
       newEventComment: null,
       newEventName: null,
       newTags: [],
@@ -342,6 +341,8 @@ export default {
     }
   },
   async created() {
+    this.resetAlertTableFilters();
+
     // Fetch alerts from the backend API
     const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/alert`).catch(error => {
       console.error(error);
@@ -350,9 +351,6 @@ export default {
     if (response && response.status === 200) {
       this.alerts = response.data;
     }
-
-    this.initAlertNarrowFilters();
-    this.selectedColumns = this.columns.slice(0, 5);
   },
   computed: {
     anyEventSelected: function () {
@@ -380,13 +378,13 @@ export default {
     }
   },
   methods: {
-    clearFilter1() {
-      this.initAlertNarrowFilters();
+    resetAlertTableFilters() {
+      this.initAlertTableFilters();
       this.selectedColumns = this.columns.slice(0, 5);
     },
 
-    initAlertNarrowFilters() {
-      this.narrowFilters = {
+    initAlertTableFilters() {
+      this.alertTableFilters = {
         'global': {value: null, matchMode: FilterMatchMode.CONTAINS}
       }
     },
