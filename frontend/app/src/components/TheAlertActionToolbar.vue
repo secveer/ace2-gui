@@ -143,6 +143,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+import {FilterMatchMode} from 'primevue/api';
 
 export default {
   name: "TheAlertActionToolbar",
@@ -215,22 +217,26 @@ export default {
       selectedAlerts: null,
       selectedColumns: null,
       selectedOwners: null,
-      selectedQueues: null,
       selectedRemediations: null,
-      selectedUser: null,
       startTimeFilterData: null,
       suggestedComments: ['this is an old comment', 'and another'],
       types: ['splunk_hunter'],
       users: ['Holly', 'Analyst', 'none'],
     }
   },
+  async created() {
+    this.resetAlertTableFilters();
+
+    // Fetch alerts from the backend API
+    const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/alert`).catch(error => {
+      console.error(error);
+    });
+
+    if (response && response.status === 200) {
+      this.alerts = response.data;
+    }
+  },
   computed: {
-    anyEventSelected: function () {
-      return Boolean(this.chosenEvent);
-    },
-    newEventSelected: function () {
-      return this.chosenEvent === "New Event";
-    },
     showAddToEventButton: function () {
       return this.elevated_dispositions.includes(this.appliedDisposition);
     },
@@ -251,6 +257,19 @@ export default {
     }
   },
   methods: {
+    resetAlertTableFilters() {
+      this.initAlertTableFilters();
+      this.selectedColumns = this.columns.slice(0, 5);
+    },
+
+    initAlertTableFilters() {
+      this.alertTableFilters = {
+        'global': {value: null, matchMode: FilterMatchMode.CONTAINS}
+      }
+    },
+    onToggle(value) {
+      this.selectedColumns = this.columns.filter(col => value.includes(col));
+    },
     addExistingTag(event) {
       this.newTags.push(event.value);
     },
@@ -309,9 +328,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-a {
-  color: #42b983;
-}
+<style scoped>
+
 </style>
