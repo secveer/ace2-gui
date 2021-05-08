@@ -25,10 +25,10 @@
         </template>
       </Dialog>
 <!--      SAVE TO EVENT -->
-      <Dialog header="Save to Event" v-model:visible="displaySaveToEventModal" :style="{width: '50vw'}" :modal="true">
+      <Dialog header="Save to Event" v-model:visible="displaySaveToEventModal" :style="{width: '50vw'}" :modal="true" :closable="false">
         <TabView class="p-m-1">
-          <TabPanel v-for="event of events" :key="event.title" :header="event.title">
-            <div v-for="eventItem of event.events" :key="eventItem" class="p-field-radiobutton p-inputgroup">
+          <TabPanel v-for="eventType of existingEvents" :key="eventType.title" :header="eventType.title">
+            <div v-for="eventItem of eventType.events" :key="eventItem" class="p-field-radiobutton p-inputgroup">
               <RadioButton :id="eventItem" name="eventItem" :value="eventItem" v-model="chosenEvent"/>
               <label :for="eventItem">{{ eventItem }}</label>
             </div>
@@ -38,7 +38,7 @@
             </div>
             <div v-if="newEventSelected" class="p-m-1 p-grid p-fluid p-formgrid">
               <div class="p-field p-col p-m-1">
-              <InputText id="newEventName" type="text" v-model="newEventName"/>
+              <InputText name="newEventName" type="text" v-model="newEventName"/>
               <Textarea v-model="newEventComment" :autoResize="true" rows="5" cols="30" id="newEventComment" placeholder="Add a comment..."/>
                 <Dropdown v-model="newEventComment" :options="suggestedComments" :showClear="true"
                           placeholder="Select from a past comment"/>
@@ -295,6 +295,8 @@ export default {
       dispositions: ['FALSE_POSITIVE', 'WEAPONIZATION', 'COMMAND_AND_CONTROL'],
       elevated_dispositions: ['COMMAND_AND_CONTROL'],
       endTimeFilterData: null,
+      existingEvents: [{'title': 'Open', 'events': ['event1', 'event2']},
+                        {'title': 'Closed', 'events': ['event3', 'event4']}],
       expandedRows: [],
       filteredTags: null,
       newEventComment: null,
@@ -357,7 +359,6 @@ export default {
       return Boolean(this.chosenEvent);
     },
     newEventSelected: function () {
-      console.log(this.chosenEvent);
       return this.chosenEvent === "New Event";
     },
     showAddToEventButton: function () {
