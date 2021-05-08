@@ -102,7 +102,7 @@
 <!--      REMEDIATE MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-times-circle" label="Remediate" @click="openRemediateModal"/>
       <Dialog header="Remediate" v-model:visible="displayRemediateModal" :style="{width: '50vw'}" :modal="true">
-        <DataTable :value="remediation_targets"
+        <DataTable :value="remediationTargets"
                    :rows="10"
                    :sortOrder="1"
                    columnResizeMode="fit"
@@ -302,7 +302,33 @@ export default {
       newEventName: null,
       newTags: [],
       queues: ['external', 'internal', 'intel'],
-      remediation_statuses: ['remediated', 'remediation_failed', 'remediating'],
+      remediationStatuses: ['remediated', 'remediation_failed', 'remediating'],
+      remediationTargets: [
+        {
+          'type': 'zerofox',
+          'target': 'bad_url',
+          'status': 'remediation failed',
+          'id': '123'
+        },
+        {
+          'type': 'email',
+          'target': 'msgID|email.com',
+          'status': 'remediating',
+          'id': '124'
+        },
+        {
+          'type': 'email',
+          'target': 'msgID|email2.com',
+          'status': 'removed',
+          'id': '125'
+        },
+        {
+          'type': 'email',
+          'target': 'msgID|email3.com',
+          'status': 'restored',
+          'id': '126'
+        },
+      ],
       selectedAlerts: null,
       selectedColumns: null,
       selectedOwners: null,
