@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     addExistingTag(event) {
-      this.newTags.push(event.value);
+      this.newTags.push(event.value.label);
     },
     close() {
       this.newTags = [];
