@@ -2,7 +2,7 @@
   <BaseModal :name="this.name" header="Add Tags" >
         <span class="p-fluid">
               <Chips v-model="newTags" />
-              <Dropdown @change="addExistingTag" :options="tags" :filter="true" placeholder="Select from existing tags"
+              <Dropdown @change="addExistingTag" :options="tags"  optionLabel="label"  :filter="true" placeholder="Select from existing tags"
                         filterPlaceholder="Search tags" />
           </span>
     <template #footer>
@@ -26,8 +26,11 @@ export default {
   data() {
     return {
       newTags: [],
-      suggestedComments: ['this is an old comment', 'and another'],
-      tags: ['oh_no', 'bad', 'malware'],
+      tags: [
+        {label: 'oh_no', id: 1},
+        {label: 'bad', id: 2},
+        {label: 'malware', id: 3},
+      ],
     }
   },
   methods: {
