@@ -2,7 +2,7 @@
 ## Backend (FastAPI) commands
 ### Run unit tests
 ```
-docker-compose -f docker-compose-dev.yml run backend pytest
+docker-compose -f docker-compose-dev.yml run -e TESTING=1 backend pytest
 ```
 
 ## Frontend (Vue.js) commands
