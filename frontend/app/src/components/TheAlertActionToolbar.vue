@@ -71,19 +71,8 @@
       <!--      TAKE OWNERSHIP -- NO MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-briefcase" label="Take Ownership"/>
       <!--      ASSIGN -->
-      <Button class="p-m-1 p-button-sm" icon="pi pi-user" label="Assign" @click="openAssignModal"/>
-      <Dialog header="Assign Ownership" v-model:visible="displayAssignModal" :style="{width: '50vw'}" :modal="true">
-        <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">
-          <div class="p-field p-col">
-            <Dropdown v-model="selectedUser" :options="users"
-                      placeholder="Select a user"/>
-          </div>
-        </div>
-        <template #footer>
-          <Button label="Nevermind" icon="pi pi-times" @click="closeAssignModal" class="p-button-text"/>
-          <Button label="Assign" icon="pi pi-check" @click="closeAssignModal" />
-        </template>
-      </Dialog>
+      <Button class="p-m-1 p-button-sm" icon="pi pi-user" label="Assign" @click="open('AssignModal')"/>
+      <AssignModal></AssignModal>
       <!--      TAG MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-tags" label="Tag" @click="openTagModal"/>
       <Dialog header="Add Tags" v-model:visible="displayTagModal" :style="{width: '50vw'}" :modal="true">
@@ -144,9 +133,10 @@
 
 <script>
 
+import AssignModal from "@/components/AssignModal";
 export default {
   name: "TheAlertActionToolbar",
-
+  components: {AssignModal},
   props: {
     selectedAlerts: {
       type: Array[Object],
@@ -208,7 +198,6 @@ export default {
       suggestedComments: ['this is an old comment', 'and another'],
       tags: ['oh_no', 'bad', 'malware'],
       types: ['splunk_hunter'],
-      users: ['Holly', 'Analyst', 'none'],
     }
   },
   computed: {
@@ -261,6 +250,9 @@ export default {
     },
     autoSetEventName() {
       this.newEventName = "this is a placeholder";
+    },
+    open(name) {
+      this.$store.dispatch("modals/open", name)
     }
   }
 }
