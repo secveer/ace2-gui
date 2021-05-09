@@ -9,14 +9,8 @@
                 selectionMode="single" style="width: 180px"/>
       <!--      EDIT FILTERS -->
       <Button type="button" icon="pi pi-filter"
-              label="Edit" class="p-button-outlined p-m-1" style="float: right" @click="openEditFilterModal"/>
-      <Dialog header="Edit Filters" v-model:visible="displayEditFilterModal" :style="{width: '50vw'}" :modal="true">
-        <p class="p-m-0">Edit Filters.</p>
-        <template #footer>
-          <Button label="No" icon="pi pi-times" @click="closeEditFilterModal" class="p-button-text"/>
-          <Button label="Yes" icon="pi pi-check" @click="closeEditFilterModal" />
-        </template>
-      </Dialog>
+              label="Edit" class="p-button-outlined p-m-1" style="float: right" @click="open('EditFilterModal')"/>
+      <EditFilterModal></EditFilterModal>
     </template>
     <!--    TODO: SHOW APPLIED FILTERS -->
     <template #right>
@@ -31,36 +25,20 @@
 </template>
 
 <script>
+import EditFilterModal from "@/components/FilterModal";
 export default {
   name: "TheFiltersToolbar",
-
-  props: {
-    appliedFilters: {
-      type: Array[Object],
-      required: true
-    },
-  },
-
+  components: {EditFilterModal},
   data() {
     return {
-      displayEditFilterModal: false,
-      dispositions: ['FALSE_POSITIVE', 'WEAPONIZATION', 'COMMAND_AND_CONTROL'],
       endTimeFilterData: null,
-      queues: ['external', 'internal', 'intel'],
-      remediationStatuses: ['remediated', 'remediation_failed', 'remediating'],
       startTimeFilterData: null,
-      tags: ['oh_no', 'bad', 'malware'],
-      types: ['splunk_hunter'],
-      users: ['Holly', 'Analyst', 'none'],
     }
   },
   methods: {
-    openEditFilterModal() {
-      this.displayEditFilterModal = true;
-    },
-    closeEditFilterModal() {
-      this.displayEditFilterModal = false;
-    },
+    open(name) {
+      this.$store.dispatch("modals/open", name)
+    }
   }
 }
 </script>

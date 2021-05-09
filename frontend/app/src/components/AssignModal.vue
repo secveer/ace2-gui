@@ -32,6 +32,7 @@ export default {
   },
   methods: {
     close() {
+      this.selectedUser = null;
       this.$store.dispatch("modals/close", this.name);
     }
   }

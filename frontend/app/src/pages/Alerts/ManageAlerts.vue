@@ -6,9 +6,7 @@
   </TheAlertActionToolbar>
   <br>
 <!--    FILTER ALERTS TOOLBAR -->
-  <TheFiltersToolbar
-  :applied-filters="appliedFilters">
-  </TheFiltersToolbar>
+  <TheFiltersToolbar></TheFiltersToolbar>
   <br>
 <!--  ALERTS DATA TABLE-->
   <div class="card">
