@@ -25,7 +25,7 @@
 
 <script>
 import BaseModal from "./BaseModal"
-import SaveToEventModal from "@/components/SaveToEventModal";
+import SaveToEventModal from "./SaveToEventModal";
 
 export default {
   name: "DispositionModal",

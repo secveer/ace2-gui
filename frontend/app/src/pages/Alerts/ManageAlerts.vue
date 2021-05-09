@@ -24,9 +24,9 @@
 
 import axios from 'axios';
 
-import TheAlertActionToolbar from "@/components/TheAlertActionToolbar";
-import TheFiltersToolbar from "@/components/TheFiltersToolbar";
-import TheAlertsTable from "@/components/TheAlertsTable";
+import TheAlertActionToolbar from "@/components/Alerts/TheAlertActionToolbar";
+import TheFiltersToolbar from "@/components/UserInterface/TheFiltersToolbar";
+import TheAlertsTable from "@/components/Alerts/TheAlertsTable";
 
 export default {
   components: {TheAlertsTable, TheFiltersToolbar, TheAlertActionToolbar},

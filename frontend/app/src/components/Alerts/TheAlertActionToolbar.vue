@@ -33,12 +33,12 @@
 
 <script>
 
-import AssignModal from "@/components/AssignModal";
-import CommentModal from "@/components/CommentModal";
-import TagModal from "@/components/TagModal";
-import RemediationModal from "@/components/RemediateModal";
-import DeleteModal from "@/components/DeleteModal";
-import DispositionModal from "@/components/DispositionModal";
+import AssignModal from "@/components/Modals/AssignModal";
+import CommentModal from "@/components/Modals/CommentModal";
+import TagModal from "@/components/Modals/TagModal";
+import RemediationModal from "@/components/Modals/RemediateModal";
+import DeleteModal from "@/components/Modals/DeleteModal";
+import DispositionModal from "@/components/Modals/DispositionModal";
 export default {
   name: "TheAlertActionToolbar",
   components: {DispositionModal, DeleteModal, RemediationModal, TagModal, CommentModal, AssignModal},
