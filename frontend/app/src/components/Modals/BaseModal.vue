@@ -1,3 +1,8 @@
+<!-- BaseModal.vue -->
+<!-- Base Modal to use with 'modal' store module, handles opening and closing of a given modal -->
+<!-- Credit to https://xon5.medium.com/a-vue-modal-manager-via-vuex-1ae530c8649 -->
+<!-- Based off above 'Modal' component and changed to use PrimeVue's Dialog component -->
+
 <template>
   <Dialog v-model:visible="isOpen" :header="header" :modal="true" @update:visible="close">
     <template #header>

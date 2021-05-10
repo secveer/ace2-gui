@@ -1,3 +1,6 @@
+<!-- DispositionModal.vue -->
+<!-- 'Disposition' alert action modal, contains trigger to open SaveToEvent modal -->
+
 <template>
   <BaseModal :name="this.name" header="Set Disposition">
     <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">

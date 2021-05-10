@@ -1,12 +1,11 @@
+<!-- ManageAlerts.vue -->
+
 <template>
   <br>
-<!--  ALERT ACTION TOOLBAR -->
   <TheAlertActionToolbar/>
   <br>
-<!--    FILTER ALERTS TOOLBAR -->
   <TheFilterToolbar/>
   <br>
-<!--  ALERTS DATA TABLE-->
   <div class="card">
     <TheAlertsTable/>
   </div>

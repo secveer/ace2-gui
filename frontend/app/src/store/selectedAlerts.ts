@@ -1,3 +1,6 @@
+// Store to track which alerts are currently selected
+// Can be used in 'alert actions' modals (or elsewhere) to determine what alerts to apply actions on
+
 import {Commit} from "vuex";
 
 export interface CommitFunction {
@@ -5,7 +8,7 @@ export interface CommitFunction {
 }
 
 // EsLint says to use 'Record<string, unknown>[]' instead of 'object' type (makes for easier debugging apparently)
-// Convert 'Record<string, unknown>[]' type to alert interface when that's nailed down more?
+// Todo: convert 'Record<string, unknown>[]' type to alert interface when that's nailed down more?
 // export interface Alert {
 //     id: string;
 // }

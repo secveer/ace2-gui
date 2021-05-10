@@ -1,3 +1,6 @@
+<!-- TheHeader.vue -->
+<!-- Header / Navigation bar -->
+
 <template>
   <Menubar>
     <template #start>

@@ -1,3 +1,6 @@
+// Modal manager that handles opening/closing of modals
+// Allows modal components to be (cleanly) called from buttons in parent component, as well as opening a modal from a modal
+// Ex. Disposition > Save to Event
 // Credit to: https://xon5.medium.com/a-vue-modal-manager-via-vuex-1ae530c8649
 
 import {Commit} from "vuex";

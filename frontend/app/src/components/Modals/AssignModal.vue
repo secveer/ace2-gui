@@ -1,3 +1,6 @@
+<!-- AssignModal.vue -->
+<!-- 'Assign' alert action modal -->
+
 <template>
   <BaseModal :name="this.name" header="Assign Ownership" >
       <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">

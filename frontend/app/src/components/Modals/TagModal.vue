@@ -1,3 +1,6 @@
+<!-- TagModal.vue -->
+<!-- 'Tag' action modal, agnostic to what is being tagged -->
+
 <template>
   <BaseModal :name="this.name" header="Add Tags" >
         <span class="p-fluid">

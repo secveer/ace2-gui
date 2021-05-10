@@ -1,3 +1,6 @@
+<!-- DeleteModal.vue -->
+<!-- 'Delete' action modal, agnostic to what type of data is being deleted -->
+
 <template>
   <BaseModal :name="this.name" header="Delete" >
     <div class="confirmation-content">

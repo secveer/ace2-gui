@@ -1,5 +1,8 @@
+<!-- App.vue -->
+<!-- Main Entrypoint to the app -->
+
 <template>
-  <TheHeader></TheHeader>
+  <TheHeader/>
   <router-view />
 </template>
 

@@ -1,3 +1,6 @@
+<!-- TheAlertsTable.vue -->
+<!-- The table where all currently filtered alerts are displayed, selected to take action, or link to an individual alert page -->
+
 <template>
   <DataTable :value="alerts"
              :globalFilterFields="[ 'alert_date',
@@ -25,7 +28,7 @@
              responsiveLayout="scroll"
              sortField="name"
              v-model:expandedRows="expandedRows"
-             v-model:filters="alertTableFilters"
+             v-model:filters="alertTableFilter"
              v-model:selection="selectedRows"
              @row-select="alertSelect($event.data)"
              @row-unselect="alertUnselect($event.data)"
@@ -39,33 +42,35 @@
           <MultiSelect :modelValue="selectedColumns"
                        :options="columns"
                        optionLabel="header"
-                       @update:modelValue="onToggle"
+                       @update:modelValue="onColumnToggle"
                        placeholder="Select Columns"/>
         </template>
         <template #right>
             <span class="p-input-icon-left p-m-1">
               <i class="pi pi-search"/>
-              <InputText v-model="alertTableFilters['global'].value" placeholder="Search in table"/>
+              <InputText v-model="alertTableFilter['global'].value" placeholder="Search in table"/>
           </span>
           <!--            CLEAR TABLE FILTERS -->
-          <Button icon="pi pi-refresh" class="p-button-rounded p-m-1" @click="resetAlertTableFilters()"/>
+          <Button icon="pi pi-refresh" class="p-button-rounded p-m-1" @click="resetAlertTable()"/>
           <!--            EXPORT TABLE -->
           <Button class="p-button-rounded p-m-1" icon="pi pi-download" @click="exportCSV($event)"/>
-
         </template>
-
       </Toolbar>
     </template>
+
     <!-- DROPDOWN COLUMN-->
     <Column id="alert-expand" :expander="true" headerStyle="width: 3rem"/>
-    <!--      CHECKBOX COLUMN -->
+
+    <!-- CHECKBOX COLUMN -->
     <Column id="alert-select" selectionMode="multiple" headerStyle="width: 3em"/>
-    <!--      DATA COLUMN -->
+
+    <!-- DATA COLUMN -->
     <Column v-for="(col, index) of selectedColumns" :field="col.field" :header="col.header"
             :key="col.field + '_' + index" :sortable="true">
-      <!--        DATA COLUMN BODY-->
+
+      <!-- DATA COLUMN BODY-->
       <template #body="{data}">
-        <!--          NAME COLUMN - HAS TAGS AND TODO: ALERT ICONS-->
+        <!-- NAME COLUMN - INCL. TAGS AND TODO: ALERT ICONS-->
         <div v-if="col.field === 'name'">
           <span class="p-m-1"> {{ data.name }}</span>
           <br>
@@ -75,6 +80,7 @@
         <span v-else> {{ data[col.field] }}</span>
       </template>
     </Column>
+
     <!--      ALERT ROW DROPDOWN -->
     <template #expansion="slotProps">
       <h5>Observables:</h5>
@@ -82,6 +88,7 @@
         <li v-for="obs of slotProps.data.observables" :key="obs.value">{{ obs.type }} - {{ obs.value }}</li>
       </ul>
     </template>
+
   </DataTable>
 </template>
 
@@ -95,7 +102,7 @@ export default {
   data() {
     return {
       alerts: [],
-      alertTableFilters: null,
+      alertTableFilter: null,
 
       columns: [{field: 'alert_date', header: 'Alert Date'},
         {field: 'name', header: 'Name'},
@@ -117,7 +124,7 @@ export default {
   },
 
   async created() {
-    this.resetAlertTableFilters();
+    this.resetAlertTable();
     await this.fetchAlerts();
   },
 
@@ -138,22 +145,26 @@ export default {
       this.$store.dispatch("selectedAlerts/unselectAll");
     },
 
-    resetAlertTableFilters() {
-      this.initAlertTableFilters();
+    resetAlertTable() {
+      // Sets the alert table selected columns and keyword search back to default
+      this.initAlertTable();
       this.selectedColumns = this.columns.slice(0, 5);
     },
 
-    initAlertTableFilters() {
-      this.alertTableFilters = {
+    initAlertTable() {
+      // Initializes alert filter (the keyword search)
+      this.alertTableFilter = {
         'global': {value: null, matchMode: FilterMatchMode.CONTAINS}
       }
     },
 
-    onToggle(value) {
+    onColumnToggle(value) {
+      // Toggles selected columns to display
       this.selectedColumns = this.columns.filter(col => value.includes(col));
     },
 
     exportCSV() {
+      // Exports currently filtered alerts to CSV
       this.$refs.dt.exportCSV();
     },
 

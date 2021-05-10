@@ -1,3 +1,6 @@
+<!-- RemediateModal.vue -->
+<!-- 'Remediation' alert action modal -->
+
 <template>
   <BaseModal :name="this.name" header="Remediate" >
     <DataTable :value="remediationTargets"

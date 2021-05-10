@@ -1,3 +1,6 @@
+<!-- FilterModal.vue -->
+<!-- 'Filter' editing modal, agnostic to what data types are being filtered -->
+
 <template>
   <BaseModal :name="this.name" header="Edit Filters" >
     <p class="p-m-0">Edit Filters.</p>

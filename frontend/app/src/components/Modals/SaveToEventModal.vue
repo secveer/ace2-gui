@@ -1,3 +1,6 @@
+<!-- SaveToEvent.vue -->
+<!-- 'Save to Event' alert action modal, will close the Disposition Modal that opened it -->
+
 <template>
   <BaseModal :name="this.name" header="Save to Event">
     <TabView class="p-m-1">

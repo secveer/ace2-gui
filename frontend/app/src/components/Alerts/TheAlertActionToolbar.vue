@@ -1,5 +1,8 @@
+<!-- AlertActionToolbar.vue -->
+<!-- Toolbar containing all alert-related actions, such as Disposition, Assign, Comment, etc. -->
+
 <template>
-  <Toolbar>
+  <Toolbar style="overflow-x: auto;">
     <template #left>
       <!--      DISPOSITION -->
       <Button class="p-m-1 p-button-normal p-button-success" icon="pi pi-thumbs-up" label="Disposition"
@@ -41,7 +44,7 @@ import DispositionModal from "@/components/Modals/DispositionModal";
 
 export default {
   name: "TheAlertActionToolbar",
-  components: {DispositionModal, DeleteModal, RemediationModal, TagModal, CommentModal, AssignModal},
+  components: { DispositionModal, DeleteModal, RemediationModal, TagModal, CommentModal, AssignModal },
   methods: {
     open(name) {
       this.$store.dispatch("modals/open", name);

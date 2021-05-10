@@ -1,5 +1,8 @@
+<!-- TheFilterToolbar.vue -->
+<!-- A toolbar containing buttons/inputs to display/change applied filters for a given set of items (ex. alerts or events) -->
+
 <template>
-  <Toolbar>
+  <Toolbar style="overflow-x: auto">
     <template #left>
       <!--      DATE PICKER -->
       <i class="pi pi-calendar"></i>

@@ -1,3 +1,6 @@
+<!-- CommentModal.vue -->
+<!-- 'Comment' action modal, agnostic to what is being commented on -->
+
 <template>
   <BaseModal :name="this.name" header="Add Comment" >
     <div class="p-m-1 p-grid p-fluid p-formgrid p-grid">
