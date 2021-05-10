@@ -1,22 +1,27 @@
-// https://xon5.medium.com/a-vue-modal-manager-via-vuex-1ae530c8649
+// Credit to: https://xon5.medium.com/a-vue-modal-manager-via-vuex-1ae530c8649
 
-// todo: need to come back and give these proper types, rather than anys
+import {Commit} from "vuex";
+
+export interface CommitFunction {
+    commit: Commit;
+}
+
 const store = {
     namespaced: true,
     state: {
         open: [],
     },
     getters: {
-        active: (state: { open: string | any[] }) => (state.open.length > 0 ? state.open[0] : null),
-        allOpen: (state: { open: any }) => state.open,
+        active: (state: { open: string | string[] }) => (state.open.length > 0 ? state.open[0] : null),
+        allOpen: (state: { open: string[] }) => state.open,
     },
     mutations: {
-        OPEN: (state: { open: any[] }, payload: any) => state.open.unshift(payload),
-        CLOSE: (state: { open: any[] }, payload: any) => (state.open = state.open.filter((e) => e !== payload)),
+        OPEN: (state: { open: string[] }, payload: string) => state.open.unshift(payload),
+        CLOSE: (state: { open: string[] }, payload: string) => (state.open = state.open.filter((e) => e !== payload)),
     },
     actions: {
-        open: ({ commit }: any, payload: any) => commit('OPEN', payload),
-        close: ({ commit }: any, payload: any) => commit('CLOSE', payload),
+        open: ({ commit }: CommitFunction, payload: string) => commit('OPEN', payload),
+        close: ({ commit }: CommitFunction, payload: string) => commit('CLOSE', payload),
     },
 }
 
