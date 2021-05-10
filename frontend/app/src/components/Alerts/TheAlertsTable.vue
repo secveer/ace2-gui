@@ -27,10 +27,10 @@
              v-model:expandedRows="expandedRows"
              v-model:filters="alertTableFilters"
              v-model:selection="selectedRows"
-             @row-select="$emit('alertSelect', $event.data)"
-             @row-unselect="$emit('alertUnselect', $event.data)"
-             @row-select-all="$emit('alertSelectAll', $event.data)"
-             @row-unselect-all="$emit('alertUnselectAll', $event.data)">
+             @row-select="alertSelect($event.data)"
+             @row-unselect="alertUnselect($event.data)"
+             @row-select-all="alertSelectAll"
+             @row-unselect-all="alertUnselectAll">
 
     <!--        ALERT TABLE TOOLBAR-->
     <template #header>
@@ -87,16 +87,10 @@
 
 <script>
 import {FilterMatchMode} from "primevue/api";
+import axios from "axios";
 
 export default {
   name: "TheAlertsTable",
-
-  props: {
-    alerts: {
-      type: Array[Object],
-      required: true
-    },
-  },
 
   emits: ['alertSelect',
           'alertUnselect',
@@ -105,6 +99,7 @@ export default {
 
   data() {
     return {
+      alerts: [],
       alertTableFilters: null,
       columns: [{field: 'alert_date', header: 'Alert Date'},
         {field: 'name', header: 'Name'},
@@ -125,6 +120,16 @@ export default {
   },
   async created() {
     this.resetAlertTableFilters();
+
+    // Fetch alerts from the backend API
+    const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/alert`).catch(error => {
+      console.error(error);
+    });
+
+    if (response && response.status === 200) {
+      this.alerts = response.data;
+    }
+
   },
   methods: {
     resetAlertTableFilters() {
@@ -141,6 +146,18 @@ export default {
     },
     exportCSV() {
       this.$refs.dt.exportCSV();
+    },
+    alertSelect(alert) {
+      this.$store.dispatch("selectedAlerts/select", alert);
+    },
+    alertUnselect(alert) {
+      this.$store.dispatch("selectedAlerts/unselect", alert);
+    },
+    alertSelectAll(){
+      this.$store.dispatch("selectedAlerts/selectAll", this.alerts);
+    },
+    alertUnselectAll(){
+      this.$store.dispatch("selectedAlerts/unselectAll");
     }
   }
 }

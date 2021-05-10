@@ -42,12 +42,6 @@ import DispositionModal from "@/components/Modals/DispositionModal";
 export default {
   name: "TheAlertActionToolbar",
   components: {DispositionModal, DeleteModal, RemediationModal, TagModal, CommentModal, AssignModal},
-  props: {
-    selectedAlerts: {
-      type: Array[Object],
-      required: true
-    },
-  },
   methods: {
     open(name) {
       this.$store.dispatch("modals/open", name)

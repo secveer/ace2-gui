@@ -1,29 +1,18 @@
 <template>
   <br>
 <!--  ALERT ACTION TOOLBAR -->
-  <TheAlertActionToolbar
-  :selected-alerts="selectedAlerts">
-  </TheAlertActionToolbar>
+  <TheAlertActionToolbar></TheAlertActionToolbar>
   <br>
 <!--    FILTER ALERTS TOOLBAR -->
   <TheFiltersToolbar></TheFiltersToolbar>
   <br>
 <!--  ALERTS DATA TABLE-->
   <div class="card">
-    <TheAlertsTable
-        :alerts="alerts"
-        @alert-select="alertSelect"
-        @alert-unselect="alertUnselect"
-        @alert-select-all="alertSelectAll"
-        @alert-unselect-all="alertUnselectAll">
-    </TheAlertsTable>
+    <TheAlertsTable></TheAlertsTable>
   </div>
 </template>
 
 <script>
-
-import axios from 'axios';
-
 import TheAlertActionToolbar from "@/components/Alerts/TheAlertActionToolbar";
 import TheFiltersToolbar from "@/components/UserInterface/TheFiltersToolbar";
 import TheAlertsTable from "@/components/Alerts/TheAlertsTable";
