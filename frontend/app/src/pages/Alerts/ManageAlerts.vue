@@ -1,14 +1,14 @@
 <template>
   <br>
 <!--  ALERT ACTION TOOLBAR -->
-  <TheAlertActionToolbar></TheAlertActionToolbar>
+  <TheAlertActionToolbar/>
   <br>
 <!--    FILTER ALERTS TOOLBAR -->
-  <TheFilterToolbar></TheFilterToolbar>
+  <TheFilterToolbar/>
   <br>
 <!--  ALERTS DATA TABLE-->
   <div class="card">
-    <TheAlertsTable></TheAlertsTable>
+    <TheAlertsTable/>
   </div>
 </template>
 
@@ -19,10 +19,3 @@ import TheAlertsTable from "@/components/Alerts/TheAlertsTable";
 
 export default { components: { TheAlertsTable, TheFilterToolbar, TheAlertActionToolbar } }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-a {
-  color: #42b983;
-}
-</style>

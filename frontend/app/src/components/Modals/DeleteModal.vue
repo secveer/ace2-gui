@@ -17,11 +17,13 @@ import BaseModal from "./BaseModal"
 export default {
   name: "DeleteModal",
   components: { BaseModal },
+
   computed: {
     name() {
       return this.$options.name;
     },
   },
+
   methods: {
     close() {
       this.$store.dispatch("modals/close", this.name);

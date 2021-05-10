@@ -20,17 +20,20 @@ import BaseModal from "./BaseModal"
 export default {
   name: "CommentModal",
   components: { BaseModal },
+
   computed: {
     name() {
       return this.$options.name;
     },
   },
+
   data() {
     return {
       newComment: null,
       suggestedComments: ['this is an old comment', 'and another'],
-    }
+    };
   },
+
   methods: {
     close() {
       this.newComment = null;

@@ -19,17 +19,20 @@ import BaseModal from "./BaseModal"
 export default {
   name: "AssignModal",
   components: { BaseModal },
+
   computed: {
     name() {
       return this.$options.name;
     },
   },
+
   data() {
     return {
       selectedUser: null,
       users: ['Holly', 'Analyst', 'none'],
-    }
+    };
   },
+
   methods: {
     close() {
       this.selectedUser = null;

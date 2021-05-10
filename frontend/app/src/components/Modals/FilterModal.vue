@@ -14,11 +14,13 @@ import BaseModal from "./BaseModal"
 export default {
   name: "EditFilterModal",
   components: { BaseModal },
+
   computed: {
     name() {
       return this.$options.name;
     },
   },
+
   methods: {
     close() {
       this.$store.dispatch("modals/close", this.name);

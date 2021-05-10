@@ -29,11 +29,13 @@ import BaseModal from "./BaseModal"
 export default {
   name: "RemediationModal",
   components: { BaseModal },
+
   computed: {
     name() {
       return this.$options.name;
     },
   },
+
   data() {
     return {
       remediationTargets: [
@@ -62,9 +64,11 @@ export default {
           'id': '126'
         },
       ],
+
       selectedRemediations: [],
-    }
+    };
   },
+
   methods: {
     close() {
       this.selectedRemediations = [];

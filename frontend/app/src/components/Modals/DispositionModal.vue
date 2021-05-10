@@ -18,7 +18,7 @@
     </template>
     <!--  SAVE TO EVENT  -->
     <template #child>
-      <SaveToEventModal></SaveToEventModal>
+      <SaveToEventModal @save-to-event="close"/>
     </template>
   </BaseModal>
 </template>
@@ -30,14 +30,17 @@ import SaveToEventModal from "./SaveToEventModal";
 export default {
   name: "DispositionModal",
   components: { SaveToEventModal, BaseModal },
+
   computed: {
     name() {
       return this.$options.name;
     },
+
     showAddToEventButton: function () {
       return this.elevated_dispositions.includes(this.newDisposition);
     },
   },
+
   data() {
     return {
       newDisposition: null,
@@ -45,16 +48,18 @@ export default {
       dispositionComment: null,
       elevated_dispositions: ['COMMAND_AND_CONTROL'],
       suggestedComments: ['this is an old comment', 'and another'],
-    }
+    };
   },
+
   methods: {
     close() {
       this.newDisposition = null;
       this.dispositionComment = null;
       this.$store.dispatch("modals/close", this.name);
     },
+
     open(name) {
-      this.$store.dispatch("modals/open", name)
+      this.$store.dispatch("modals/open", name);
     }
   }
 }

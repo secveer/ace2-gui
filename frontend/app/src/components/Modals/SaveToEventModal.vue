@@ -38,35 +38,46 @@ import BaseModal from "./BaseModal"
 export default {
   name: "SaveToEventModal",
   components: { BaseModal },
+
   computed: {
     anyEventSelected: function () {
       return Boolean(this.selectedEvent);
     },
+
     newEventSelected: function () {
       return this.selectedEvent === "New Event";
     },
+
     name() {
       return this.$options.name;
     },
   },
-  beforeMount() {
-    this.autoSetEventName();
-  },
+
+  emits: ['save-to-event'],
+
   data() {
     return {
       selectedEvent: null,
       displaySaveToEventModal: false,
+
       existingEvents: [{'title': 'Open', 'events': ['event1', 'event2']},
         {'title': 'Closed', 'events': ['event3', 'event4']}],
+
       newEventComment: null,
       newEventName: null,
       suggestedComments: ['this is an old comment', 'and another'],
-    }
+    };
   },
+
+  created() {
+    this.autoSetEventName();
+  },
+
   methods: {
     autoSetEventName() {
       this.newEventName = "this is a placeholder";
     },
+
     close() {
       this.selectedEvent = null;
       this.displaySaveToEventModal = false;
@@ -76,9 +87,10 @@ export default {
       this.newEventName = null;
       this.$store.dispatch("modals/close", this.name);
     },
+
     save() {
       this.close();
-      this.$store.dispatch("modals/close", 'DispositionModal');
+      this.$emit('save-to-event');
     }
   }
 }

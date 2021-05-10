@@ -10,7 +10,7 @@
       <!--      EDIT FILTERS -->
       <Button type="button" icon="pi pi-filter"
               label="Edit" class="p-button-outlined p-m-1" style="float: right" @click="open('EditFilterModal')"/>
-      <EditFilterModal></EditFilterModal>
+      <EditFilterModal/>
     </template>
     <!--    TODO: SHOW APPLIED FILTERS -->
     <template #right>
@@ -30,19 +30,18 @@ import EditFilterModal from "../Modals/FilterModal";
 export default {
   name: "TheFilterToolbar",
   components: {EditFilterModal},
+
   data() {
     return {
       endTimeFilterData: null,
       startTimeFilterData: null,
-    }
+    };
   },
+
   methods: {
     open(name) {
-      this.$store.dispatch("modals/open", name)
+      this.$store.dispatch("modals/open", name);
     }
   }
 }
 </script>
-
-<style scoped>
-</style>

@@ -6,7 +6,7 @@
 <script>
 import TheHeader from "@/components/UserInterface/TheHeader";
 export default {
-  components: { TheHeader}
+  components: { TheHeader }
 }
 </script>
 

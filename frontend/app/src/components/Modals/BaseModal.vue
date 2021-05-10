@@ -14,29 +14,30 @@
 <script>
 export default {
   name: "BaseModal",
+
   props: {
     name: { type: String, required: true },
     header: { type: String, required: false },
   },
+
   computed: {
     isActive() {
       return this.$store.getters["modals/active"] === this.name;
     },
+
     isOpen() {
       return this.$store.getters["modals/allOpen"].includes(this.name);
     }
   },
+
+  beforeUnmount() {
+    if (this.isOpen) this.close();
+  },
+
   methods: {
     close() {
       this.$store.dispatch("modals/close", this.name);
     }
   },
-  beforeUnmount() {
-    if (this.isOpen) this.close();
-  }
 }
 </script>
-
-<style scoped>
-
-</style>

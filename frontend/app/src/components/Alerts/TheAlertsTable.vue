@@ -96,6 +96,7 @@ export default {
     return {
       alerts: [],
       alertTableFilters: null,
+
       columns: [{field: 'alert_date', header: 'Alert Date'},
         {field: 'name', header: 'Name'},
         {field: 'disposition', header: 'Disposition'},
@@ -108,43 +109,54 @@ export default {
         {field: 'remediated_date', header: 'Remediated Date'},
         {field: 'remediation_status', header: 'Remediation Status'},
       ],
+
       expandedRows: [],
       selectedColumns: null,
       selectedRows: null,
-    }
+    };
   },
+
   async created() {
     this.resetAlertTableFilters();
     await this.fetchAlerts();
   },
+
   methods: {
     alertSelect(alert) {
       this.$store.dispatch("selectedAlerts/select", alert);
     },
+
     alertUnselect(alert) {
       this.$store.dispatch("selectedAlerts/unselect", alert);
     },
+
     alertSelectAll(){
       this.$store.dispatch("selectedAlerts/selectAll", this.alerts);
     },
+
     alertUnselectAll(){
       this.$store.dispatch("selectedAlerts/unselectAll");
     },
+
     resetAlertTableFilters() {
       this.initAlertTableFilters();
       this.selectedColumns = this.columns.slice(0, 5);
     },
+
     initAlertTableFilters() {
       this.alertTableFilters = {
         'global': {value: null, matchMode: FilterMatchMode.CONTAINS}
       }
     },
+
     onToggle(value) {
       this.selectedColumns = this.columns.filter(col => value.includes(col));
     },
+
     exportCSV() {
       this.$refs.dt.exportCSV();
     },
+
     async fetchAlerts() {
       // Fetch alerts from the backend API
       const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/alert`).catch(error => {
@@ -158,6 +170,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

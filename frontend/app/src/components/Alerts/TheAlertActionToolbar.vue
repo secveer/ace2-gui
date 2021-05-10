@@ -4,24 +4,24 @@
       <!--      DISPOSITION -->
       <Button class="p-m-1 p-button-normal p-button-success" icon="pi pi-thumbs-up" label="Disposition"
               @click="open('DispositionModal')"/>
-      <DispositionModal></DispositionModal>
+      <DispositionModal/>
       <!--      COMMENT -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-comment" label="Comment" @click="open('CommentModal')"/>
-      <CommentModal></CommentModal>
+      <CommentModal/>
       <!--      TAKE OWNERSHIP -- NO MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-briefcase" label="Take Ownership"/>
       <!--      ASSIGN -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-user" label="Assign" @click="open('AssignModal')"/>
-      <AssignModal></AssignModal>
+      <AssignModal/>
       <!--      TAG MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-tags" label="Tag" @click="open('TagModal')"/>
-      <TagModal></TagModal>
+      <TagModal/>
       <!--      REMEDIATE MODAL -->
       <Button class="p-m-1 p-button-sm" icon="pi pi-times-circle" label="Remediate" @click="open('RemediationModal')"/>
-      <RemediationModal></RemediationModal>
+      <RemediationModal/>
       <!--      DELETE ALERT -->
       <Button class="p-m-1 p-button-sm p-button-danger" icon="pi pi-trash" label="Delete" @click="open('DeleteModal')"/>
-      <DeleteModal></DeleteModal>
+      <DeleteModal/>
 
     </template>
     <template #right>
@@ -32,24 +32,20 @@
 </template>
 
 <script>
-
 import AssignModal from "@/components/Modals/AssignModal";
 import CommentModal from "@/components/Modals/CommentModal";
 import TagModal from "@/components/Modals/TagModal";
 import RemediationModal from "@/components/Modals/RemediateModal";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import DispositionModal from "@/components/Modals/DispositionModal";
+
 export default {
   name: "TheAlertActionToolbar",
   components: {DispositionModal, DeleteModal, RemediationModal, TagModal, CommentModal, AssignModal},
   methods: {
     open(name) {
-      this.$store.dispatch("modals/open", name)
+      this.$store.dispatch("modals/open", name);
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>
