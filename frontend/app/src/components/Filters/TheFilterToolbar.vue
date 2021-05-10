@@ -25,9 +25,10 @@
 </template>
 
 <script>
-import EditFilterModal from "@/components/Modals/FilterModal";
+import EditFilterModal from "../Modals/FilterModal";
+
 export default {
-  name: "TheFiltersToolbar",
+  name: "TheFilterToolbar",
   components: {EditFilterModal},
   data() {
     return {
