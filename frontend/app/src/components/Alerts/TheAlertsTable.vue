@@ -92,11 +92,6 @@ import axios from "axios";
 export default {
   name: "TheAlertsTable",
 
-  emits: ['alertSelect',
-          'alertUnselect',
-          'alertSelectAll',
-          'alertUnselectAll'],
-
   data() {
     return {
       alerts: [],
@@ -120,18 +115,21 @@ export default {
   },
   async created() {
     this.resetAlertTableFilters();
-
-    // Fetch alerts from the backend API
-    const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/alert`).catch(error => {
-      console.error(error);
-    });
-
-    if (response && response.status === 200) {
-      this.alerts = response.data;
-    }
-
+    await this.fetchAlerts();
   },
   methods: {
+    alertSelect(alert) {
+      this.$store.dispatch("selectedAlerts/select", alert);
+    },
+    alertUnselect(alert) {
+      this.$store.dispatch("selectedAlerts/unselect", alert);
+    },
+    alertSelectAll(){
+      this.$store.dispatch("selectedAlerts/selectAll", this.alerts);
+    },
+    alertUnselectAll(){
+      this.$store.dispatch("selectedAlerts/unselectAll");
+    },
     resetAlertTableFilters() {
       this.initAlertTableFilters();
       this.selectedColumns = this.columns.slice(0, 5);
@@ -147,17 +145,15 @@ export default {
     exportCSV() {
       this.$refs.dt.exportCSV();
     },
-    alertSelect(alert) {
-      this.$store.dispatch("selectedAlerts/select", alert);
-    },
-    alertUnselect(alert) {
-      this.$store.dispatch("selectedAlerts/unselect", alert);
-    },
-    alertSelectAll(){
-      this.$store.dispatch("selectedAlerts/selectAll", this.alerts);
-    },
-    alertUnselectAll(){
-      this.$store.dispatch("selectedAlerts/unselectAll");
+    async fetchAlerts() {
+      // Fetch alerts from the backend API
+      const response = await axios.get(`${process.env.VUE_APP_BACKEND_URL}/alert`).catch(error => {
+        console.error(error);
+      });
+
+      if (response && response.status === 200) {
+        this.alerts = response.data;
+      }
     }
   }
 }

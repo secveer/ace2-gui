@@ -6,7 +6,7 @@
     </div>
     <template #footer>
       <Button label="Actually, no" icon="pi pi-times" @click="close" class="p-button-text"/>
-      <Button label="Do it!" icon="pi pi-check" @click="close" class="p-button-text" />
+      <Button label="Do it!" icon="pi pi-check" @click="close" />
     </template>
   </BaseModal>
 </template>

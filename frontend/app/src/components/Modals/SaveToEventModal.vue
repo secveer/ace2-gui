@@ -68,12 +68,12 @@ export default {
       this.newEventName = "this is a placeholder";
     },
     close() {
-      this.selectedEvent = null,
-      this.displaySaveToEventModal = false,
+      this.selectedEvent = null;
+      this.displaySaveToEventModal = false;
       this.existingEvents = [{'title': 'Open', 'events': ['event1', 'event2']},
-                             {'title': 'Closed', 'events': ['event3', 'event4']}],
-      this.newEventComment = null,
-      this.newEventName = null,
+                             {'title': 'Closed', 'events': ['event3', 'event4']}];
+      this.newEventComment = null;
+      this.newEventName = null;
       this.$store.dispatch("modals/close", this.name);
     },
     save() {
