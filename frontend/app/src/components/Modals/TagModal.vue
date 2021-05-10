@@ -2,21 +2,32 @@
 <!-- 'Tag' action modal, agnostic to what is being tagged -->
 
 <template>
-  <BaseModal :name="this.name" header="Add Tags" >
-        <span class="p-fluid">
-              <Chips v-model="newTags" />
-              <Dropdown @change="addExistingTag" :options="tags" optionLabel="label" :filter="true" placeholder="Select from existing tags"
-                        filterPlaceholder="Search tags" />
-          </span>
+  <BaseModal :name="this.name" header="Add Tags">
+    <span class="p-fluid">
+      <Chips v-model="newTags" />
+      <Dropdown
+        @change="addExistingTag"
+        :options="tags"
+        optionLabel="label"
+        :filter="true"
+        placeholder="Select from existing tags"
+        filterPlaceholder="Search tags"
+      />
+    </span>
     <template #footer>
-      <Button label="Nevermind" icon="pi pi-times" @click="close" class="p-button-text"/>
+      <Button
+        label="Nevermind"
+        icon="pi pi-times"
+        @click="close"
+        class="p-button-text"
+      />
       <Button label="Add" icon="pi pi-check" @click="close" />
     </template>
   </BaseModal>
 </template>
 
 <script>
-import BaseModal from "./BaseModal"
+import BaseModal from "./BaseModal";
 
 export default {
   name: "TagModal",
@@ -33,9 +44,9 @@ export default {
       newTags: [],
 
       tags: [
-        {label: 'oh_no', id: 1},
-        {label: 'bad', id: 2},
-        {label: 'malware', id: 3},
+        { label: "oh_no", id: 1 },
+        { label: "bad", id: 2 },
+        { label: "malware", id: 3 },
       ],
     };
   },
@@ -49,7 +60,7 @@ export default {
     close() {
       this.newTags = [];
       this.$store.dispatch("modals/close", this.name);
-    }
-  }
-}
+    },
+  },
+};
 </script>

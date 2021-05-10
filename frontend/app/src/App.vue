@@ -2,15 +2,15 @@
 <!-- Main Entrypoint to the app -->
 
 <template>
-  <TheHeader/>
+  <TheHeader />
   <router-view />
 </template>
 
 <script>
 import TheHeader from "@/components/UserInterface/TheHeader";
 export default {
-  components: { TheHeader }
-}
+  components: { TheHeader },
+};
 </script>
 
 <style lang="scss">

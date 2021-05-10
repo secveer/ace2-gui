@@ -9,8 +9,8 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    redirect: "/manage_alerts"
-  }
+    redirect: "/manage_alerts",
+  },
 ];
 
 const router = createRouter({

@@ -4,7 +4,12 @@
 <!-- Based off above 'Modal' component and changed to use PrimeVue's Dialog component -->
 
 <template>
-  <Dialog v-model:visible="isOpen" :header="header" :modal="true" @update:visible="close">
+  <Dialog
+    v-model:visible="isOpen"
+    :header="header"
+    :modal="true"
+    @update:visible="close"
+  >
     <template #header>
       <slot name="header"></slot>
     </template>
@@ -32,7 +37,7 @@ export default {
 
     isOpen() {
       return this.$store.getters["modals/allOpen"].includes(this.name);
-    }
+    },
   },
 
   beforeUnmount() {
@@ -42,7 +47,7 @@ export default {
   methods: {
     close() {
       this.$store.dispatch("modals/close", this.name);
-    }
+    },
   },
-}
+};
 </script>

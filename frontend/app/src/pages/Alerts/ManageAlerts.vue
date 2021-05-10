@@ -1,13 +1,13 @@
 <!-- ManageAlerts.vue -->
 
 <template>
-  <br>
-  <TheAlertActionToolbar/>
-  <br>
-  <TheFilterToolbar/>
-  <br>
+  <br />
+  <TheAlertActionToolbar />
+  <br />
+  <TheFilterToolbar />
+  <br />
   <div class="card">
-    <TheAlertsTable/>
+    <TheAlertsTable />
   </div>
 </template>
 
@@ -16,5 +16,7 @@ import TheAlertActionToolbar from "@/components/Alerts/TheAlertActionToolbar";
 import TheFilterToolbar from "@/components/Filters/TheFilterToolbar";
 import TheAlertsTable from "@/components/Alerts/TheAlertsTable";
 
-export default { components: { TheAlertsTable, TheFilterToolbar, TheAlertActionToolbar } }
+export default {
+  components: { TheAlertsTable, TheFilterToolbar, TheAlertActionToolbar },
+};
 </script>
