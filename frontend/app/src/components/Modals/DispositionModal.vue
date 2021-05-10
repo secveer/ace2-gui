@@ -40,6 +40,7 @@ export default {
     },
 
     showAddToEventButton: function () {
+      // Only show add to event button if selected disposition is an 'elevated' disposition
       return this.elevated_dispositions.includes(this.newDisposition);
     },
   },

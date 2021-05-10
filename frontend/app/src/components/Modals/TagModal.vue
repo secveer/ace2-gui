@@ -42,6 +42,7 @@ export default {
 
   methods: {
     addExistingTag(event) {
+      // Add an existing tag to the list of tags to be added
       this.newTags.push(event.value.label);
     },
 

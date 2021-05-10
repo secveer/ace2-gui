@@ -78,6 +78,7 @@ export default {
 
   methods: {
     autoSetEventName() {
+      // Automagically set new event name using data from selected alerts
       this.newEventName = "this is a placeholder";
     },
 
