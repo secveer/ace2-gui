@@ -121,11 +121,19 @@
 </template>
 
 <script>
-import { FilterMatchMode } from "primevue/api";
 import axios from "axios";
+import Button from "primevue/button";
+import Column from "primevue/column";
+import DataTable from "primevue/datatable";
+import { FilterMatchMode } from "primevue/api";
+import InputText from "primevue/inputtext";
+import MultiSelect from "primevue/multiselect";
+import Tag from "primevue/tag";
+import Toolbar from "primevue/toolbar";
 
 export default {
   name: "TheAlertsTable",
+  components: {Button, Column, DataTable, InputText, MultiSelect, Tag, Toolbar},
 
   data() {
     return {

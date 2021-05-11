@@ -26,8 +26,11 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import Menubar from "primevue/menubar";
+import Button from "primevue/button";
 
 export default defineComponent({
   name: "TheHeader",
+  components: { Menubar, Button },
 });
 </script>
