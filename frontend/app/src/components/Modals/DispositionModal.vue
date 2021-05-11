@@ -52,12 +52,17 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import RadioButton from "primevue/radiobutton";
+import Textarea from "primevue/textarea";
+
 import BaseModal from "./BaseModal";
 import SaveToEventModal from "./SaveToEventModal";
 
 export default {
   name: "DispositionModal",
-  components: { SaveToEventModal, BaseModal },
+  components: { BaseModal, Button, Dropdown, RadioButton, SaveToEventModal, Textarea },
 
   computed: {
     name() {

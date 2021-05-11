@@ -25,11 +25,14 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+
 import BaseModal from "./BaseModal";
 
 export default {
   name: "AssignModal",
-  components: { BaseModal },
+  components: { BaseModal, Button, Dropdown},
 
   computed: {
     name() {

@@ -33,11 +33,15 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import Textarea from "primevue/textarea";
+
 import BaseModal from "./BaseModal";
 
 export default {
   name: "CommentModal",
-  components: { BaseModal },
+  components: { BaseModal, Button, Dropdown, Textarea },
 
   computed: {
     name() {

@@ -57,11 +57,15 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+import Calendar from "primevue/calendar";
+import Toolbar from "primevue/toolbar";
+
 import EditFilterModal from "../Modals/FilterModal";
 
 export default {
   name: "TheFilterToolbar",
-  components: { EditFilterModal },
+  components: { Button, Calendar, EditFilterModal, Toolbar},
 
   data() {
     return {

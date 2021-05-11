@@ -78,11 +78,19 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
+import InputText from "primevue/inputtext";
+import RadioButton from "primevue/radiobutton";
+import TabPanel from "primevue/tabpanel";
+import TabView from "primevue/tabview";
+import Textarea from "primevue/textarea";
+
 import BaseModal from "./BaseModal";
 
 export default {
   name: "SaveToEventModal",
-  components: { BaseModal },
+  components: { BaseModal, Button, Dropdown, InputText, RadioButton, TabPanel, TabView, Textarea },
 
   computed: {
     anyEventSelected: function () {

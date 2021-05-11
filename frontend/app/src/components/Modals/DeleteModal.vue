@@ -20,11 +20,13 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+
 import BaseModal from "./BaseModal";
 
 export default {
   name: "DeleteModal",
-  components: { BaseModal },
+  components: { BaseModal, Button },
 
   computed: {
     name() {

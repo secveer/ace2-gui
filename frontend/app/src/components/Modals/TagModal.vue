@@ -27,11 +27,15 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+import Chips from "primevue/chips";
+import Dropdown from "primevue/dropdown";
+
 import BaseModal from "./BaseModal";
 
 export default {
   name: "TagModal",
-  components: { BaseModal },
+  components: { BaseModal, Button, Chips, Dropdown },
 
   computed: {
     name() {

@@ -22,8 +22,11 @@
 </template>
 
 <script>
+import Dialog from "primevue/dialog";
+
 export default {
   name: "BaseModal",
+  components: { Dialog },
 
   props: {
     name: { type: String, required: true },

@@ -17,11 +17,13 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+
 import BaseModal from "./BaseModal";
 
 export default {
   name: "EditFilterModal",
-  components: { BaseModal },
+  components: { BaseModal, Button },
 
   computed: {
     name() {

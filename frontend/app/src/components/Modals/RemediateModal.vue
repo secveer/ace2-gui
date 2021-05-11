@@ -20,9 +20,9 @@
         selectionMode="multiple"
         headerStyle="width: 3em"
       />
-      <Column field="type" header="Type" :sortable="true"></Column>
-      <Column field="target" header="Target" :sortable="true"></Column>
-      <Column field="status" header="Status" :sortable="true"></Column>
+      <Column field="type" header="Type" :sortable="true"/>
+      <Column field="target" header="Target" :sortable="true"/>
+      <Column field="status" header="Status" :sortable="true"/>
     </DataTable>
     <template #footer>
       <Button label="Stop" class="p-button-text" />
@@ -33,11 +33,15 @@
 </template>
 
 <script>
+import Button from "primevue/button";
+import Column from "primevue/column";
+import DataTable from "primevue/datatable";
+
 import BaseModal from "./BaseModal";
 
 export default {
   name: "RemediationModal",
-  components: { BaseModal },
+  components: { BaseModal, Button, Column, DataTable },
 
   computed: {
     name() {
