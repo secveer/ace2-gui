@@ -37,6 +37,7 @@
     @row-unselect="alertUnselect($event.data)"
     @row-select-all="alertSelectAll"
     @row-unselect-all="alertUnselectAll"
+    name="AlertsTable"
   >
     <!--        ALERT TABLE TOOLBAR-->
     <template #header>
