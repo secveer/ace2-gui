@@ -24,7 +24,7 @@ router = APIRouter()
     responses={
         status.HTTP_201_CREATED: {
             "headers": {
-                "Location": {"description": "The path to retrieve the disposition"},
+                "Content-Location": {"description": "The path to retrieve the disposition"},
             },
         },
         status.HTTP_409_CONFLICT: {"description": "A disposition with this rank or value already exists"},
@@ -42,7 +42,7 @@ def create_disposition(
 
     try:
         db.commit()
-        response.headers["Location"] = request.url_for("get_disposition", id=new_disposition.id)
+        response.headers["Content-Location"] = request.url_for("get_disposition", id=new_disposition.id)
         return True
     except IntegrityError:
         db.rollback()
@@ -95,7 +95,7 @@ def get_disposition(id: int, db: Session = Depends(get_db)):
     responses={
         status.HTTP_200_OK: {
             "headers": {
-                "Location": {"description": "The path to retrieve the disposition"}
+                "Content-Location": {"description": "The path to retrieve the disposition"}
             },
         },
         status.HTTP_400_BAD_REQUEST: {"description": "The database returned an IntegrityError"},
@@ -126,8 +126,8 @@ def update_disposition(
         if result.rowcount != 1:
             raise HTTPException(status_code=404, detail=f"Disposition ID {id} does not exist.")
 
-        # Set the Location header to get the disposition
-        response.headers["Location"] = request.url_for("get_disposition", id=id)
+        # Set the Content-Location header to get the disposition
+        response.headers["Content-Location"] = request.url_for("get_disposition", id=id)
         return True
     # An IntegrityError will happen if the rank or value already exists or was set to None
     except IntegrityError:
