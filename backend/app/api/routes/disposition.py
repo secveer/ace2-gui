@@ -20,7 +20,7 @@ router = APIRouter()
 @router.post(
     "/disposition",
     tags=["disposition"],
-    response_model=bool,
+    response_class=Response,  # This allows to respond with a 201 and no body listed in the documentation
     responses={
         status.HTTP_201_CREATED: {
             "headers": {
@@ -43,7 +43,6 @@ def create_disposition(
     try:
         db.commit()
         response.headers["Content-Location"] = request.url_for("get_disposition", id=new_disposition.id)
-        return True
     except IntegrityError:
         db.rollback()
         raise HTTPException(
@@ -91,9 +90,8 @@ def get_disposition(id: int, db: Session = Depends(get_db)):
 @router.put(
     "/disposition/{id}",
     tags=["disposition"],
-    response_model=bool,
     responses={
-        status.HTTP_200_OK: {
+        status.HTTP_204_NO_CONTENT: {
             "headers": {
                 "Content-Location": {"description": "The path to retrieve the disposition"}
             },
@@ -101,6 +99,7 @@ def get_disposition(id: int, db: Session = Depends(get_db)):
         status.HTTP_400_BAD_REQUEST: {"description": "The database returned an IntegrityError"},
         status.HTTP_404_NOT_FOUND: {"description": "The disposition ID was not found"},
     },
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 def update_disposition(
     id: int,
@@ -109,7 +108,7 @@ def update_disposition(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    # True to perform the update
+    # Try to perform the update
     try:
         result = db.execute(
             update(Disposition)
@@ -128,7 +127,7 @@ def update_disposition(
 
         # Set the Content-Location header to get the disposition
         response.headers["Content-Location"] = request.url_for("get_disposition", id=id)
-        return True
+
     # An IntegrityError will happen if the rank or value already exists or was set to None
     except IntegrityError:
         db.rollback()
@@ -143,10 +142,10 @@ def update_disposition(
 @router.delete(
     "/disposition/{id}",
     tags=["disposition"],
-    response_model=bool,
     responses={
         status.HTTP_400_BAD_REQUEST: {"description": "Unable to delete the disposition"},
     },
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_disposition(id: int, db: Session = Depends(get_db)):
     # NOTE: This will need to be updated to account for foreign key constraint errors when Alert endpoints exist.
@@ -154,5 +153,3 @@ def delete_disposition(id: int, db: Session = Depends(get_db)):
 
     if result.rowcount != 1:
         raise HTTPException(status_code=400, detail=f"Unable to delete disposition ID {id} or it does not exist.")
-
-    return True

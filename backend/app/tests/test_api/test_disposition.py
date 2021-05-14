@@ -13,7 +13,6 @@ def test_create_disposition(client):
     # Create a disposition
     create = client.post("/api/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
     assert create.status_code == 201
-    assert create.json() is True
     assert create.headers["Content-Location"]
 
     # Make sure it can be read back
@@ -89,20 +88,17 @@ def test_update_disposition(client):
 
     # Update a single field
     update = client.put(create.headers["Content-Location"], json={"rank": "3"})
-    assert update.status_code == 200
-    assert update.json() is True
+    assert update.status_code == 204
     assert update.headers["Content-Location"]
 
     # Update multiple fields
     update = client.put(create.headers["Content-Location"], json={"value": "UPDATED", "description": "Test"})
-    assert update.status_code == 200
-    assert update.json() is True
+    assert update.status_code == 204
     assert update.headers["Content-Location"]
 
     # Update a field to the same value
     update = client.put(create.headers["Content-Location"], json={"rank": "3"})
-    assert update.status_code == 200
-    assert update.json() is True
+    assert update.status_code == 204
     assert update.headers["Content-Location"]
 
     # Read it back to make sure the update was successful
@@ -167,8 +163,7 @@ def test_delete_disposition(client):
 
     # Delete it
     delete = client.delete(create.headers["Content-Location"])
-    assert delete.status_code == 200
-    assert delete.json() is True
+    assert delete.status_code == 204
 
     # Make sure it is gone
     get = client.get(create.headers["Content-Location"])
