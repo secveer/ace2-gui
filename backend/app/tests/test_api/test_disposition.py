@@ -41,6 +41,16 @@ def test_create_disposition_duplicate_value(client):
     assert create.status_code == 409
 
 
+def test_create_disposition_invalid_rank(client):
+    create = client.post("/api/disposition", json={"rank": "asdf", "value": "FALSE_POSITIVE"})
+    assert create.status_code == 422
+
+
+def test_create_disposition_invalid_value(client):
+    create = client.post("/api/disposition", json={"rank": 1, "value": {"asdf": "asdf"}})
+    assert create.status_code == 422
+
+
 def test_create_disposition_missing_rank(client):
     create = client.post("/api/disposition", json={"value": "FALSE_POSITIVE"})
     assert create.status_code == 422
@@ -57,11 +67,6 @@ def test_create_disposition_missing_value(client):
 
 
 def test_get_all_dispositions(client):
-    # There should not be any dispositions at first
-    get = client.get("/api/disposition")
-    assert get.status_code == 200
-    assert get.json() == []
-
     # Create some dispositions
     client.post("/api/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
     client.post("/api/disposition", json={"rank": 2, "value": "IGNORE"})
@@ -70,6 +75,12 @@ def test_get_all_dispositions(client):
     get = client.get("/api/disposition")
     assert get.status_code == 200
     assert len(get.json()) == 2
+
+
+def test_get_all_dispositions_empty(client):
+    get = client.get("/api/disposition")
+    assert get.status_code == 200
+    assert get.json() == []
 
 
 def test_get_nonexistent_disposition(client):
@@ -127,6 +138,24 @@ def test_update_disposition_duplicate_value(client):
     # Ensure you cannot update a disposition rank to one that already exists
     update = client.put(create.headers["Content-Location"], json={"value": "FALSE_POSITIVE"})
     assert update.status_code == 400
+
+
+def test_update_disposition_invalid_rank(client):
+    # Create a disposition
+    create = client.post("/api/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+
+    # Ensure you cannot update a rank to an invalid value
+    update = client.put(create.headers["Content-Location"], json={"rank": "asdf"})
+    assert update.status_code == 422
+
+
+def test_update_disposition_invalid_value(client):
+    # Create a disposition
+    create = client.post("/api/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+
+    # Ensure you cannot update a value to an invalid value
+    update = client.put(create.headers["Content-Location"], json={"value": {"asdf": "asdf"}})
+    assert update.status_code == 422
 
 
 def test_update_disposition_none_rank(client):
