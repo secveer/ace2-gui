@@ -9,7 +9,10 @@ from db.database import get_db
 from db.schemas.disposition import Disposition
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/disposition",
+    tags=["disposition"],
+)
 
 
 #
@@ -18,8 +21,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/disposition",
-    tags=["disposition"],
+    "",
     response_class=Response,  # This allows to respond with a 201 and no body listed in the documentation
     responses={
         status.HTTP_201_CREATED: {
@@ -56,18 +58,13 @@ def create_disposition(
 #
 
 
-@router.get(
-    "/disposition",
-    tags=["disposition"],
-    response_model=List[DispositionRead],
-)
+@router.get("", response_model=List[DispositionRead])
 def get_all_dispositions(db: Session = Depends(get_db)):
     return db.execute(select(Disposition)).scalars().all()
 
 
 @router.get(
-    "/disposition/{id}",
-    tags=["disposition"],
+    "/{id}",
     response_model=DispositionRead,
     responses={
         status.HTTP_404_NOT_FOUND: {"description": "The disposition ID was not found"},
@@ -88,8 +85,7 @@ def get_disposition(id: int, db: Session = Depends(get_db)):
 
 
 @router.put(
-    "/disposition/{id}",
-    tags=["disposition"],
+    "/{id}",
     responses={
         status.HTTP_204_NO_CONTENT: {
             "headers": {
@@ -140,8 +136,7 @@ def update_disposition(
 
 
 @router.delete(
-    "/disposition/{id}",
-    tags=["disposition"],
+    "/{id}",
     responses={
         status.HTTP_400_BAD_REQUEST: {"description": "Unable to delete the disposition"},
     },
