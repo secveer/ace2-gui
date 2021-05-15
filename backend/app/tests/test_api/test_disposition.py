@@ -15,7 +15,7 @@ def test_create_disposition(client):
     assert create.status_code == 201
     assert create.headers["Content-Location"]
 
-    # Make sure it can be read back
+    # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.status_code == 200
     assert get.json()["description"] is None
@@ -98,26 +98,50 @@ def test_update_disposition(client):
     create = client.post("/api/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Update a single field
-    update = client.put(create.headers["Content-Location"], json={"rank": "3"})
+    update = client.put(create.headers["Content-Location"], json={"rank": 2})
     assert update.status_code == 204
     assert update.headers["Content-Location"]
+
+    # Read it back
+    get = client.get(update.headers["Content-Location"])
+    assert get.status_code == 200
+    assert get.json()["description"] is None
+    assert get.json()["rank"] == 2
+    assert get.json()["value"] == "FALSE_POSITIVE"
+
+
+def test_update_disposition_multiple_fields(client):
+    # Create a disposition
+    create = client.post("/api/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Update multiple fields
-    update = client.put(create.headers["Content-Location"], json={"value": "UPDATED", "description": "Test"})
+    update = client.put(create.headers["Content-Location"], json={"description": "Test", "rank": 2, "value": "UPDATED"})
     assert update.status_code == 204
     assert update.headers["Content-Location"]
 
-    # Update a field to the same value
-    update = client.put(create.headers["Content-Location"], json={"rank": "3"})
-    assert update.status_code == 204
-    assert update.headers["Content-Location"]
-
-    # Read it back to make sure the update was successful
+    # Read it back
     get = client.get(update.headers["Content-Location"])
     assert get.status_code == 200
     assert get.json()["description"] == "Test"
-    assert get.json()["rank"] == 3
+    assert get.json()["rank"] == 2
     assert get.json()["value"] == "UPDATED"
+
+
+def test_udpate_disposition_same_value(client):
+    # Create a disposition
+    create = client.post("/api/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+
+    # Update a field to the same value
+    update = client.put(create.headers["Content-Location"], json={"rank": 1})
+    assert update.status_code == 204
+    assert update.headers["Content-Location"]
+
+    # Read it back
+    get = client.get(update.headers["Content-Location"])
+    assert get.status_code == 200
+    assert get.json()["description"] is None
+    assert get.json()["rank"] == 1
+    assert get.json()["value"] == "FALSE_POSITIVE"
 
 
 def test_update_disposition_duplicate_rank(client):
