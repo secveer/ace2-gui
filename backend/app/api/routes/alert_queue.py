@@ -55,7 +55,7 @@ def get_all_alert_queues(db: Session = Depends(get_db)):
 
 
 def get_alert_queue(id: int, db: Session = Depends(get_db)):
-    return crud.read_by_id(db_table=AlertQueue, id=id, db=db)
+    return crud.read_by_id(id=id, db_table=AlertQueue, db=db)
 
 
 api_route_read_all(router, get_all_alert_queues, List[AlertQueueRead])
