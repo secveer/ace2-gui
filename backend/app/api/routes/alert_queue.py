@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 from typing import List
 
-from api import crud
 from api.models.alert_queue import AlertQueueCreate, AlertQueueRead, AlertQueueUpdate
 from api.routes import (
     api_route_create,
@@ -11,6 +10,7 @@ from api.routes import (
     api_route_update,
     api_route_delete,
 )
+from db import crud
 from db.database import get_db
 from db.schemas.alert_queue import AlertQueue
 
