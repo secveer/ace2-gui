@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Response, status
-from typing import Any, Callable
+from pydantic import BaseModel
+from typing import Callable
 
 
 #
@@ -32,7 +33,7 @@ def api_route_create(router: APIRouter, endpoint: Callable):
 #
 
 
-def api_route_read_all(router: APIRouter, endpoint: Callable, response_model: Any):
+def api_route_read_all(router: APIRouter, endpoint: Callable, response_model: BaseModel):
     router.add_api_route(
         path="",
         endpoint=endpoint,
@@ -41,7 +42,7 @@ def api_route_read_all(router: APIRouter, endpoint: Callable, response_model: An
     )
 
 
-def api_route_read(router: APIRouter, endpoint: Callable, response_model: Any):
+def api_route_read(router: APIRouter, endpoint: Callable, response_model: BaseModel):
     router.add_api_route(
         path="/{id}",
         endpoint=endpoint,
