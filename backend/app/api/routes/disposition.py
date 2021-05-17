@@ -17,7 +17,7 @@ from db.schemas.disposition import Disposition
 
 router = APIRouter(
     prefix="/disposition",
-    tags=["disposition"],
+    tags=["Disposition"],
 )
 
 
