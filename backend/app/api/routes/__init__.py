@@ -1,5 +1,5 @@
-from typing import Any, Callable
 from fastapi import APIRouter, Response, status
+from typing import Any, Callable
 
 
 #
