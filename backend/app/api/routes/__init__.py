@@ -12,7 +12,7 @@ def api_route_create(router: APIRouter, endpoint: Callable):
         path="",
         endpoint=endpoint,
         methods=["POST"],
-        response_class=Response,
+        response_class=Response,  # This allows to respond with a 201 and no body listed in the documentation
         responses={
             status.HTTP_201_CREATED: {
                 "headers": {
