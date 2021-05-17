@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Request, Response, status
+from fastapi import HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import delete, select, update
 from sqlalchemy.exc import IntegrityError
@@ -11,22 +11,15 @@ from sqlalchemy.orm.decl_api import DeclarativeMeta
 #
 
 
-def create(
-    obj: BaseModel,
-    db_table: DeclarativeMeta,
-    response_location: str,
-    db: Session,
-    request: Request,
-    response: Response,
-):
+def create(obj: BaseModel, db_table: DeclarativeMeta, db: Session) -> int:
+    """Creates a new object in the given database table. Returns the new object's ID."""
+
     new_obj = db_table(**obj.dict())
     db.add(new_obj)
 
     try:
         db.commit()
-        response.headers["Content-Location"] = request.url_for(
-            response_location, id=new_obj.id
-        )
+        return new_obj.id
     except IntegrityError:
         db.rollback()
         raise HTTPException(
@@ -41,10 +34,14 @@ def create(
 
 
 def read_all(db_table: DeclarativeMeta, db: Session):
+    """Returns all objects from the given database table."""
+
     return db.execute(select(db_table)).scalars().all()
 
 
-def read_by_id(db_table: DeclarativeMeta, id: int, db: Session):
+def read_by_id(id: int, db_table: DeclarativeMeta, db: Session):
+    """Returns the single object with the given ID if it exists, otherwise returns None."""
+
     result = (
         db.execute(select(db_table).where(db_table.id == id)).scalars().one_or_none()
     )
@@ -60,17 +57,10 @@ def read_by_id(db_table: DeclarativeMeta, id: int, db: Session):
 #
 
 
-def update_by_id(
-    id: int,
-    obj: BaseModel,
-    db_table: DeclarativeMeta,
-    response_location: str,
-    db: Session,
-    request: Request,
-    response: Response,
-):
+def update_by_id(id: int, obj: BaseModel, db_table: DeclarativeMeta, db: Session):
+    """Updates the object with the given ID in the database."""
 
-# Try to perform the update
+    # Try to perform the update
     try:
         result = db.execute(
             update(db_table)
@@ -84,12 +74,7 @@ def update_by_id(
 
         # Verify a row was actually updated
         if result.rowcount != 1:
-            raise HTTPException(
-                status_code=404, detail=f"ID {id} does not exist."
-            )
-
-        # Set the Content-Location header to get the object
-        response.headers["Content-Location"] = request.url_for(response_location, id=id)
+            raise HTTPException(status_code=404, detail=f"ID {id} does not exist.")
 
     # An IntegrityError will happen if value already exists or was set to None
     except IntegrityError:
@@ -106,6 +91,8 @@ def update_by_id(
 
 
 def delete_by_id(id: int, db_table: DeclarativeMeta, db: Session):
+    """Deletes the object with the given ID from the database."""
+
     # NOTE: This will need to be updated to account for foreign key constraint errors.
     result = db.execute(delete(db_table).where(db_table.id == id))
 

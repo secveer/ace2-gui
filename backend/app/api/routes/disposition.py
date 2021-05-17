@@ -32,14 +32,13 @@ def create_disposition(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    crud.create(
+    id = crud.create(
         obj=disposition,
         db_table=Disposition,
-        response_location="get_disposition",
         db=db,
-        request=request,
-        response=response,
     )
+
+    response.headers["Content-Location"] = request.url_for("get_disposition", id=id)
 
 
 api_route_create(router, create_disposition)
@@ -78,11 +77,10 @@ def update_disposition(
         id=id,
         obj=disposition,
         db_table=Disposition,
-        response_location="get_disposition",
         db=db,
-        request=request,
-        response=response,
     )
+
+    response.headers["Content-Location"] = request.url_for("get_disposition", id=id)
 
 
 api_route_update(router, update_disposition)
