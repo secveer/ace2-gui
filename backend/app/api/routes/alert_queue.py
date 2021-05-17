@@ -32,11 +32,7 @@ def create_alert_queue(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    id = crud.create(
-        obj=alert_queue,
-        db_table=AlertQueue,
-        db=db,
-    )
+    id = crud.create(obj=alert_queue, db_table=AlertQueue, db=db)
 
     response.headers["Content-Location"] = request.url_for("get_alert_queue", id=id)
 
@@ -73,12 +69,7 @@ def update_alert_queue(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    crud.update_by_id(
-        id=id,
-        obj=alert_queue,
-        db_table=AlertQueue,
-        db=db,
-    )
+    crud.update_by_id(id=id, obj=alert_queue, db_table=AlertQueue, db=db)
 
     response.headers["Content-Location"] = request.url_for("get_alert_queue", id=id)
 
