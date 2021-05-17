@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi import HTTPException, Request, Response, status
 from pydantic import BaseModel
 from sqlalchemy import delete, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta
-from typing import Any, List
 
 
 #
