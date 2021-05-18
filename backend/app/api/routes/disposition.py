@@ -3,13 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from api.models.disposition import DispositionCreate, DispositionRead, DispositionUpdate
-from api.routes import (
-    api_route_create,
-    api_route_read,
-    api_route_read_all,
-    api_route_update,
-    api_route_delete,
-)
+from api.routes import helpers
 from db import crud
 from db.database import get_db
 from db.schemas.disposition import Disposition
@@ -37,7 +31,7 @@ def create_disposition(
     response.headers["Content-Location"] = request.url_for("get_disposition", id=id)
 
 
-api_route_create(router, create_disposition)
+helpers.api_route_create(router, create_disposition)
 
 
 #
@@ -53,8 +47,8 @@ def get_disposition(id: int, db: Session = Depends(get_db)):
     return crud.read_by_id(id=id, db_table=Disposition, db=db)
 
 
-api_route_read_all(router, get_all_dispositions, List[DispositionRead])
-api_route_read(router, get_disposition, DispositionRead)
+helpers.api_route_read_all(router, get_all_dispositions, List[DispositionRead])
+helpers.api_route_read(router, get_disposition, DispositionRead)
 
 
 #
@@ -74,7 +68,7 @@ def update_disposition(
     response.headers["Content-Location"] = request.url_for("get_disposition", id=id)
 
 
-api_route_update(router, update_disposition)
+helpers.api_route_update(router, update_disposition)
 
 
 #
@@ -86,4 +80,4 @@ def delete_disposition(id: int, db: Session = Depends(get_db)):
     crud.delete_by_id(id=id, db_table=Disposition, db=db)
 
 
-api_route_delete(router, delete_disposition)
+helpers.api_route_delete(router, delete_disposition)

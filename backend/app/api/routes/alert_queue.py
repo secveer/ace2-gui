@@ -3,13 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from api.models.alert_queue import AlertQueueCreate, AlertQueueRead, AlertQueueUpdate
-from api.routes import (
-    api_route_create,
-    api_route_read,
-    api_route_read_all,
-    api_route_update,
-    api_route_delete,
-)
+from api.routes import helpers
 from db import crud
 from db.database import get_db
 from db.schemas.alert_queue import AlertQueue
@@ -37,7 +31,7 @@ def create_alert_queue(
     response.headers["Content-Location"] = request.url_for("get_alert_queue", id=id)
 
 
-api_route_create(router, create_alert_queue)
+helpers.api_route_create(router, create_alert_queue)
 
 
 #
@@ -53,8 +47,8 @@ def get_alert_queue(id: int, db: Session = Depends(get_db)):
     return crud.read_by_id(id=id, db_table=AlertQueue, db=db)
 
 
-api_route_read_all(router, get_all_alert_queues, List[AlertQueueRead])
-api_route_read(router, get_alert_queue, AlertQueueRead)
+helpers.api_route_read_all(router, get_all_alert_queues, List[AlertQueueRead])
+helpers.api_route_read(router, get_alert_queue, AlertQueueRead)
 
 
 #
@@ -74,7 +68,7 @@ def update_alert_queue(
     response.headers["Content-Location"] = request.url_for("get_alert_queue", id=id)
 
 
-api_route_update(router, update_alert_queue)
+helpers.api_route_update(router, update_alert_queue)
 
 
 #
@@ -86,4 +80,4 @@ def delete_alert_queue(id: int, db: Session = Depends(get_db)):
     crud.delete_by_id(id=id, db_table=AlertQueue, db=db)
 
 
-api_route_delete(router, delete_alert_queue)
+helpers.api_route_delete(router, delete_alert_queue)
