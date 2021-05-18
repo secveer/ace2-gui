@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import func, Column, String
+from sqlalchemy.dialects.postgresql import UUID
 
 from db.database import Base
 
@@ -6,6 +7,6 @@ from db.database import Base
 class NodeHistoryAction(Base):
     __tablename__ = "node_history_action"
 
-    id = Column(Integer, primary_key=True)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
     value = Column(String, nullable=False, unique=True, index=True)

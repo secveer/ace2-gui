@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy import func, Column, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
@@ -9,11 +9,11 @@ from db.schemas.helpers import utcnow
 class NodeHistory(Base):
     __tablename__ = "node_history"
 
-    id = Column(Integer, primary_key=True)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
     action = relationship("NodeHistoryAction")
 
-    action_id = Column(Integer, ForeignKey("node_history_action.id"))
+    action_uuid = Column(UUID(as_uuid=True), ForeignKey("node_history_action.uuid"))
 
     action_user_uuid = Column(UUID(as_uuid=True), ForeignKey("user.uuid"))
 

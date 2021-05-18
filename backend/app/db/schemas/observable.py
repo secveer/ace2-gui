@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Index, Integer, String, UniqueConstraint
+from sqlalchemy import func, Boolean, Column, DateTime, ForeignKey, Index, String, UniqueConstraint
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from db.database import Base
@@ -7,7 +8,7 @@ from db.database import Base
 class Observable(Base):
     __tablename__ = "observable"
 
-    id = Column(Integer, primary_key=True)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
     expires_on = Column(DateTime)
 
@@ -15,7 +16,7 @@ class Observable(Base):
 
     type = relationship("ObservableType")
 
-    type_id = Column(Integer, ForeignKey("observable_type.id"))
+    type_uuid = Column(UUID(as_uuid=True), ForeignKey("observable_type.uuid"))
 
     value = Column(String)
 
@@ -27,7 +28,7 @@ class Observable(Base):
             postgresql_using="gin",
         ),
 
-        Index("type_value", type_id, value),
+        Index("type_value", type_uuid, value),
 
-        UniqueConstraint("type_id", "value", name="type_value_uc"),
+        UniqueConstraint("type_uuid", "value", name="type_value_uc"),
     )

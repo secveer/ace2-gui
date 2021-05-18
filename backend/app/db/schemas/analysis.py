@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
@@ -13,7 +13,7 @@ class Analysis(Node):
 
     analysis_module_type = relationship("AnalysisModuleType")
 
-    analysis_module_type_id = Column(Integer, ForeignKey("analysis_module_type.id"))
+    analysis_module_type_uuid = Column(UUID(as_uuid=True), ForeignKey("analysis_module_type.uuid"))
 
     details = Column(JSONB)
 

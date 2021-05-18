@@ -44,12 +44,12 @@ def api_route_read_all(router: APIRouter, endpoint: Callable, response_model: Ba
 
 def api_route_read(router: APIRouter, endpoint: Callable, response_model: BaseModel):
     router.add_api_route(
-        path="/{id}",
+        path="/{uuid}",
         endpoint=endpoint,
         methods=["GET"],
         response_model=response_model,
         responses={
-            status.HTTP_404_NOT_FOUND: {"description": "The ID was not found"},
+            status.HTTP_404_NOT_FOUND: {"description": "The UUID was not found"},
         },
     )
 
@@ -61,7 +61,7 @@ def api_route_read(router: APIRouter, endpoint: Callable, response_model: BaseMo
 
 def api_route_update(router: APIRouter, endpoint: Callable):
     router.add_api_route(
-        path="/{id}",
+        path="/{uuid}",
         endpoint=endpoint,
         methods=["PUT"],
         responses={
@@ -75,7 +75,7 @@ def api_route_update(router: APIRouter, endpoint: Callable):
             status.HTTP_400_BAD_REQUEST: {
                 "description": "The database returned an IntegrityError"
             },
-            status.HTTP_404_NOT_FOUND: {"description": "The ID was not found"},
+            status.HTTP_404_NOT_FOUND: {"description": "The UUID was not found"},
         },
         status_code=status.HTTP_204_NO_CONTENT,
     )
@@ -88,7 +88,7 @@ def api_route_update(router: APIRouter, endpoint: Callable):
 
 def api_route_delete(router: APIRouter, endpoint: Callable):
     router.add_api_route(
-        path="/{id}",
+        path="/{uuid}",
         endpoint=endpoint,
         methods=["DELETE"],
         responses={

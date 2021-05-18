@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy import func, Column, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -9,15 +9,15 @@ from db.schemas.helpers import utcnow
 class NodeHistoryFeedback(Base):
     __tablename__ = "node_history_feedback"
 
-    id = Column(Integer, primary_key=True)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
     feedback_type = relationship("FeedbackType")
 
-    feedback_type_id = Column(Integer, ForeignKey("feedback_type.id"))
+    feedback_type_uuid = Column(UUID(as_uuid=True), ForeignKey("feedback_type.uuid"))
 
     node_history = relationship("NodeHistory")
 
-    node_history_id = Column(Integer, ForeignKey("node_history.id"))
+    node_history_uuid = Column(UUID(as_uuid=True), ForeignKey("node_history.uuid"))
 
     timestamp = Column(DateTime, server_default=utcnow())
 
