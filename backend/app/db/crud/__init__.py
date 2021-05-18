@@ -12,7 +12,8 @@ from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 
 def create(obj: BaseModel, db_table: DeclarativeMeta, db: Session) -> int:
-    """Creates a new object in the given database table. Returns the new object's ID."""
+    """Creates a new object in the given database table. Returns the new object's ID.
+    Designed to be called only by the API since it raises an HTTPException."""
 
     new_obj = db_table(**obj.dict())
     db.add(new_obj)
@@ -40,7 +41,8 @@ def read_all(db_table: DeclarativeMeta, db: Session):
 
 
 def read_by_id(id: int, db_table: DeclarativeMeta, db: Session):
-    """Returns the single object with the given ID if it exists, otherwise returns None."""
+    """Returns the single object with the given ID if it exists, otherwise returns None.
+    Designed to be called only by the API since it raises an HTTPException."""
 
     result = (
         db.execute(select(db_table).where(db_table.id == id)).scalars().one_or_none()
@@ -58,7 +60,8 @@ def read_by_id(id: int, db_table: DeclarativeMeta, db: Session):
 
 
 def update_by_id(id: int, obj: BaseModel, db_table: DeclarativeMeta, db: Session):
-    """Updates the object with the given ID in the database."""
+    """Updates the object with the given ID in the database.
+    Designed to be called only by the API since it raises an HTTPException."""
 
     # Try to perform the update
     try:
@@ -91,7 +94,8 @@ def update_by_id(id: int, obj: BaseModel, db_table: DeclarativeMeta, db: Session
 
 
 def delete_by_id(id: int, db_table: DeclarativeMeta, db: Session):
-    """Deletes the object with the given ID from the database."""
+    """Deletes the object with the given ID from the database.
+    Designed to be called only by the API since it raises an HTTPException."""
 
     # NOTE: This will need to be updated to account for foreign key constraint errors.
     result = db.execute(delete(db_table).where(db_table.id == id))
