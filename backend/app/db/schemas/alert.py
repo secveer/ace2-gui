@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Index, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -13,11 +13,11 @@ class Alert(Analysis):
 
     alert_type = relationship("AlertType")
 
-    alert_type_id = Column(Integer, ForeignKey("alert_type.id"))
+    alert_type_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_type.uuid"))
 
     disposition = relationship("Disposition")
 
-    disposition_id = Column(Integer, ForeignKey("disposition.id"))
+    disposition_uuid = Column(UUID(as_uuid=True), ForeignKey("disposition.uuid"))
     
     disposition_time = Column(DateTime)
 
@@ -39,7 +39,7 @@ class Alert(Analysis):
 
     queue = relationship("AlertQueue")
 
-    queue_id = Column(Integer, ForeignKey("alert_queue.id"))
+    queue_id = Column(UUID(as_uuid=True), ForeignKey("alert_queue.uuid"))
 
     tool = Column(String)
 

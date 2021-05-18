@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy import Column, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -18,7 +18,7 @@ class ObservableInstance(Node):
 
     observable = relationship("Observable")
 
-    observable_id = Column(Integer, ForeignKey("observable.id"))
+    observable_uuid = Column(UUID(as_uuid=True), ForeignKey("observable.uuid"))
 
     redirection = Column(UUID(as_uuid=True), ForeignKey("observable_instance.uuid"))
 

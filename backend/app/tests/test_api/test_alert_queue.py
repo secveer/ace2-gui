@@ -1,3 +1,6 @@
+import uuid
+
+
 """
 NOTE: There are no tests for the foreign key constraints, namely deleting an AlertQueue that is tied to and Alert.
 The DELETE endpoint will need to be updated once the Alert endpoints are in place in order to account for this.
@@ -18,6 +21,21 @@ def test_create_alert_queue(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.status_code == 200
+    assert get.json()["description"] is None
+    assert get.json()["value"] == "default"
+
+
+def test_create_alert_queue_with_uuid(client):
+    # Create an alert queue and specify the UUID it should use
+    u = str(uuid.uuid4())
+    create = client.post("/api/alert_queue", json={"uuid": u, "value": "default"})
+    assert create.status_code == 201
+    assert create.headers["Content-Location"]
+
+    # Read it back using the UUID
+    get = client.get(f"/api/alert_queue/{u}")
+    assert get.status_code == 200
+    assert get.json()["uuid"] == u
     assert get.json()["description"] is None
     assert get.json()["value"] == "default"
 
@@ -64,7 +82,7 @@ def test_get_all_alert_queues_empty(client):
 
 
 def test_get_nonexistent_alert_queue(client):
-    get = client.get("/api/alert_queue/1")
+    get = client.get(f"/api/alert_queue/{uuid.uuid4()}")
     assert get.status_code == 404
 
 
@@ -150,7 +168,7 @@ def test_update_alert_queue_none_value(client):
 
 
 def test_update_nonexistent_alert_queue(client):
-    update = client.put("/api/alert_queue/1", json={"value": "default"})
+    update = client.put(f"/api/alert_queue/{uuid.uuid4()}", json={"value": "default"})
     assert update.status_code == 404
 
 
@@ -173,5 +191,5 @@ def test_delete_alert_queue(client):
 
 
 def test_delete_nonexistent_alert_queue(client):
-    delete = client.delete("/api/alert_queue/1")
+    delete = client.delete(f"/api/alert_queue/{uuid.uuid4()}")
     assert delete.status_code == 400

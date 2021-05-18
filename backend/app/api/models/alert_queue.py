@@ -1,9 +1,12 @@
 from pydantic import BaseModel, Field
 from typing import Optional
+from uuid import UUID
 
 
 class AlertQueueBase(BaseModel):
     """Represents an alert queue used to filter alerts (typically by an analyst's job function)."""
+
+    uuid: Optional[UUID] = Field(description="The UUID of the alert queue")
 
     description: Optional[str] = Field(description="An optional human-readable description of the alert queue")
 
@@ -15,7 +18,7 @@ class AlertQueueCreate(AlertQueueBase):
 
 
 class AlertQueueRead(AlertQueueBase):
-    id: int = Field(description="The ID of the alert queue")
+    uuid: UUID = Field(description="The UUID of the alert queue")
 
     class Config:
         orm_mode = True

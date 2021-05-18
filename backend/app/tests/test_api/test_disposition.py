@@ -1,3 +1,6 @@
+import uuid
+
+
 """
 NOTE: There are no tests for the foreign key constraints, namely deleting a Disposition that is tied to and Alert.
 The DELETE endpoint will need to be updated once the Alert endpoints are in place in order to account for this.
@@ -18,6 +21,22 @@ def test_create_disposition(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.status_code == 200
+    assert get.json()["description"] is None
+    assert get.json()["rank"] == 1
+    assert get.json()["value"] == "FALSE_POSITIVE"
+
+
+def test_create_disposition_with_uuid(client):
+    # Create a disposition and specify the UUID it should use
+    u = str(uuid.uuid4())
+    create = client.post("/api/disposition", json={"uuid": u, "rank": 1, "value": "FALSE_POSITIVE"})
+    assert create.status_code == 201
+    assert create.headers["Content-Location"]
+
+    # Read it back using the UUID
+    get = client.get(f"/api/disposition/{u}")
+    assert get.status_code == 200
+    assert get.json()["uuid"] == u
     assert get.json()["description"] is None
     assert get.json()["rank"] == 1
     assert get.json()["value"] == "FALSE_POSITIVE"
@@ -84,7 +103,7 @@ def test_get_all_dispositions_empty(client):
 
 
 def test_get_nonexistent_disposition(client):
-    get = client.get("/api/disposition/1")
+    get = client.get(f"/api/disposition/{uuid.uuid4()}")
     assert get.status_code == 404
 
 
@@ -201,7 +220,7 @@ def test_update_disposition_none_value(client):
 
 
 def test_update_nonexistent_disposition(client):
-    update = client.put("/api/disposition/1", json={"value": "FALSE_POSITIVE"})
+    update = client.put(f"/api/disposition/{uuid.uuid4()}", json={"value": "FALSE_POSITIVE"})
     assert update.status_code == 404
 
 
@@ -224,5 +243,5 @@ def test_delete_disposition(client):
 
 
 def test_delete_nonexistent_disposition(client):
-    delete = client.delete("/api/disposition/1")
+    delete = client.delete(f"/api/disposition/{uuid.uuid4()}")
     assert delete.status_code == 400

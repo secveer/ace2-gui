@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -38,15 +38,15 @@ class Event(Node):
 
     risk_level = relationship("EventRiskLevel")
 
-    risk_level_id = Column(Integer, ForeignKey("event_risk_level.id"))
+    risk_level_uuid = Column(UUID(as_uuid=True), ForeignKey("event_risk_level.uuid"))
 
     status = relationship("EventStatus")
 
-    status_id = Column(Integer, ForeignKey("event_status.id"))
+    status_uuid = Column(UUID(as_uuid=True), ForeignKey("event_status.uuid"))
 
     type = relationship("EventType")
 
-    type_id = Column(Integer, ForeignKey("event_type.id"))
+    type_uuid = Column(UUID(as_uuid=True), ForeignKey("event_type.uuid"))
 
     vectors = relationship("EventVector", secondary=event_vector_mapping)
 

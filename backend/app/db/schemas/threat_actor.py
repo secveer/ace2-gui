@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import func, Column, String
+from sqlalchemy.dialects.postgresql import UUID
 
 from db.database import Base
 
@@ -6,7 +7,7 @@ from db.database import Base
 class ThreatActor(Base):
     __tablename__ = "threat_actor"
 
-    id = Column(Integer, primary_key=True)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
     description = Column(String)
 

@@ -1,9 +1,10 @@
 from fastapi import HTTPException, status
 from pydantic import BaseModel
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete as sql_delete, select, update as sql_update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta
+from uuid import UUID
 
 
 #
@@ -12,7 +13,7 @@ from sqlalchemy.orm.decl_api import DeclarativeMeta
 
 
 def create(obj: BaseModel, db_table: DeclarativeMeta, db: Session) -> int:
-    """Creates a new object in the given database table. Returns the new object's ID.
+    """Creates a new object in the given database table. Returns the new object's UUID.
     Designed to be called only by the API since it raises an HTTPException."""
 
     new_obj = db_table(**obj.dict())
@@ -20,7 +21,7 @@ def create(obj: BaseModel, db_table: DeclarativeMeta, db: Session) -> int:
 
     try:
         db.commit()
-        return new_obj.id
+        return new_obj.uuid
     except IntegrityError:
         db.rollback()
         raise HTTPException(
@@ -40,16 +41,16 @@ def read_all(db_table: DeclarativeMeta, db: Session):
     return db.execute(select(db_table)).scalars().all()
 
 
-def read_by_id(id: int, db_table: DeclarativeMeta, db: Session):
-    """Returns the single object with the given ID if it exists, otherwise returns None.
+def read(uuid: UUID, db_table: DeclarativeMeta, db: Session):
+    """Returns the single object with the given UUID if it exists, otherwise returns None.
     Designed to be called only by the API since it raises an HTTPException."""
 
     result = (
-        db.execute(select(db_table).where(db_table.id == id)).scalars().one_or_none()
+        db.execute(select(db_table).where(db_table.uuid == uuid)).scalars().one_or_none()
     )
 
     if result is None:
-        raise HTTPException(status_code=404, detail=f"ID {id} does not exist.")
+        raise HTTPException(status_code=404, detail=f"UUID {uuid} does not exist.")
 
     return result
 
@@ -59,15 +60,15 @@ def read_by_id(id: int, db_table: DeclarativeMeta, db: Session):
 #
 
 
-def update_by_id(id: int, obj: BaseModel, db_table: DeclarativeMeta, db: Session):
-    """Updates the object with the given ID in the database.
+def update(uuid: UUID, obj: BaseModel, db_table: DeclarativeMeta, db: Session):
+    """Updates the object with the given UUID in the database.
     Designed to be called only by the API since it raises an HTTPException."""
 
     # Try to perform the update
     try:
         result = db.execute(
-            update(db_table)
-            .where(db_table.id == id)
+            sql_update(db_table)
+            .where(db_table.uuid == uuid)
             .values(
                 # exclude_unset is needed for update routes so that any values in the Pydantic model
                 # that are not being updated are not set to None. Instead they will be removed from the dict.
@@ -77,14 +78,14 @@ def update_by_id(id: int, obj: BaseModel, db_table: DeclarativeMeta, db: Session
 
         # Verify a row was actually updated
         if result.rowcount != 1:
-            raise HTTPException(status_code=404, detail=f"ID {id} does not exist.")
+            raise HTTPException(status_code=404, detail=f"UUID {uuid} does not exist.")
 
     # An IntegrityError will happen if value already exists or was set to None
     except IntegrityError:
         db.rollback()
         raise HTTPException(
             status_code=400,
-            detail=f"Got an IntegrityError while updating ID {id}.",
+            detail=f"Got an IntegrityError while updating UUID {uuid}.",
         )
 
 
@@ -93,15 +94,15 @@ def update_by_id(id: int, obj: BaseModel, db_table: DeclarativeMeta, db: Session
 #
 
 
-def delete_by_id(id: int, db_table: DeclarativeMeta, db: Session):
-    """Deletes the object with the given ID from the database.
+def delete(uuid: UUID, db_table: DeclarativeMeta, db: Session):
+    """Deletes the object with the given UUID from the database.
     Designed to be called only by the API since it raises an HTTPException."""
 
     # NOTE: This will need to be updated to account for foreign key constraint errors.
-    result = db.execute(delete(db_table).where(db_table.id == id))
+    result = db.execute(sql_delete(db_table).where(db_table.uuid == uuid))
 
     if result.rowcount != 1:
         raise HTTPException(
             status_code=400,
-            detail=f"Unable to delete ID {id} or it does not exist.",
+            detail=f"Unable to delete UUID {uuid} or it does not exist.",
         )

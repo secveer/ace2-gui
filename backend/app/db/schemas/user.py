@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -15,7 +15,7 @@ class User(Node):
 
     default_queue = relationship("AlertQueue")
 
-    default_queue_id = Column(Integer, ForeignKey("alert_queue.id"))
+    default_queue_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_queue.uuid"))
 
     display_name = Column(String)
 

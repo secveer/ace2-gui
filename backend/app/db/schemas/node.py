@@ -1,4 +1,4 @@
-from sqlalchemy import func, Column, ForeignKey, Integer, String
+from sqlalchemy import func, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -24,7 +24,7 @@ class Node(Base):
 
     threat_actor = relationship("ThreatActor")
 
-    threat_actor_id = Column(Integer, ForeignKey("threat_actor.id"))
+    threat_actor_uuid = Column(UUID(as_uuid=True), ForeignKey("threat_actor.uuid"))
 
     threats = relationship("Threat", secondary=node_threat_mapping)
 

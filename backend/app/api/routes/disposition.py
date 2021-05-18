@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 from typing import List
+from uuid import UUID
 
 from api.models.disposition import DispositionCreate, DispositionRead, DispositionUpdate
 from api.routes import helpers
@@ -26,9 +27,9 @@ def create_disposition(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    id = crud.create(obj=disposition, db_table=Disposition, db=db)
+    uuid = crud.create(obj=disposition, db_table=Disposition, db=db)
 
-    response.headers["Content-Location"] = request.url_for("get_disposition", id=id)
+    response.headers["Content-Location"] = request.url_for("get_disposition", uuid=uuid)
 
 
 helpers.api_route_create(router, create_disposition)
@@ -43,8 +44,8 @@ def get_all_dispositions(db: Session = Depends(get_db)):
     return crud.read_all(db_table=Disposition, db=db)
 
 
-def get_disposition(id: int, db: Session = Depends(get_db)):
-    return crud.read_by_id(id=id, db_table=Disposition, db=db)
+def get_disposition(uuid: UUID, db: Session = Depends(get_db)):
+    return crud.read(uuid=uuid, db_table=Disposition, db=db)
 
 
 helpers.api_route_read_all(router, get_all_dispositions, List[DispositionRead])
@@ -57,15 +58,15 @@ helpers.api_route_read(router, get_disposition, DispositionRead)
 
 
 def update_disposition(
-    id: int,
+    uuid: UUID,
     disposition: DispositionUpdate,
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
 ):
-    crud.update_by_id(id=id, obj=disposition, db_table=Disposition, db=db)
+    crud.update(uuid=uuid, obj=disposition, db_table=Disposition, db=db)
 
-    response.headers["Content-Location"] = request.url_for("get_disposition", id=id)
+    response.headers["Content-Location"] = request.url_for("get_disposition", uuid=uuid)
 
 
 helpers.api_route_update(router, update_disposition)
@@ -76,8 +77,8 @@ helpers.api_route_update(router, update_disposition)
 #
 
 
-def delete_disposition(id: int, db: Session = Depends(get_db)):
-    crud.delete_by_id(id=id, db_table=Disposition, db=db)
+def delete_disposition(uuid: UUID, db: Session = Depends(get_db)):
+    crud.delete(uuid=uuid, db_table=Disposition, db=db)
 
 
 helpers.api_route_delete(router, delete_disposition)
