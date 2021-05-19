@@ -162,7 +162,7 @@ def test_update_alert_type_none_value(client):
     # Create an alert type
     create = client.post("/api/alert/type", json={"value": "default"})
 
-    # Ensure you cannot update a alert_type value to None
+    # Ensure you cannot update an alert_type value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
     assert update.status_code == 400
 

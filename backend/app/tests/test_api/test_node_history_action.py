@@ -13,7 +13,7 @@ The DELETE endpoint will need to be updated once the Node endpoints are in place
 
 
 def test_create_node_history_action(client):
-    # Create an node history action
+    # Create a node history action
     create = client.post("/api/node/history_action", json={"value": "default"})
     assert create.status_code == 201
     assert create.headers["Content-Location"]
@@ -26,7 +26,7 @@ def test_create_node_history_action(client):
 
 
 def test_create_node_history_action_with_uuid(client):
-    # Create an node history action and specify the UUID it should use
+    # Create a node history action and specify the UUID it should use
     u = str(uuid.uuid4())
     create = client.post("/api/node/history_action", json={"uuid": u, "value": "default"})
     assert create.status_code == 201
@@ -41,7 +41,7 @@ def test_create_node_history_action_with_uuid(client):
 
 
 def test_create_node_history_action_duplicate_value(client):
-    # Create an node history action
+    # Create a node history action
     client.post("/api/node/history_action", json={"value": "default"})
 
     # Ensure you cannot create another node history action with the same value
@@ -92,7 +92,7 @@ def test_get_nonexistent_node_history_action(client):
 
 
 def test_update_node_history_action(client):
-    # Create an node history action
+    # Create a node history action
     create = client.post("/api/node/history_action", json={"value": "default"})
 
     # Update a single field
@@ -108,7 +108,7 @@ def test_update_node_history_action(client):
 
 
 def test_update_node_history_action_multiple_fields(client):
-    # Create an node history action
+    # Create a node history action
     create = client.post("/api/node/history_action", json={"value": "default"})
 
     # Update multiple fields
@@ -127,7 +127,7 @@ def test_update_node_history_action_multiple_fields(client):
 
 
 def test_udpate_node_history_action_same_value(client):
-    # Create an node history action
+    # Create a node history action
     create = client.post("/api/node/history_action", json={"value": "default"})
 
     # Update a field to the same value
@@ -147,13 +147,13 @@ def test_update_node_history_action_duplicate_value(client):
     client.post("/api/node/history_action", json={"value": "default"})
     create = client.post("/api/node/history_action", json={"value": "intel"})
 
-    # Ensure you cannot update an node history action value to one that already exists
+    # Ensure you cannot update a node history action value to one that already exists
     update = client.put(create.headers["Content-Location"], json={"value": "default"})
     assert update.status_code == 400
 
 
 def test_update_node_history_action_invalid_value(client):
-    # Create an node history action
+    # Create a node history action
     create = client.post("/api/node/history_action", json={"value": "default"})
 
     # Ensure you cannot update a value to an invalid value
@@ -164,10 +164,10 @@ def test_update_node_history_action_invalid_value(client):
 
 
 def test_update_node_history_action_none_value(client):
-    # Create an node history action
+    # Create a node history action
     create = client.post("/api/node/history_action", json={"value": "default"})
 
-    # Ensure you cannot update an node history action value to None
+    # Ensure you cannot update a node history action value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
     assert update.status_code == 400
 
@@ -183,7 +183,7 @@ def test_update_nonexistent_node_history_action(client):
 
 
 def test_delete_node_history_action(client):
-    # Create an node history action
+    # Create a node history action
     create = client.post("/api/node/history_action", json={"value": "default"})
 
     # Delete it

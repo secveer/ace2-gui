@@ -162,7 +162,7 @@ def test_update_alert_queue_none_value(client):
     # Create an alert queue
     create = client.post("/api/alert/queue", json={"value": "default"})
 
-    # Ensure you cannot update a alert_queue value to None
+    # Ensure you cannot update an alert_queue value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
     assert update.status_code == 400
 
