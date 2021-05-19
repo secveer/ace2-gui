@@ -3,16 +3,16 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from api.models.disposition import DispositionCreate, DispositionRead, DispositionUpdate
+from api.models.alert_disposition import AlertDispositionCreate, AlertDispositionRead, AlertDispositionUpdate
 from api.routes import helpers
 from db import crud
 from db.database import get_db
-from db.schemas.disposition import Disposition
+from db.schemas.alert_disposition import AlertDisposition
 
 
 router = APIRouter(
-    prefix="/disposition",
-    tags=["Disposition"],
+    prefix="/alert/disposition",
+    tags=["Alert Disposition"],
 )
 
 
@@ -22,12 +22,12 @@ router = APIRouter(
 
 
 def create_disposition(
-    disposition: DispositionCreate,
+    disposition: AlertDispositionCreate,
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
 ):
-    uuid = crud.create(obj=disposition, db_table=Disposition, db=db)
+    uuid = crud.create(obj=disposition, db_table=AlertDisposition, db=db)
 
     response.headers["Content-Location"] = request.url_for("get_disposition", uuid=uuid)
 
@@ -41,15 +41,15 @@ helpers.api_route_create(router, create_disposition)
 
 
 def get_all_dispositions(db: Session = Depends(get_db)):
-    return crud.read_all(db_table=Disposition, db=db)
+    return crud.read_all(db_table=AlertDisposition, db=db)
 
 
 def get_disposition(uuid: UUID, db: Session = Depends(get_db)):
-    return crud.read(uuid=uuid, db_table=Disposition, db=db)
+    return crud.read(uuid=uuid, db_table=AlertDisposition, db=db)
 
 
-helpers.api_route_read_all(router, get_all_dispositions, List[DispositionRead])
-helpers.api_route_read(router, get_disposition, DispositionRead)
+helpers.api_route_read_all(router, get_all_dispositions, List[AlertDispositionRead])
+helpers.api_route_read(router, get_disposition, AlertDispositionRead)
 
 
 #
@@ -59,12 +59,12 @@ helpers.api_route_read(router, get_disposition, DispositionRead)
 
 def update_disposition(
     uuid: UUID,
-    disposition: DispositionUpdate,
+    disposition: AlertDispositionUpdate,
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
 ):
-    crud.update(uuid=uuid, obj=disposition, db_table=Disposition, db=db)
+    crud.update(uuid=uuid, obj=disposition, db_table=AlertDisposition, db=db)
 
     response.headers["Content-Location"] = request.url_for("get_disposition", uuid=uuid)
 
@@ -78,7 +78,7 @@ helpers.api_route_update(router, update_disposition)
 
 
 def delete_disposition(uuid: UUID, db: Session = Depends(get_db)):
-    crud.delete(uuid=uuid, db_table=Disposition, db=db)
+    crud.delete(uuid=uuid, db_table=AlertDisposition, db=db)
 
 
 helpers.api_route_delete(router, delete_disposition)
