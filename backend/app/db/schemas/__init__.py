@@ -24,6 +24,7 @@ from db.schemas.node_directive_mapping import node_directive_mapping
 from db.schemas.node_history import NodeHistory
 from db.schemas.node_history_action import NodeHistoryAction
 from db.schemas.node_history_feedback import NodeHistoryFeedback
+from db.schemas.node_tag import NodeTag
 from db.schemas.node_tag_mapping import node_tag_mapping
 from db.schemas.node_threat_actor import NodeThreatActor
 from db.schemas.node_threat_mapping import node_threat_mapping
@@ -32,7 +33,6 @@ from db.schemas.node_threat_type import NodeThreatType
 from db.schemas.observable import Observable
 from db.schemas.observable_instance import ObservableInstance
 from db.schemas.observable_type import ObservableType
-from db.schemas.tag import Tag
 from db.schemas.threat import Threat
 from db.schemas.user import User
 from db.schemas.user_role import UserRole
