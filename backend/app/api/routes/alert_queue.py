@@ -11,7 +11,7 @@ from db.schemas.alert_queue import AlertQueue
 
 
 router = APIRouter(
-    prefix="/alert_queue",
+    prefix="/alert/queue",
     tags=["Alert Queue"],
 )
 
