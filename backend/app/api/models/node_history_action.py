@@ -1,12 +1,28 @@
 from pydantic import BaseModel, Field
+from typing import Optional
+from uuid import UUID
 
 
-class NodeHistoryAction(BaseModel):
+class NodeHistoryActionBase(BaseModel):
     """Represents a historical action that can be performed on a node."""
 
-    id: int = Field(description="The ID of the action")
+    description: Optional[str] = Field(description="An optional human-readable description of the node history action")
 
-    value: str = Field(description="The value of the action")
+    uuid: Optional[UUID] = Field(description="The UUID of the node history action")
+
+    value: str = Field(description="The value of the node history action")
+
+
+class NodeHistoryActionCreate(NodeHistoryActionBase):
+    pass
+
+
+class NodeHistoryActionRead(NodeHistoryActionBase):
+    uuid: UUID = Field(description="The UUID of the node history action")
 
     class Config:
         orm_mode = True
+
+
+class NodeHistoryActionUpdate(NodeHistoryActionBase):
+    value: Optional[str] = Field(description="The value of the node history action")
