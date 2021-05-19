@@ -25,13 +25,13 @@ from db.schemas.node_history import NodeHistory
 from db.schemas.node_history_action import NodeHistoryAction
 from db.schemas.node_history_feedback import NodeHistoryFeedback
 from db.schemas.node_tag_mapping import node_tag_mapping
+from db.schemas.node_threat_actor import NodeThreatActor
 from db.schemas.node_threat_mapping import node_threat_mapping
 from db.schemas.observable import Observable
 from db.schemas.observable_instance import ObservableInstance
 from db.schemas.observable_type import ObservableType
 from db.schemas.tag import Tag
 from db.schemas.threat import Threat
-from db.schemas.threat_actor import ThreatActor
 from db.schemas.threat_threat_type_mapping import threat_threat_type_mapping
 from db.schemas.threat_type import ThreatType
 from db.schemas.user import User

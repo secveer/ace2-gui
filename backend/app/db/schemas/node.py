@@ -22,9 +22,9 @@ class Node(Base):
     
     tags = relationship("Tag", secondary=node_tag_mapping)
 
-    threat_actor = relationship("ThreatActor")
+    threat_actor = relationship("NodeThreatActor")
 
-    threat_actor_uuid = Column(UUID(as_uuid=True), ForeignKey("threat_actor.uuid"))
+    threat_actor_uuid = Column(UUID(as_uuid=True), ForeignKey("node_threat_actor.uuid"))
 
     threats = relationship("Threat", secondary=node_threat_mapping)
 
