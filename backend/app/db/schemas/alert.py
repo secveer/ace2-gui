@@ -15,9 +15,9 @@ class Alert(Analysis):
 
     alert_type_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_type.uuid"))
 
-    disposition = relationship("Disposition")
+    disposition = relationship("AlertDisposition")
 
-    disposition_uuid = Column(UUID(as_uuid=True), ForeignKey("disposition.uuid"))
+    disposition_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_disposition.uuid"))
     
     disposition_time = Column(DateTime)
 

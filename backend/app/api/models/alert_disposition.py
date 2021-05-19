@@ -3,7 +3,7 @@ from typing import Optional
 from uuid import UUID
 
 
-class DispositionBase(BaseModel):
+class AlertDispositionBase(BaseModel):
     """Represents a disposition that can be applied to an alert to denote a status such as false positive or a stage in the cyber kill chain."""
 
     uuid: Optional[UUID] = Field(description="The UUID of the disposition")
@@ -15,18 +15,18 @@ class DispositionBase(BaseModel):
     value: str = Field(description="The value of the disposition")
 
 
-class DispositionCreate(DispositionBase):
+class AlertDispositionCreate(AlertDispositionBase):
     pass
 
 
-class DispositionRead(DispositionBase):
+class AlertDispositionRead(AlertDispositionBase):
     uuid: UUID = Field(description="The UUID of the disposition")
 
     class Config:
         orm_mode = True
 
 
-class DispositionUpdate(DispositionBase):
+class AlertDispositionUpdate(AlertDispositionBase):
     rank: Optional[int] = Field(description="A numeric value used to sort the dispositions")
 
     value: Optional[str] = Field(description="The value of the disposition")

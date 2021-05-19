@@ -2,12 +2,12 @@ from db.schemas.analysis import Analysis
 from db.schemas.analysis_module_type_observable_type_mapping import analysis_module_type_observable_type_mapping
 from db.schemas.analysis_observable_instance_mapping import analysis_observable_instance_mapping
 from db.schemas.alert import Alert
+from db.schemas.alert_disposition import AlertDisposition
 from db.schemas.alert_queue import AlertQueue
 from db.schemas.alert_type import AlertType
 from db.schemas.analysis_module_type import AnalysisModuleType
 from db.schemas.comment import Comment
 from db.schemas.directive import Directive
-from db.schemas.disposition import Disposition
 from db.schemas.event import Event
 from db.schemas.event_prevention_tool import EventPreventionTool
 from db.schemas.event_prevention_tool_mapping import event_prevention_tool_mapping
