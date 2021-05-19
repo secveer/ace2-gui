@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: dc394e8203c8
+Revision ID: 15e6af37d6b8
 Revises: 
-Create Date: 2021-05-19 15:37:54.105254
+Create Date: 2021-05-19 16:05:40.590410
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'dc394e8203c8'
+revision = '15e6af37d6b8'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -120,13 +120,6 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_index(op.f('ix_observable_type_value'), 'observable_type', ['value'], unique=True)
-    op.create_table('role',
-    sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.Column('value', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('uuid')
-    )
-    op.create_index(op.f('ix_role_value'), 'role', ['value'], unique=True)
     op.create_table('tag',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('value', sa.String(), nullable=False),
@@ -154,6 +147,13 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_index(op.f('ix_threat_type_value'), 'threat_type', ['value'], unique=True)
+    op.create_table('user_role',
+    sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('value', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('uuid')
+    )
+    op.create_index(op.f('ix_user_role_value'), 'user_role', ['value'], unique=True)
     op.create_table('analysis_module_type_observable_type_mapping',
     sa.Column('analysis_module_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('observable_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
@@ -338,10 +338,10 @@ def upgrade() -> None:
     )
     op.create_table('user_role_mapping',
     sa.Column('user_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('role_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.ForeignKeyConstraint(['role_uuid'], ['role.uuid'], ),
+    sa.Column('user_role_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.ForeignKeyConstraint(['user_role_uuid'], ['user_role.uuid'], ),
     sa.ForeignKeyConstraint(['user_uuid'], ['user.uuid'], ),
-    sa.PrimaryKeyConstraint('user_uuid', 'role_uuid')
+    sa.PrimaryKeyConstraint('user_uuid', 'user_role_uuid')
     )
     op.create_index(op.f('ix_user_role_mapping_user_uuid'), 'user_role_mapping', ['user_uuid'], unique=False)
     op.create_table('node_history_feedback',
@@ -413,6 +413,8 @@ def downgrade() -> None:
     op.drop_table('node')
     op.drop_index(op.f('ix_analysis_module_type_observable_type_mapping_analysis_module_type_uuid'), table_name='analysis_module_type_observable_type_mapping')
     op.drop_table('analysis_module_type_observable_type_mapping')
+    op.drop_index(op.f('ix_user_role_value'), table_name='user_role')
+    op.drop_table('user_role')
     op.drop_index(op.f('ix_threat_type_value'), table_name='threat_type')
     op.drop_table('threat_type')
     op.drop_index(op.f('ix_threat_actor_value'), table_name='threat_actor')
@@ -421,8 +423,6 @@ def downgrade() -> None:
     op.drop_table('threat')
     op.drop_index(op.f('ix_tag_value'), table_name='tag')
     op.drop_table('tag')
-    op.drop_index(op.f('ix_role_value'), table_name='role')
-    op.drop_table('role')
     op.drop_index(op.f('ix_observable_type_value'), table_name='observable_type')
     op.drop_table('observable_type')
     op.drop_index(op.f('ix_node_history_action_value'), table_name='node_history_action')

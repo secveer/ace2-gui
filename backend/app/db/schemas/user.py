@@ -25,7 +25,7 @@ class User(Node):
 
     password = Column(String)
 
-    roles = relationship("Role", secondary=user_role_mapping)
+    roles = relationship("UserRole", secondary=user_role_mapping)
 
     salt = Column(String)
 
