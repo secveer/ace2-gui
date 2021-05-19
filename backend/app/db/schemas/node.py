@@ -16,7 +16,7 @@ class Node(Base):
 
     comments = relationship("Comment")
 
-    directives = relationship("Directive", secondary=node_directive_mapping)
+    directives = relationship("NodeDirective", secondary=node_directive_mapping)
 
     node_type = Column(String)
     
