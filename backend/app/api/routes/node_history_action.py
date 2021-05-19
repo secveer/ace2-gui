@@ -11,7 +11,7 @@ from db.schemas.node_history_action import NodeHistoryAction
 
 
 router = APIRouter(
-    prefix="/node/history_action",
+    prefix="/node/history/action",
     tags=["Node History Action"],
 )
 
