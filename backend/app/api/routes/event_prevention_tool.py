@@ -11,7 +11,7 @@ from db.schemas.event_prevention_tool import EventPreventionTool
 
 
 router = APIRouter(
-    prefix="/event_prevention_tool",
+    prefix="/event/prevention_tool",
     tags=["Event Prevention Tool"],
 )
 
