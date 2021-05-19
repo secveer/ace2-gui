@@ -20,7 +20,7 @@ class Node(Base):
 
     node_type = Column(String)
     
-    tags = relationship("Tag", secondary=node_tag_mapping)
+    tags = relationship("NodeTag", secondary=node_tag_mapping)
 
     threat_actor = relationship("NodeThreatActor")
 
