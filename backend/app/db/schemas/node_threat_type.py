@@ -4,8 +4,8 @@ from sqlalchemy.dialects.postgresql import UUID
 from db.database import Base
 
 
-class ThreatType(Base):
-    __tablename__ = "threat_type"
+class NodeThreatType(Base):
+    __tablename__ = "node_threat_type"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
