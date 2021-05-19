@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 11172b8e063d
+Revision ID: dc394e8203c8
 Revises: 
-Create Date: 2021-05-19 15:16:13.564484
+Create Date: 2021-05-19 15:37:54.105254
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = '11172b8e063d'
+revision = 'dc394e8203c8'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -115,6 +115,7 @@ def upgrade() -> None:
     op.create_index(op.f('ix_node_history_action_value'), 'node_history_action', ['value'], unique=True)
     op.create_table('observable_type',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
     sa.Column('value', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('uuid')
     )
