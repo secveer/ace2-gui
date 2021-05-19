@@ -11,7 +11,7 @@ from db.schemas.alert_type import AlertType
 
 
 router = APIRouter(
-    prefix="/alert_type",
+    prefix="/alert/type",
     tags=["Alert Type"],
 )
 
