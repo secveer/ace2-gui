@@ -1,15 +1,28 @@
 from pydantic import BaseModel, Field
 from typing import Optional
+from uuid import UUID
 
 
-class EventRiskLevel(BaseModel):
+class EventRiskLevelBase(BaseModel):
     """Represents a risk level that can be applied to an event to denote its severity."""
 
-    description: Optional[str] = Field(description="An optional human-readable description of the risk level")
+    description: Optional[str] = Field(description="An optional human-readable description of the event risk level")
 
-    id: int = Field(description="The ID of the risk level")
+    uuid: Optional[UUID] = Field(description="The UUID of the event risk level")
 
-    value: str = Field(description="The value of the risk level")
+    value: str = Field(description="The value of the event risk level")
+
+
+class EventRiskLevelCreate(EventRiskLevelBase):
+    pass
+
+
+class EventRiskLevelRead(EventRiskLevelBase):
+    uuid: UUID = Field(description="The UUID of the event risk level")
 
     class Config:
         orm_mode = True
+
+
+class EventRiskLevelUpdate(EventRiskLevelBase):
+    value: Optional[str] = Field(description="The value of the event risk level")
