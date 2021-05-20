@@ -40,6 +40,10 @@ class Event(Node):
 
     risk_level_uuid = Column(UUID(as_uuid=True), ForeignKey("event_risk_level.uuid"))
 
+    source = relationship("EventSource")
+
+    source_uuid = Column(UUID(as_uuid=True), ForeignKey("event_source.uuid"))
+
     status = relationship("EventStatus")
 
     status_uuid = Column(UUID(as_uuid=True), ForeignKey("event_status.uuid"))

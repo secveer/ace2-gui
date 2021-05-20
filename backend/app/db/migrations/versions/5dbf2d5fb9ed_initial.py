@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: dece5de32a48
+Revision ID: 5dbf2d5fb9ed
 Revises: 
-Create Date: 2021-05-19 20:10:55.459539
+Create Date: 2021-05-20 12:53:44.958311
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'dece5de32a48'
+revision = '5dbf2d5fb9ed'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -69,6 +69,13 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_index(op.f('ix_event_risk_level_value'), 'event_risk_level', ['value'], unique=True)
+    op.create_table('event_source',
+    sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('value', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('uuid')
+    )
+    op.create_index(op.f('ix_event_source_value'), 'event_source', ['value'], unique=True)
     op.create_table('event_status',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
@@ -215,9 +222,11 @@ def upgrade() -> None:
     sa.Column('ownership_time', sa.DateTime(), nullable=True),
     sa.Column('remediation_time', sa.DateTime(), nullable=True),
     sa.Column('risk_level_uuid', postgresql.UUID(as_uuid=True), nullable=True),
+    sa.Column('source_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('status_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('type_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.ForeignKeyConstraint(['risk_level_uuid'], ['event_risk_level.uuid'], ),
+    sa.ForeignKeyConstraint(['source_uuid'], ['event_source.uuid'], ),
     sa.ForeignKeyConstraint(['status_uuid'], ['event_status.uuid'], ),
     sa.ForeignKeyConstraint(['type_uuid'], ['event_type.uuid'], ),
     sa.ForeignKeyConstraint(['uuid'], ['node.uuid'], ),
@@ -438,6 +447,8 @@ def downgrade() -> None:
     op.drop_table('event_type')
     op.drop_index(op.f('ix_event_status_value'), table_name='event_status')
     op.drop_table('event_status')
+    op.drop_index(op.f('ix_event_source_value'), table_name='event_source')
+    op.drop_table('event_source')
     op.drop_index(op.f('ix_event_risk_level_value'), table_name='event_risk_level')
     op.drop_table('event_risk_level')
     op.drop_index(op.f('ix_event_remediation_value'), table_name='event_remediation')

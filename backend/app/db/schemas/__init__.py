@@ -13,6 +13,7 @@ from db.schemas.event_prevention_tool_mapping import event_prevention_tool_mappi
 from db.schemas.event_remediation import EventRemediation
 from db.schemas.event_remediation_mapping import event_remediation_mapping
 from db.schemas.event_risk_level import EventRiskLevel
+from db.schemas.event_source import EventSource
 from db.schemas.event_status import EventStatus
 from db.schemas.event_type import EventType
 from db.schemas.event_vector import EventVector
