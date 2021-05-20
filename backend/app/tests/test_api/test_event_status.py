@@ -14,7 +14,7 @@ The DELETE endpoint will need to be updated once the Node endpoints are in place
 
 def test_create_event_status(client):
     # Create an event status
-    create = client.post("/api/event/status", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "default"})
     assert create.status_code == 201
     assert create.headers["Content-Location"]
 
@@ -28,7 +28,7 @@ def test_create_event_status(client):
 def test_create_event_status_with_uuid(client):
     # Create an event status and specify the UUID it should use
     u = str(uuid.uuid4())
-    create = client.post("/api/event/status", json={"uuid": u, "value": "default"})
+    create = client.post("/api/event/status/", json={"uuid": u, "value": "default"})
     assert create.status_code == 201
     assert create.headers["Content-Location"]
 
@@ -42,20 +42,20 @@ def test_create_event_status_with_uuid(client):
 
 def test_create_event_status_duplicate_value(client):
     # Create an event status
-    client.post("/api/event/status", json={"value": "default"})
+    client.post("/api/event/status/", json={"value": "default"})
 
     # Ensure you cannot create another event status with the same value
-    create = client.post("/api/event/status", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "default"})
     assert create.status_code == 409
 
 
 def test_create_event_status_invalid_value(client):
-    create = client.post("/api/event/status", json={"value": {"asdf": "asdf"}})
+    create = client.post("/api/event/status/", json={"value": {"asdf": "asdf"}})
     assert create.status_code == 422
 
 
 def test_create_event_status_missing_value(client):
-    create = client.post("/api/event/status", json={})
+    create = client.post("/api/event/status/", json={})
     assert create.status_code == 422
 
 
@@ -66,17 +66,17 @@ def test_create_event_status_missing_value(client):
 
 def test_get_all_event_statuses(client):
     # Create some event statuses
-    client.post("/api/event/status", json={"value": "default"})
-    client.post("/api/event/status", json={"value": "intel"})
+    client.post("/api/event/status/", json={"value": "default"})
+    client.post("/api/event/status/", json={"value": "intel"})
 
     # Read them back
-    get = client.get("/api/event/status")
+    get = client.get("/api/event/status/")
     assert get.status_code == 200
     assert len(get.json()) == 2
 
 
 def test_get_all_event_statuses_empty(client):
-    get = client.get("/api/event/status")
+    get = client.get("/api/event/status/")
     assert get.status_code == 200
     assert get.json() == []
 
@@ -93,7 +93,7 @@ def test_get_nonexistent_event_status(client):
 
 def test_update_event_status(client):
     # Create an event status
-    create = client.post("/api/event/status", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "default"})
 
     # Update a single field
     update = client.put(create.headers["Content-Location"], json={"value": "test"})
@@ -109,7 +109,7 @@ def test_update_event_status(client):
 
 def test_update_event_status_multiple_fields(client):
     # Create an event status
-    create = client.post("/api/event/status", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "default"})
 
     # Update multiple fields
     update = client.put(
@@ -128,7 +128,7 @@ def test_update_event_status_multiple_fields(client):
 
 def test_udpate_event_status_same_value(client):
     # Create an event status
-    create = client.post("/api/event/status", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "default"})
 
     # Update a field to the same value
     update = client.put(create.headers["Content-Location"], json={"value": "default"})
@@ -144,8 +144,8 @@ def test_udpate_event_status_same_value(client):
 
 def test_update_event_status_duplicate_value(client):
     # Create some event statuses
-    client.post("/api/event/status", json={"value": "default"})
-    create = client.post("/api/event/status", json={"value": "intel"})
+    client.post("/api/event/status/", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "intel"})
 
     # Ensure you cannot update an event status value to one that already exists
     update = client.put(create.headers["Content-Location"], json={"value": "default"})
@@ -154,7 +154,7 @@ def test_update_event_status_duplicate_value(client):
 
 def test_update_event_status_invalid_value(client):
     # Create an event status
-    create = client.post("/api/event/status", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "default"})
 
     # Ensure you cannot update a value to an invalid value
     update = client.put(
@@ -165,7 +165,7 @@ def test_update_event_status_invalid_value(client):
 
 def test_update_event_status_none_value(client):
     # Create an event status
-    create = client.post("/api/event/status", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "default"})
 
     # Ensure you cannot update an event status value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
@@ -184,7 +184,7 @@ def test_update_nonexistent_event_status(client):
 
 def test_delete_event_status(client):
     # Create an event status
-    create = client.post("/api/event/status", json={"value": "default"})
+    create = client.post("/api/event/status/", json={"value": "default"})
 
     # Delete it
     delete = client.delete(create.headers["Content-Location"])

@@ -14,7 +14,7 @@ The DELETE endpoint will need to be updated once the User endpoints are in place
 
 def test_create_user_role(client):
     # Create a user role
-    create = client.post("/api/user/role", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "default"})
     assert create.status_code == 201
     assert create.headers["Content-Location"]
 
@@ -28,7 +28,7 @@ def test_create_user_role(client):
 def test_create_user_role_with_uuid(client):
     # Create a user role and specify the UUID it should use
     u = str(uuid.uuid4())
-    create = client.post("/api/user/role", json={"uuid": u, "value": "default"})
+    create = client.post("/api/user/role/", json={"uuid": u, "value": "default"})
     assert create.status_code == 201
     assert create.headers["Content-Location"]
 
@@ -42,20 +42,20 @@ def test_create_user_role_with_uuid(client):
 
 def test_create_user_role_duplicate_value(client):
     # Create a user role
-    client.post("/api/user/role", json={"value": "default"})
+    client.post("/api/user/role/", json={"value": "default"})
 
     # Ensure you cannot create another user role with the same value
-    create = client.post("/api/user/role", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "default"})
     assert create.status_code == 409
 
 
 def test_create_user_role_invalid_value(client):
-    create = client.post("/api/user/role", json={"value": {"asdf": "asdf"}})
+    create = client.post("/api/user/role/", json={"value": {"asdf": "asdf"}})
     assert create.status_code == 422
 
 
 def test_create_user_role_missing_value(client):
-    create = client.post("/api/user/role", json={})
+    create = client.post("/api/user/role/", json={})
     assert create.status_code == 422
 
 
@@ -66,17 +66,17 @@ def test_create_user_role_missing_value(client):
 
 def test_get_all_user_roles(client):
     # Create some user roles
-    client.post("/api/user/role", json={"value": "default"})
-    client.post("/api/user/role", json={"value": "intel"})
+    client.post("/api/user/role/", json={"value": "default"})
+    client.post("/api/user/role/", json={"value": "intel"})
 
     # Read them back
-    get = client.get("/api/user/role")
+    get = client.get("/api/user/role/")
     assert get.status_code == 200
     assert len(get.json()) == 2
 
 
 def test_get_all_user_roles_empty(client):
-    get = client.get("/api/user/role")
+    get = client.get("/api/user/role/")
     assert get.status_code == 200
     assert get.json() == []
 
@@ -93,7 +93,7 @@ def test_get_nonexistent_user_role(client):
 
 def test_update_user_role(client):
     # Create a user role
-    create = client.post("/api/user/role", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "default"})
 
     # Update a single field
     update = client.put(create.headers["Content-Location"], json={"value": "test"})
@@ -109,7 +109,7 @@ def test_update_user_role(client):
 
 def test_update_user_role_multiple_fields(client):
     # Create a user role
-    create = client.post("/api/user/role", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "default"})
 
     # Update multiple fields
     update = client.put(
@@ -128,7 +128,7 @@ def test_update_user_role_multiple_fields(client):
 
 def test_udpate_user_role_same_value(client):
     # Create a user role
-    create = client.post("/api/user/role", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "default"})
 
     # Update a field to the same value
     update = client.put(create.headers["Content-Location"], json={"value": "default"})
@@ -144,8 +144,8 @@ def test_udpate_user_role_same_value(client):
 
 def test_update_user_role_duplicate_value(client):
     # Create some user roles
-    client.post("/api/user/role", json={"value": "default"})
-    create = client.post("/api/user/role", json={"value": "intel"})
+    client.post("/api/user/role/", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "intel"})
 
     # Ensure you cannot update a user role value to one that already exists
     update = client.put(create.headers["Content-Location"], json={"value": "default"})
@@ -154,7 +154,7 @@ def test_update_user_role_duplicate_value(client):
 
 def test_update_user_role_invalid_value(client):
     # Create a user role
-    create = client.post("/api/user/role", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "default"})
 
     # Ensure you cannot update a value to an invalid value
     update = client.put(
@@ -165,7 +165,7 @@ def test_update_user_role_invalid_value(client):
 
 def test_update_user_role_none_value(client):
     # Create a user role
-    create = client.post("/api/user/role", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "default"})
 
     # Ensure you cannot update a user role value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
@@ -184,7 +184,7 @@ def test_update_nonexistent_user_role(client):
 
 def test_delete_user_role(client):
     # Create a user role
-    create = client.post("/api/user/role", json={"value": "default"})
+    create = client.post("/api/user/role/", json={"value": "default"})
 
     # Delete it
     delete = client.delete(create.headers["Content-Location"])

@@ -14,7 +14,7 @@ The DELETE endpoint will need to be updated once the Alert endpoints are in plac
 
 def test_create_disposition(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
     assert create.status_code == 201
     assert create.headers["Content-Location"]
 
@@ -29,7 +29,7 @@ def test_create_disposition(client):
 def test_create_disposition_with_uuid(client):
     # Create a disposition and specify the UUID it should use
     u = str(uuid.uuid4())
-    create = client.post("/api/alert/disposition", json={"uuid": u, "rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"uuid": u, "rank": 1, "value": "FALSE_POSITIVE"})
     assert create.status_code == 201
     assert create.headers["Content-Location"]
 
@@ -44,39 +44,39 @@ def test_create_disposition_with_uuid(client):
 
 def test_create_disposition_duplicate_rank(client):
     # Create a disposition
-    client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Ensure you cannot create another disposition with the same rank
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "IGNORE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "IGNORE"})
     assert create.status_code == 409
 
 
 def test_create_disposition_duplicate_value(client):
     # Create a disposition
-    client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Ensure you cannot create another disposition with the same value
-    create = client.post("/api/alert/disposition", json={"rank": 2, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 2, "value": "FALSE_POSITIVE"})
     assert create.status_code == 409
 
 
 def test_create_disposition_invalid_rank(client):
-    create = client.post("/api/alert/disposition", json={"rank": "asdf", "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": "asdf", "value": "FALSE_POSITIVE"})
     assert create.status_code == 422
 
 
 def test_create_disposition_invalid_value(client):
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": {"asdf": "asdf"}})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": {"asdf": "asdf"}})
     assert create.status_code == 422
 
 
 def test_create_disposition_missing_rank(client):
-    create = client.post("/api/alert/disposition", json={"value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"value": "FALSE_POSITIVE"})
     assert create.status_code == 422
 
 
 def test_create_disposition_missing_value(client):
-    create = client.post("/api/alert/disposition", json={"rank": 1})
+    create = client.post("/api/alert/disposition/", json={"rank": 1})
     assert create.status_code == 422
 
 
@@ -87,17 +87,17 @@ def test_create_disposition_missing_value(client):
 
 def test_get_all_dispositions(client):
     # Create some dispositions
-    client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
-    client.post("/api/alert/disposition", json={"rank": 2, "value": "IGNORE"})
+    client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    client.post("/api/alert/disposition/", json={"rank": 2, "value": "IGNORE"})
     
     # Read them back
-    get = client.get("/api/alert/disposition")
+    get = client.get("/api/alert/disposition/")
     assert get.status_code == 200
     assert len(get.json()) == 2
 
 
 def test_get_all_dispositions_empty(client):
-    get = client.get("/api/alert/disposition")
+    get = client.get("/api/alert/disposition/")
     assert get.status_code == 200
     assert get.json() == []
 
@@ -114,7 +114,7 @@ def test_get_nonexistent_disposition(client):
 
 def test_update_disposition(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Update a single field
     update = client.put(create.headers["Content-Location"], json={"rank": 2})
@@ -131,7 +131,7 @@ def test_update_disposition(client):
 
 def test_update_disposition_multiple_fields(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Update multiple fields
     update = client.put(create.headers["Content-Location"], json={"description": "Test", "rank": 2, "value": "UPDATED"})
@@ -148,7 +148,7 @@ def test_update_disposition_multiple_fields(client):
 
 def test_udpate_disposition_same_value(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Update a field to the same value
     update = client.put(create.headers["Content-Location"], json={"rank": 1})
@@ -165,8 +165,8 @@ def test_udpate_disposition_same_value(client):
 
 def test_update_disposition_duplicate_rank(client):
     # Create some dispositions
-    client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
-    create = client.post("/api/alert/disposition", json={"rank": 2, "value": "IGNORE"})
+    client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 2, "value": "IGNORE"})
 
     # Ensure you cannot update a disposition rank to one that already exists
     update = client.put(create.headers["Content-Location"], json={"rank": 1})
@@ -175,8 +175,8 @@ def test_update_disposition_duplicate_rank(client):
 
 def test_update_disposition_duplicate_value(client):
     # Create some dispositions
-    client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
-    create = client.post("/api/alert/disposition", json={"rank": 2, "value": "IGNORE"})
+    client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 2, "value": "IGNORE"})
 
     # Ensure you cannot update a disposition rank to one that already exists
     update = client.put(create.headers["Content-Location"], json={"value": "FALSE_POSITIVE"})
@@ -185,7 +185,7 @@ def test_update_disposition_duplicate_value(client):
 
 def test_update_disposition_invalid_rank(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Ensure you cannot update a rank to an invalid value
     update = client.put(create.headers["Content-Location"], json={"rank": "asdf"})
@@ -194,7 +194,7 @@ def test_update_disposition_invalid_rank(client):
 
 def test_update_disposition_invalid_value(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Ensure you cannot update a value to an invalid value
     update = client.put(create.headers["Content-Location"], json={"value": {"asdf": "asdf"}})
@@ -203,7 +203,7 @@ def test_update_disposition_invalid_value(client):
 
 def test_update_disposition_none_rank(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Ensure you cannot update a disposition rank to None
     update = client.put(create.headers["Content-Location"], json={"rank": None})
@@ -212,7 +212,7 @@ def test_update_disposition_none_rank(client):
 
 def test_update_disposition_none_value(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Ensure you cannot update a disposition value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
@@ -231,7 +231,7 @@ def test_update_nonexistent_disposition(client):
 
 def test_delete_disposition(client):
     # Create a disposition
-    create = client.post("/api/alert/disposition", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Delete it
     delete = client.delete(create.headers["Content-Location"])

@@ -10,7 +10,7 @@ from typing import Callable
 
 def api_route_create(router: APIRouter, endpoint: Callable):
     router.add_api_route(
-        path="",
+        path="/",
         endpoint=endpoint,
         methods=["POST"],
         response_class=Response,  # This allows to respond with a 201 and no body listed in the documentation
@@ -35,7 +35,7 @@ def api_route_create(router: APIRouter, endpoint: Callable):
 
 def api_route_read_all(router: APIRouter, endpoint: Callable, response_model: BaseModel):
     router.add_api_route(
-        path="",
+        path="/",
         endpoint=endpoint,
         methods=["GET"],
         response_model=response_model,
