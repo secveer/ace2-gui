@@ -30,10 +30,6 @@ def create_node_threat(
     response: Response,
     db: Session = Depends(get_db),
 ):
-
-    # Required: list of strings for "types" and string for "value"... optional "uuid" and "description"
-    # If any of the "types" do not exist, throw an HTTPException
-
     # Make sure that all the threat types that were given actually exist
     threat_types = db.execute(select(NodeThreatType).where(NodeThreatType.value.in_(node_threat.types))).scalars().all()
     for given_type in node_threat.types:
@@ -42,6 +38,11 @@ def create_node_threat(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"The {given_type} node threat type does not exist",
             )
+
+    # Because the NodeThreat.types field is a set, it will cause an error when SQLAlchemy attempts to create a new
+    # NodeThreat object since SQLAlchemy expects a list. We can manually recast the types field as a list, or we can
+    # simply delete it since we will overwrite it with the threat_types objects from above.
+    del node_threat.types
 
     # Create the new node threat
     new_threat = NodeThreat(**node_threat.dict())
@@ -60,8 +61,6 @@ def create_node_threat(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"A similiar object already exists",
         )
-
-    #uuid = crud.create(obj=node_threat, db_table=NodeThreat, db=db)
 
     response.headers["Content-Location"] = request.url_for("get_node_threat", uuid=new_threat.uuid)
 

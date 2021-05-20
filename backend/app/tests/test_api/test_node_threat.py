@@ -12,28 +12,63 @@ The DELETE endpoint will need to be updated once the Node endpoints are in place
 #
 
 
+def test_create_node_threat(client):
+    # Create a node threat type
+    threat_type_uuid = str(uuid.uuid4())
+    client.post("/api/node/threat/type/", json={"uuid": threat_type_uuid, "value": "test_type"})
+
+    # Create a node threat using the type that was just created
+    create = client.post("/api/node/threat/", json={"value": "test", "types": ["test_type"]})
+    assert create.status_code == 201
+    assert create.headers["Content-Location"]
+
+    # Read it back
+    get = client.get(create.headers["Content-Location"])
+    assert get.status_code == 200
+    assert get.json()["description"] is None
+    assert get.json()["types"] == [
+        {
+            "description": None,
+            "uuid": threat_type_uuid,
+            "value": "test_type",
+        },
+    ]
+    assert get.json()["value"] == "test"
+
+
+def test_create_node_threat_with_uuid(client):
+    # Create a node threat type
+    threat_type_uuid = str(uuid.uuid4())
+    client.post("/api/node/threat/type/", json={"uuid": threat_type_uuid, "value": "test_type"})
+
+    # Create a node threat using the type that was just created
+    threat_uuid = str(uuid.uuid4())
+    create = client.post("/api/node/threat/", json={"uuid": threat_uuid, "value": "test", "types": ["test_type"]})
+    assert create.status_code == 201
+    assert create.headers["Content-Location"]
+
+    # Read it back
+    get = client.get(f"/api/node/threat/{threat_uuid}")
+    assert get.status_code == 200
+    assert get.json()["uuid"] == threat_uuid
+    assert get.json()["description"] is None
+    assert get.json()["types"] == [
+        {
+            "description": None,
+            "uuid": threat_type_uuid,
+            "value": "test_type",
+        },
+    ]
+    assert get.json()["value"] == "test"
+
+
 def test_create_node_threat_nonexistent_type(client):
-    # Create a node threat
-    create = client.post("/api/node/threat/", json={"value": "test", "types": ["test"]})
+    # Create a node threat with a threat type that does not exist
+    create = client.post("/api/node/threat/", json={"value": "test", "types": ["test_type"]})
     assert create.status_code == 404
 
 
 """
-def test_create_node_threat_type_with_uuid(client):
-    # Create a node threat type and specify the UUID it should use
-    u = str(uuid.uuid4())
-    create = client.post("/api/node/threat/type", json={"uuid": u, "value": "default"})
-    assert create.status_code == 201
-    assert create.headers["Content-Location"]
-
-    # Read it back using the UUID
-    get = client.get(f"/api/node/threat/type/{u}")
-    assert get.status_code == 200
-    assert get.json()["uuid"] == u
-    assert get.json()["description"] is None
-    assert get.json()["value"] == "default"
-
-
 def test_create_node_threat_type_duplicate_value(client):
     # Create a node threat type
     client.post("/api/node/threat/type", json={"value": "default"})
