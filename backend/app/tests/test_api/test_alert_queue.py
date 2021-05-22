@@ -49,6 +49,11 @@ def test_create_alert_queue_duplicate_value(client):
     assert create.status_code == 409
 
 
+def test_create_alert_queue_invalid_uuid(client):
+    create = client.post("/api/alert/queue/", json={"uuid": 1, "value": "default"})
+    assert create.status_code == 422
+
+
 def test_create_alert_queue_invalid_value(client):
     create = client.post("/api/alert/queue/", json={"value": {"asdf": "asdf"}})
     assert create.status_code == 422
@@ -154,12 +159,14 @@ def test_update_alert_queue_duplicate_value(client):
     assert update.status_code == 400
 
 
-def test_update_alert_queue_invalid_value(client):
-    # Create an alert queue
-    create = client.post("/api/alert/queue/", json={"value": "default"})
+def test_update_alert_queue_invalid_uuid(client):
+    update = client.put("/api/alert/queue/1", json={"value": "default"})
+    assert update.status_code == 422
 
+
+def test_update_alert_queue_invalid_value(client):
     # Ensure you cannot update a value to an invalid value
-    update = client.put(create.headers["Content-Location"], json={"value": {"asdf": "asdf"}})
+    update = client.put(f"/api/alert/queue/{uuid.uuid4()}", json={"value": {"asdf": "asdf"}})
     assert update.status_code == 422
 
 

@@ -65,6 +65,11 @@ def test_create_disposition_invalid_rank(client):
     assert create.status_code == 422
 
 
+def test_create_disposition_invalid_uuid(client):
+    create = client.post("/api/alert/disposition/", json={"uuid": 1, "rank": 1, "value": "FALSE_POSITIVE"})
+    assert create.status_code == 422
+
+
 def test_create_disposition_invalid_value(client):
     create = client.post("/api/alert/disposition/", json={"rank": 1, "value": {"asdf": "asdf"}})
     assert create.status_code == 422
@@ -189,20 +194,17 @@ def test_update_disposition_duplicate_value(client):
 
 
 def test_update_disposition_invalid_rank(client):
-    # Create a disposition
-    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
+    update = client.put(f"/api/alert/disposition/{uuid.uuid4()}", json={"rank": "asdf"})
+    assert update.status_code == 422
 
-    # Ensure you cannot update a rank to an invalid value
-    update = client.put(create.headers["Content-Location"], json={"rank": "asdf"})
+
+def test_update_disposition_invalid_uuid(client):
+    update = client.put("/api/alert/disposition/1", json={"rank": 1})
     assert update.status_code == 422
 
 
 def test_update_disposition_invalid_value(client):
-    # Create a disposition
-    create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
-
-    # Ensure you cannot update a value to an invalid value
-    update = client.put(create.headers["Content-Location"], json={"value": {"asdf": "asdf"}})
+    update = client.put(f"/api/alert/disposition/{uuid.uuid4()}", json={"value": {"asdf": "asdf"}})
     assert update.status_code == 422
 
 

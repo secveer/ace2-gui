@@ -49,6 +49,11 @@ def test_create_node_tag_duplicate_value(client):
     assert create.status_code == 409
 
 
+def test_create_node_tag_invalid_uuid(client):
+    create = client.post("/api/node/tag/", json={"uuid": 1, "value": "default"})
+    assert create.status_code == 422
+
+
 def test_create_node_tag_invalid_value(client):
     create = client.post("/api/node/tag/", json={"value": {"asdf": "asdf"}})
     assert create.status_code == 422
@@ -157,14 +162,13 @@ def test_update_node_tag_duplicate_value(client):
     assert update.status_code == 400
 
 
-def test_update_node_tag_invalid_value(client):
-    # Create a node tag
-    create = client.post("/api/node/tag/", json={"value": "default"})
+def test_update_node_tag_invalid_uuid(client):
+    update = client.put("/api/node/tag/1", json={"value": "default"})
+    assert update.status_code == 422
 
-    # Ensure you cannot update a value to an invalid value
-    update = client.put(
-        create.headers["Content-Location"], json={"value": {"asdf": "asdf"}}
-    )
+
+def test_update_node_tag_invalid_value(client):
+    update = client.put(f"/api/node/tag/{uuid.uuid4()}", json={"value": {"asdf": "asdf"}})
     assert update.status_code == 422
 
 

@@ -49,6 +49,11 @@ def test_create_user_role_duplicate_value(client):
     assert create.status_code == 409
 
 
+def test_create_user_role_invalid_uuid(client):
+    create = client.post("/api/user/role/", json={"uuid": 1, "value": "default"})
+    assert create.status_code == 422
+
+
 def test_create_user_role_invalid_value(client):
     create = client.post("/api/user/role/", json={"value": {"asdf": "asdf"}})
     assert create.status_code == 422
@@ -157,14 +162,13 @@ def test_update_user_role_duplicate_value(client):
     assert update.status_code == 400
 
 
-def test_update_user_role_invalid_value(client):
-    # Create a user role
-    create = client.post("/api/user/role/", json={"value": "default"})
+def test_update_user_role_invalid_uuid(client):
+    update = client.put("/api/user/role/1", json={"value": "default"})
+    assert update.status_code == 422
 
-    # Ensure you cannot update a value to an invalid value
-    update = client.put(
-        create.headers["Content-Location"], json={"value": {"asdf": "asdf"}}
-    )
+
+def test_update_user_role_invalid_value(client):
+    update = client.put(f"/api/user/role/{uuid.uuid4()}", json={"value": {"asdf": "asdf"}})
     assert update.status_code == 422
 
 
