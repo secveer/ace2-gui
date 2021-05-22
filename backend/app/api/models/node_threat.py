@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional, Set
+from typing import List, Optional
 from uuid import UUID
 
 from api.models.node_threat_type import NodeThreatTypeRead
@@ -10,7 +10,7 @@ class NodeThreatBase(BaseModel):
 
     description: Optional[str] = Field(description="An optional human-readable description of the threat")
 
-    types: Set[str] = Field(description="A list of types the threat represents")
+    types: List[str] = Field(description="A list of types the threat represents")
 
     uuid: Optional[UUID] = Field(description="The UUID of the threat")
 
@@ -31,6 +31,6 @@ class NodeThreatRead(NodeThreatBase):
 
 
 class NodeThreatUpdate(NodeThreatBase):
-    types: Optional[Set[str]] = Field(description="A list of types the threat represents")
+    types: Optional[List[str]] = Field(description="A list of types the threat represents")
 
     value: Optional[str] = Field(description="The value of the threat")
