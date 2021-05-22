@@ -81,6 +81,11 @@ def test_get_all_node_history_actions_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_node_history_action(client):
+    get = client.get("/api/node/history/action/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_node_history_action(client):
     get = client.get(f"/api/node/history/action/{uuid.uuid4()}")
     assert get.status_code == 404

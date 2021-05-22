@@ -81,6 +81,11 @@ def test_get_all_event_types_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_event_type(client):
+    get = client.get("/api/event/type/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_event_type(client):
     get = client.get(f"/api/event/type/{uuid.uuid4()}")
     assert get.status_code == 404

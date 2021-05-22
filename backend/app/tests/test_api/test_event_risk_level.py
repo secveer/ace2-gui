@@ -81,6 +81,11 @@ def test_get_all_event_risk_levels_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_event_risk_level(client):
+    get = client.get("/api/event/risk_level/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_event_risk_level(client):
     get = client.get(f"/api/event/risk_level/{uuid.uuid4()}")
     assert get.status_code == 404

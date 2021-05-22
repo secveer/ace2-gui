@@ -81,6 +81,11 @@ def test_get_all_alert_types_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_alert_type(client):
+    get = client.get("/api/alert/type/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_alert_type(client):
     get = client.get(f"/api/alert/type/{uuid.uuid4()}")
     assert get.status_code == 404

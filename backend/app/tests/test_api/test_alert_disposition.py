@@ -102,6 +102,11 @@ def test_get_all_dispositions_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_disposition(client):
+    get = client.get("/api/alert/disposition/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_disposition(client):
     get = client.get(f"/api/alert/disposition/{uuid.uuid4()}")
     assert get.status_code == 404

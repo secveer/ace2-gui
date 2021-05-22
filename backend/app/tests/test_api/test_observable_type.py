@@ -81,6 +81,11 @@ def test_get_all_observable_types_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_observable_type(client):
+    get = client.get("/api/observable/type/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_observable_type(client):
     get = client.get(f"/api/observable/type/{uuid.uuid4()}")
     assert get.status_code == 404

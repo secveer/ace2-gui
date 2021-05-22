@@ -81,6 +81,11 @@ def test_get_all_node_directives_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_node_directive(client):
+    get = client.get("/api/node/directive/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_node_directive(client):
     get = client.get(f"/api/node/directive/{uuid.uuid4()}")
     assert get.status_code == 404

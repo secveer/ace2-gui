@@ -81,6 +81,11 @@ def test_get_all_alert_queues_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_alert_queue(client):
+    get = client.get("/api/alert/queue/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_alert_queue(client):
     get = client.get(f"/api/alert/queue/{uuid.uuid4()}")
     assert get.status_code == 404

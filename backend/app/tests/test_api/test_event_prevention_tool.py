@@ -12,7 +12,7 @@ The DELETE endpoint will need to be updated once the Node endpoints are in place
 #
 
 
-def test_create_directive(client):
+def test_create_event_prevention_tool(client):
     # Create an event prevention tool
     create = client.post("/api/event/prevention_tool/", json={"value": "default"})
     assert create.status_code == 201
@@ -25,7 +25,7 @@ def test_create_directive(client):
     assert get.json()["value"] == "default"
 
 
-def test_create_directive_with_uuid(client):
+def test_create_event_prevention_tool_with_uuid(client):
     # Create an event prevention tool and specify the UUID it should use
     u = str(uuid.uuid4())
     create = client.post("/api/event/prevention_tool/", json={"uuid": u, "value": "default"})
@@ -40,7 +40,7 @@ def test_create_directive_with_uuid(client):
     assert get.json()["value"] == "default"
 
 
-def test_create_directive_duplicate_value(client):
+def test_create_event_prevention_tool_duplicate_value(client):
     # Create an event prevention tool
     client.post("/api/event/prevention_tool/", json={"value": "default"})
 
@@ -49,12 +49,12 @@ def test_create_directive_duplicate_value(client):
     assert create.status_code == 409
 
 
-def test_create_directive_invalid_value(client):
+def test_create_event_prevention_tool_invalid_value(client):
     create = client.post("/api/event/prevention_tool/", json={"value": {"asdf": "asdf"}})
     assert create.status_code == 422
 
 
-def test_create_directive_missing_value(client):
+def test_create_event_prevention_tool_missing_value(client):
     create = client.post("/api/event/prevention_tool/", json={})
     assert create.status_code == 422
 
@@ -64,7 +64,7 @@ def test_create_directive_missing_value(client):
 #
 
 
-def test_get_all_directives(client):
+def test_get_all_event_prevention_tools(client):
     # Create some event prevention tools
     client.post("/api/event/prevention_tool/", json={"value": "default"})
     client.post("/api/event/prevention_tool/", json={"value": "intel"})
@@ -75,13 +75,18 @@ def test_get_all_directives(client):
     assert len(get.json()) == 2
 
 
-def test_get_all_directives_empty(client):
+def test_get_all_event_prevention_tools_empty(client):
     get = client.get("/api/event/prevention_tool/")
     assert get.status_code == 200
     assert get.json() == []
 
 
-def test_get_nonexistent_directive(client):
+def test_get_invalid_event_prevention_tool(client):
+    get = client.get("/api/event/prevention_tool/1")
+    assert get.status_code == 422
+
+
+def test_get_nonexistent_event_prevention_tool(client):
     get = client.get(f"/api/event/prevention_tool/{uuid.uuid4()}")
     assert get.status_code == 404
 
@@ -91,7 +96,7 @@ def test_get_nonexistent_directive(client):
 #
 
 
-def test_update_directive(client):
+def test_update_event_prevention_tool(client):
     # Create an event prevention tool
     create = client.post("/api/event/prevention_tool/", json={"value": "default"})
 
@@ -107,7 +112,7 @@ def test_update_directive(client):
     assert get.json()["value"] == "test"
 
 
-def test_update_directive_multiple_fields(client):
+def test_update_event_prevention_tool_multiple_fields(client):
     # Create an event prevention tool
     create = client.post("/api/event/prevention_tool/", json={"value": "default"})
 
@@ -126,7 +131,7 @@ def test_update_directive_multiple_fields(client):
     assert get.json()["value"] == "test"
 
 
-def test_udpate_directive_same_value(client):
+def test_udpate_event_prevention_tool_same_value(client):
     # Create an event prevention tool
     create = client.post("/api/event/prevention_tool/", json={"value": "default"})
 
@@ -142,7 +147,7 @@ def test_udpate_directive_same_value(client):
     assert get.json()["value"] == "default"
 
 
-def test_update_directive_duplicate_value(client):
+def test_update_event_prevention_tool_duplicate_value(client):
     # Create some event prevention tools
     client.post("/api/event/prevention_tool/", json={"value": "default"})
     create = client.post("/api/event/prevention_tool/", json={"value": "intel"})
@@ -152,7 +157,7 @@ def test_update_directive_duplicate_value(client):
     assert update.status_code == 400
 
 
-def test_update_directive_invalid_value(client):
+def test_update_event_prevention_tool_invalid_value(client):
     # Create an event prevention tool
     create = client.post("/api/event/prevention_tool/", json={"value": "default"})
 
@@ -163,7 +168,7 @@ def test_update_directive_invalid_value(client):
     assert update.status_code == 422
 
 
-def test_update_directive_none_value(client):
+def test_update_event_prevention_tool_none_value(client):
     # Create an event prevention tool
     create = client.post("/api/event/prevention_tool/", json={"value": "default"})
 
@@ -172,7 +177,7 @@ def test_update_directive_none_value(client):
     assert update.status_code == 400
 
 
-def test_update_nonexistent_directive(client):
+def test_update_nonexistent_event_prevention_tool(client):
     update = client.put(f"/api/event/prevention_tool/{uuid.uuid4()}", json={"value": "default"})
     assert update.status_code == 404
 
@@ -182,7 +187,7 @@ def test_update_nonexistent_directive(client):
 #
 
 
-def test_delete_directive(client):
+def test_delete_event_prevention_tool(client):
     # Create an event prevention tool
     create = client.post("/api/event/prevention_tool/", json={"value": "default"})
 
@@ -195,6 +200,6 @@ def test_delete_directive(client):
     assert get.status_code == 404
 
 
-def test_delete_nonexistent_directive(client):
+def test_delete_nonexistent_event_prevention_tool(client):
     delete = client.delete(f"/api/event/prevention_tool/{uuid.uuid4()}")
     assert delete.status_code == 400

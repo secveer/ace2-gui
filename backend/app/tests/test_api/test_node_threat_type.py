@@ -82,6 +82,11 @@ def test_get_all_node_threat_types_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_node_threat_type(client):
+    get = client.get("/api/node/threat/type/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_node_threat_type(client):
     get = client.get(f"/api/node/threat/type/{uuid.uuid4()}")
     assert get.status_code == 404

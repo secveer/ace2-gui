@@ -81,6 +81,11 @@ def test_get_all_user_roles_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_user_role(client):
+    get = client.get("/api/user/role/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_user_role(client):
     get = client.get(f"/api/user/role/{uuid.uuid4()}")
     assert get.status_code == 404

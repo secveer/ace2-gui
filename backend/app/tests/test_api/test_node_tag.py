@@ -81,6 +81,11 @@ def test_get_all_node_tags_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_node_tag(client):
+    get = client.get("/api/node/tag/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_node_tag(client):
     get = client.get(f"/api/node/tag/{uuid.uuid4()}")
     assert get.status_code == 404

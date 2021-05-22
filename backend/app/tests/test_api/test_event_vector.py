@@ -81,6 +81,11 @@ def test_get_all_event_vectors_empty(client):
     assert get.json() == []
 
 
+def test_get_invalid_event_vector(client):
+    get = client.get("/api/event/vector/1")
+    assert get.status_code == 422
+
+
 def test_get_nonexistent_event_vector(client):
     get = client.get(f"/api/event/vector/{uuid.uuid4()}")
     assert get.status_code == 404
