@@ -200,6 +200,11 @@ def test_delete_node_threat_actor(client):
     assert get.status_code == 404
 
 
+def test_delete_invalid_node_threat_actor(client):
+    delete = client.delete("/api/node/threat_actor/1")
+    assert delete.status_code == 422
+
+
 def test_delete_nonexistent_node_threat_actor(client):
     delete = client.delete(f"/api/node/threat_actor/{uuid.uuid4()}")
     assert delete.status_code == 400

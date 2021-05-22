@@ -200,6 +200,11 @@ def test_delete_event_status(client):
     assert get.status_code == 404
 
 
+def test_delete_invalid_event_status(client):
+    delete = client.delete("/api/event/status/1")
+    assert delete.status_code == 422
+
+
 def test_delete_nonexistent_event_status(client):
     delete = client.delete(f"/api/event/status/{uuid.uuid4()}")
     assert delete.status_code == 400

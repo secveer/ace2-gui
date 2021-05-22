@@ -195,6 +195,11 @@ def test_delete_alert_type(client):
     assert get.status_code == 404
 
 
+def test_delete_invalid_alert_type(client):
+    delete = client.delete("/api/alert/type/1")
+    assert delete.status_code == 422
+
+
 def test_delete_nonexistent_alert_type(client):
     delete = client.delete(f"/api/alert/type/{uuid.uuid4()}")
     assert delete.status_code == 400

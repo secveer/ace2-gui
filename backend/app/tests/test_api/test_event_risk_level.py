@@ -200,6 +200,11 @@ def test_delete_event_risk_level(client):
     assert get.status_code == 404
 
 
+def test_delete_invalid_event_risk_level(client):
+    delete = client.delete("/api/event/risk_level/1")
+    assert delete.status_code == 422
+
+
 def test_delete_nonexistent_event_risk_level(client):
     delete = client.delete(f"/api/event/risk_level/{uuid.uuid4()}")
     assert delete.status_code == 400

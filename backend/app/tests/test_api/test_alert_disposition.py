@@ -247,6 +247,11 @@ def test_delete_disposition(client):
     assert get.status_code == 404
 
 
+def test_delete_invalid_disposition(client):
+    delete = client.delete("/api/alert/disposition/1")
+    assert delete.status_code == 422
+
+
 def test_delete_nonexistent_disposition(client):
     delete = client.delete(f"/api/alert/disposition/{uuid.uuid4()}")
     assert delete.status_code == 400

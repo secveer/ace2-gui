@@ -200,6 +200,11 @@ def test_delete_observable_type(client):
     assert get.status_code == 404
 
 
+def test_delete_invalid_observable_type(client):
+    delete = client.delete("/api/observable/type/1")
+    assert delete.status_code == 422
+
+
 def test_delete_nonexistent_observable_type(client):
     delete = client.delete(f"/api/observable/type/{uuid.uuid4()}")
     assert delete.status_code == 400
