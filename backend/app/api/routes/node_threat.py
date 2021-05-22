@@ -39,11 +39,6 @@ def create_node_threat(
                 detail=f"The {given_type} node threat type does not exist",
             )
 
-    # Because the NodeThreat.types field is a set, it will cause an error when SQLAlchemy attempts to create a new
-    # NodeThreat object since SQLAlchemy expects a list. We can manually recast the types field as a list, or we can
-    # simply delete it since we will overwrite it with the threat_types objects from above.
-    del node_threat.types
-
     # Create the new node threat
     new_threat = NodeThreat(**node_threat.dict())
 
