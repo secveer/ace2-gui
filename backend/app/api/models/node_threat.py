@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import List, Optional
 from uuid import UUID
 
@@ -34,3 +34,8 @@ class NodeThreatUpdate(NodeThreatBase):
     types: Optional[List[str]] = Field(description="A list of types the threat represents")
 
     value: Optional[str] = Field(description="The value of the threat")
+
+    @validator("value")
+    def prevent_none(cls, v):
+        assert v is not None, "value may not be None"
+        return v

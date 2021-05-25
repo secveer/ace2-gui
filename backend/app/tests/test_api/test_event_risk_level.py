@@ -178,7 +178,7 @@ def test_update_event_risk_level_none_value(client):
 
     # Ensure you cannot update an event risk level value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
-    assert update.status_code == 400
+    assert update.status_code == 422
 
 
 def test_update_nonexistent_event_risk_level(client):

@@ -175,7 +175,7 @@ def test_update_node_directive_none_value(client):
 
     # Ensure you cannot update a node directive value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
-    assert update.status_code == 400
+    assert update.status_code == 422
 
 
 def test_update_nonexistent_node_directive(client):

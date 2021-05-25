@@ -214,7 +214,7 @@ def test_update_disposition_none_rank(client):
 
     # Ensure you cannot update a disposition rank to None
     update = client.put(create.headers["Content-Location"], json={"rank": None})
-    assert update.status_code == 400
+    assert update.status_code == 422
 
 
 def test_update_disposition_none_value(client):
@@ -223,7 +223,7 @@ def test_update_disposition_none_value(client):
 
     # Ensure you cannot update a disposition value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
-    assert update.status_code == 400
+    assert update.status_code == 422
 
 
 def test_update_nonexistent_disposition(client):

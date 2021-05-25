@@ -176,7 +176,7 @@ def test_update_alert_queue_none_value(client):
 
     # Ensure you cannot update an alert_queue value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
-    assert update.status_code == 400
+    assert update.status_code == 422
 
 
 def test_update_nonexistent_alert_queue(client):
