@@ -57,7 +57,7 @@ def read(uuid: UUID, db_table: DeclarativeMeta, db: Session):
 
 
 def read_by_values(values: List[str], db_table: DeclarativeMeta, db: Session):
-    """Returns a list of objects with the given values.
+    """Returns a list of objects from the given database table with the given values.
     Designed to be called only by the API since it raises an HTTPException."""
 
     resources = db.execute(select(db_table).where(db_table.value.in_(values))).scalars().all()
