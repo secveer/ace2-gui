@@ -119,6 +119,11 @@ def test_create_node_threat_duplicate_value(client):
     assert create.status_code == 409
 
 
+def test_create_node_threat_empty_type(client):
+    create = client.post("/api/node/threat/", json={"value": "test", "types": []})
+    assert create.status_code == 422
+
+
 def test_create_node_threat_invalid_type(client):
     create = client.post("/api/node/threat/", json={"value": "test", "types": "test_type"})
     assert create.status_code == 422
@@ -281,6 +286,11 @@ def test_update_node_threat_duplicate_value(client):
     # Ensure you cannot update a node threat type value to one that already exists
     update = client.put(create.headers["Content-Location"], json={"value": "default"})
     assert update.status_code == 400
+
+
+def test_update_node_threat_empty_type(client):
+    update = client.put(f"/api/node/threat/{uuid.uuid4()}", json={"types": []})
+    assert update.status_code == 422
 
 
 def test_update_node_threat_invalid_uuid(client):

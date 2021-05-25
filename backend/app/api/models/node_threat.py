@@ -16,6 +16,11 @@ class NodeThreatBase(BaseModel):
 
     value: str = Field(description="The value of the threat")
 
+    @validator("types")
+    def prevent_empty(cls, v):
+        assert len(v), "types may not be empty"
+        return v
+
 
 class NodeThreatCreate(NodeThreatBase):
     pass
