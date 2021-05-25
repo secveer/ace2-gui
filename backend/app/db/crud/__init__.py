@@ -4,6 +4,7 @@ from sqlalchemy import delete as sql_delete, select, update as sql_update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta
+from typing import List
 from uuid import UUID
 
 
@@ -53,6 +54,22 @@ def read(uuid: UUID, db_table: DeclarativeMeta, db: Session):
         raise HTTPException(status_code=404, detail=f"UUID {uuid} does not exist.")
 
     return result
+
+
+def read_by_values(values: List[str], db_table: DeclarativeMeta, db: Session):
+    """Returns a list of objects with the given values.
+    Designed to be called only by the API since it raises an HTTPException."""
+
+    resources = db.execute(select(db_table).where(db_table.value.in_(values))).scalars().all()
+
+    for value in values:
+        if not any(value == t.value for t in resources):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"The {value} {db_table} does not exist",
+            )
+
+    return resources
 
 
 #
@@ -106,3 +123,33 @@ def delete(uuid: UUID, db_table: DeclarativeMeta, db: Session):
             status_code=400,
             detail=f"Unable to delete UUID {uuid} or it does not exist.",
         )
+
+
+#
+# COMMIT
+#
+
+def _commit(db: Session, status_code: int):
+    try:
+        db.commit()
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status_code,
+            detail=f"Got an IntegrityError while committing the database session: {e}",
+        )
+
+
+def commit_create(db: Session):
+    """Tries to commit any create changes made in the session.
+    Designed to be called only by the API since it raises an HTTPException."""
+
+    _commit(db=db, status_code=status.HTTP_409_CONFLICT)
+
+
+def commit_update(db: Session):
+    """Tries to commit any update changes made in the session. Raises an HTTP 400 error if the database
+    raises an IntegrityError because it could be due to invalid or conflicting data.
+    Designed to be called only by the API since it raises an HTTPException."""
+
+    _commit(db=db, status_code=status.HTTP_400_BAD_REQUEST)

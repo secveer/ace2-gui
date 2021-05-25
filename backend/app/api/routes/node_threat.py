@@ -31,13 +31,7 @@ def create_node_threat(
     db: Session = Depends(get_db),
 ):
     # Make sure that all the threat types that were given actually exist
-    threat_types = db.execute(select(NodeThreatType).where(NodeThreatType.value.in_(node_threat.types))).scalars().all()
-    for given_type in node_threat.types:
-        if not any(given_type == t.value for t in threat_types):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"The {given_type} node threat type does not exist",
-            )
+    threat_types = crud.read_by_values(values=node_threat.types, db_table=NodeThreatType, db=db)
 
     # Create the new node threat
     new_threat = NodeThreat(**node_threat.dict())
@@ -47,15 +41,7 @@ def create_node_threat(
 
     # Save the new node threat to the database
     db.add(new_threat)
-
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail=f"A similiar object already exists",
-        )
+    crud.commit_create(db)
 
     response.headers["Content-Location"] = request.url_for("get_node_threat", uuid=new_threat.uuid)
 
@@ -92,7 +78,27 @@ def update_node_threat(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    crud.update(uuid=uuid, obj=node_threat, db_table=NodeThreat, db=db)
+    # Read the current node threat from the database
+    obj = crud.read(uuid=uuid, db_table=NodeThreat, db=db)
+
+    # Update the description if one was given
+    if node_threat.description:
+        obj.description = node_threat.description
+
+    # Update the value if one was given
+    if node_threat.value:
+        obj.value = node_threat.value
+
+    # Update the types if they were given
+    if node_threat.types:
+        # Make sure that all the threat types that were given actually exist
+        threat_types = crud.read_by_values(values=node_threat.types, db_table=NodeThreatType, db=db)
+
+        # Update the types on the node threat
+        obj.types = threat_types
+
+    # Save the updated node threat to the database
+    crud.commit_update(db)
 
     response.headers["Content-Location"] = request.url_for("get_node_threat", uuid=uuid)
 
