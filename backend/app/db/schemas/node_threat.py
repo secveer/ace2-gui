@@ -13,6 +13,6 @@ class NodeThreat(Base):
 
     description = Column(String)
 
-    types = relationship("NodeThreatType", secondary=node_threat_node_threat_type_mapping)
+    types = relationship("NodeThreatType", secondary=node_threat_node_threat_type_mapping, passive_deletes=True)
 
     value = Column(String, nullable=False, unique=True, index=True)

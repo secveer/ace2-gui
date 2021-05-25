@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: aa90e3f09fff
+Revision ID: 66b60e71a787
 Revises: 
-Create Date: 2021-05-20 19:00:08.076804
+Create Date: 2021-05-25 15:33:32.577452
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'aa90e3f09fff'
+revision = '66b60e71a787'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -181,7 +181,7 @@ def upgrade() -> None:
     sa.Column('node_threat_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('node_threat_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.ForeignKeyConstraint(['node_threat_type_uuid'], ['node_threat_type.uuid'], ),
-    sa.ForeignKeyConstraint(['node_threat_uuid'], ['node_threat.uuid'], ),
+    sa.ForeignKeyConstraint(['node_threat_uuid'], ['node_threat.uuid'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('node_threat_uuid', 'node_threat_type_uuid')
     )
     op.create_index(op.f('ix_node_threat_node_threat_type_mapping_node_threat_uuid'), 'node_threat_node_threat_type_mapping', ['node_threat_uuid'], unique=False)
