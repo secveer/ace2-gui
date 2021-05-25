@@ -31,13 +31,13 @@ def create_node_threat(
     db: Session = Depends(get_db),
 ):
     # Make sure that all the threat types that were given actually exist
-    threat_types = crud.read_by_values(values=node_threat.types, db_table=NodeThreatType, db=db)
+    db_threat_types = crud.read_by_values(values=node_threat.types, db_table=NodeThreatType, db=db)
 
     # Create the new node threat
     new_threat = NodeThreat(**node_threat.dict())
 
     # Set the threat types on the new node threat
-    new_threat.types = threat_types
+    new_threat.types = db_threat_types
 
     # Save the new node threat to the database
     db.add(new_threat)
@@ -79,23 +79,23 @@ def update_node_threat(
     db: Session = Depends(get_db),
 ):
     # Read the current node threat from the database
-    obj = crud.read(uuid=uuid, db_table=NodeThreat, db=db)
+    db_node_threat = crud.read(uuid=uuid, db_table=NodeThreat, db=db)
 
     # Update the description if one was given
     if node_threat.description:
-        obj.description = node_threat.description
+        db_node_threat.description = node_threat.description
 
     # Update the value if one was given
     if node_threat.value:
-        obj.value = node_threat.value
+        db_node_threat.value = node_threat.value
 
     # Update the types if they were given
     if node_threat.types:
         # Make sure that all the threat types that were given actually exist
-        threat_types = crud.read_by_values(values=node_threat.types, db_table=NodeThreatType, db=db)
+        db_threat_types = crud.read_by_values(values=node_threat.types, db_table=NodeThreatType, db=db)
 
         # Update the types on the node threat
-        obj.types = threat_types
+        db_node_threat.types = db_threat_types
 
     # Save the updated node threat to the database
     crud.commit_update(db)
