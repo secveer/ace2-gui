@@ -5,6 +5,6 @@ from db.database import Base
 
 
 node_threat_node_threat_type_mapping = Table("node_threat_node_threat_type_mapping", Base.metadata,
-    Column("threat_uuid", UUID(as_uuid=True), ForeignKey("threat.uuid"), index=True, primary_key=True),
+    Column("node_threat_uuid", UUID(as_uuid=True), ForeignKey("node_threat.uuid", ondelete="CASCADE"), index=True, primary_key=True),
     Column("node_threat_type_uuid", UUID(as_uuid=True), ForeignKey("node_threat_type.uuid"), primary_key=True)
 )

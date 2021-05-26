@@ -26,7 +26,7 @@ class Node(Base):
 
     threat_actor_uuid = Column(UUID(as_uuid=True), ForeignKey("node_threat_actor.uuid"))
 
-    threats = relationship("Threat", secondary=node_threat_mapping)
+    threats = relationship("NodeThreat", secondary=node_threat_mapping)
 
     __mapper_args__ = {
         "polymorphic_identity": "node",
