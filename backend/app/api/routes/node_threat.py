@@ -1,6 +1,4 @@
-from fastapi import status, APIRouter, Depends, HTTPException, Request, Response
-from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID

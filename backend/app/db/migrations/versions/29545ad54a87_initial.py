@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 66b60e71a787
+Revision ID: 29545ad54a87
 Revises: 
-Create Date: 2021-05-25 15:33:32.577452
+Create Date: 2021-05-26 01:53:47.120638
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = '66b60e71a787'
+revision = '29545ad54a87'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -165,7 +165,7 @@ def upgrade() -> None:
     op.create_table('analysis_module_type_observable_type_mapping',
     sa.Column('analysis_module_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('observable_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.ForeignKeyConstraint(['analysis_module_type_uuid'], ['analysis_module_type.uuid'], ),
+    sa.ForeignKeyConstraint(['analysis_module_type_uuid'], ['analysis_module_type.uuid'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['observable_type_uuid'], ['observable_type.uuid'], ),
     sa.PrimaryKeyConstraint('analysis_module_type_uuid', 'observable_type_uuid')
     )

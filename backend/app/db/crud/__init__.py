@@ -60,10 +60,17 @@ def read_by_values(values: List[str], db_table: DeclarativeMeta, db: Session):
     """Returns a list of objects from the given database table with the given values.
     Designed to be called only by the API since it raises an HTTPException."""
 
+    # Return without performing a database query if the list of values is empty
+    if values == []:
+        return values
+
+    # Only search the database for unique values
+    values = list(set(values))
+
     resources = db.execute(select(db_table).where(db_table.value.in_(values))).scalars().all()
 
     for value in values:
-        if not any(value == t.value for t in resources):
+        if not any(value == r.value for r in resources):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=f"The {value} {db_table} does not exist",
