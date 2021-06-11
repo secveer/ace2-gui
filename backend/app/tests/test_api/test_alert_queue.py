@@ -209,4 +209,4 @@ def test_delete_invalid_alert_queue(client):
 
 def test_delete_nonexistent_alert_queue(client):
     delete = client.delete(f"/api/alert/queue/{uuid.uuid4()}")
-    assert delete.status_code == 400
+    assert delete.status_code == 404

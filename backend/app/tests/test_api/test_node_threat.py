@@ -353,4 +353,4 @@ def test_delete_invalid_node_threat(client):
 
 def test_delete_nonexistent_node_threat_type(client):
     delete = client.delete(f"/api/node/threat/{uuid.uuid4()}")
-    assert delete.status_code == 400
+    assert delete.status_code == 404
