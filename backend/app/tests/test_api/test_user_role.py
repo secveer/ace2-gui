@@ -1,5 +1,7 @@
 import uuid
 
+from fastapi import status
+
 
 """
 NOTE: There are no tests for the foreign key constraints, namely deleting an UserRole that is tied to a User.
@@ -15,12 +17,12 @@ The DELETE endpoint will need to be updated once the User endpoints are in place
 def test_create_user_role(client):
     # Create a user role
     create = client.post("/api/user/role/", json={"value": "default"})
-    assert create.status_code == 201
+    assert create.status_code == status.HTTP_201_CREATED
     assert create.headers["Content-Location"]
 
     # Read it back
     get = client.get(create.headers["Content-Location"])
-    assert get.status_code == 200
+    assert get.status_code == status.HTTP_200_OK
     assert get.json()["description"] is None
     assert get.json()["value"] == "default"
 
@@ -29,12 +31,12 @@ def test_create_user_role_with_uuid(client):
     # Create a user role and specify the UUID it should use
     u = str(uuid.uuid4())
     create = client.post("/api/user/role/", json={"uuid": u, "value": "default"})
-    assert create.status_code == 201
+    assert create.status_code == status.HTTP_201_CREATED
     assert create.headers["Content-Location"]
 
     # Read it back using the UUID
     get = client.get(f"/api/user/role/{u}")
-    assert get.status_code == 200
+    assert get.status_code == status.HTTP_200_OK
     assert get.json()["uuid"] == u
     assert get.json()["description"] is None
     assert get.json()["value"] == "default"
@@ -46,22 +48,22 @@ def test_create_user_role_duplicate_value(client):
 
     # Ensure you cannot create another user role with the same value
     create = client.post("/api/user/role/", json={"value": "default"})
-    assert create.status_code == 409
+    assert create.status_code == status.HTTP_409_CONFLICT
 
 
 def test_create_user_role_invalid_uuid(client):
     create = client.post("/api/user/role/", json={"uuid": 1, "value": "default"})
-    assert create.status_code == 422
+    assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_create_user_role_invalid_value(client):
     create = client.post("/api/user/role/", json={"value": {"asdf": "asdf"}})
-    assert create.status_code == 422
+    assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_create_user_role_missing_value(client):
     create = client.post("/api/user/role/", json={})
-    assert create.status_code == 422
+    assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 #
@@ -76,24 +78,24 @@ def test_get_all_user_roles(client):
 
     # Read them back
     get = client.get("/api/user/role/")
-    assert get.status_code == 200
+    assert get.status_code == status.HTTP_200_OK
     assert len(get.json()) == 2
 
 
 def test_get_all_user_roles_empty(client):
     get = client.get("/api/user/role/")
-    assert get.status_code == 200
+    assert get.status_code == status.HTTP_200_OK
     assert get.json() == []
 
 
 def test_get_invalid_user_role(client):
     get = client.get("/api/user/role/1")
-    assert get.status_code == 422
+    assert get.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_get_nonexistent_user_role(client):
     get = client.get(f"/api/user/role/{uuid.uuid4()}")
-    assert get.status_code == 404
+    assert get.status_code == status.HTTP_404_NOT_FOUND
 
 
 #
@@ -107,12 +109,12 @@ def test_update_user_role(client):
 
     # Update a single field
     update = client.put(create.headers["Content-Location"], json={"value": "test"})
-    assert update.status_code == 204
+    assert update.status_code == status.HTTP_204_NO_CONTENT
     assert update.headers["Content-Location"]
 
     # Read it back
     get = client.get(update.headers["Content-Location"])
-    assert get.status_code == 200
+    assert get.status_code == status.HTTP_200_OK
     assert get.json()["description"] is None
     assert get.json()["value"] == "test"
 
@@ -126,12 +128,12 @@ def test_update_user_role_multiple_fields(client):
         create.headers["Content-Location"],
         json={"description": "Test", "value": "test"},
     )
-    assert update.status_code == 204
+    assert update.status_code == status.HTTP_204_NO_CONTENT
     assert update.headers["Content-Location"]
 
     # Read it back
     get = client.get(update.headers["Content-Location"])
-    assert get.status_code == 200
+    assert get.status_code == status.HTTP_200_OK
     assert get.json()["description"] == "Test"
     assert get.json()["value"] == "test"
 
@@ -142,12 +144,12 @@ def test_udpate_user_role_same_value(client):
 
     # Update a field to the same value
     update = client.put(create.headers["Content-Location"], json={"value": "default"})
-    assert update.status_code == 204
+    assert update.status_code == status.HTTP_204_NO_CONTENT
     assert update.headers["Content-Location"]
 
     # Read it back
     get = client.get(update.headers["Content-Location"])
-    assert get.status_code == 200
+    assert get.status_code == status.HTTP_200_OK
     assert get.json()["description"] is None
     assert get.json()["value"] == "default"
 
@@ -159,17 +161,17 @@ def test_update_user_role_duplicate_value(client):
 
     # Ensure you cannot update a user role value to one that already exists
     update = client.put(create.headers["Content-Location"], json={"value": "default"})
-    assert update.status_code == 400
+    assert update.status_code == status.HTTP_400_BAD_REQUEST
 
 
 def test_update_user_role_invalid_uuid(client):
     update = client.put("/api/user/role/1", json={"value": "default"})
-    assert update.status_code == 422
+    assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_update_user_role_invalid_value(client):
     update = client.put(f"/api/user/role/{uuid.uuid4()}", json={"value": {"asdf": "asdf"}})
-    assert update.status_code == 422
+    assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_update_user_role_none_value(client):
@@ -178,12 +180,12 @@ def test_update_user_role_none_value(client):
 
     # Ensure you cannot update a user role value to None
     update = client.put(create.headers["Content-Location"], json={"value": None})
-    assert update.status_code == 422
+    assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_update_nonexistent_user_role(client):
     update = client.put(f"/api/user/role/{uuid.uuid4()}", json={"value": "default"})
-    assert update.status_code == 404
+    assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
 #
@@ -197,18 +199,18 @@ def test_delete_user_role(client):
 
     # Delete it
     delete = client.delete(create.headers["Content-Location"])
-    assert delete.status_code == 204
+    assert delete.status_code == status.HTTP_204_NO_CONTENT
 
     # Make sure it is gone
     get = client.get(create.headers["Content-Location"])
-    assert get.status_code == 404
+    assert get.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_delete_invalid_user_role(client):
     delete = client.delete("/api/user/role/1")
-    assert delete.status_code == 422
+    assert delete.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_delete_nonexistent_user_role(client):
     delete = client.delete(f"/api/user/role/{uuid.uuid4()}")
-    assert delete.status_code == 404
+    assert delete.status_code == status.HTTP_404_NOT_FOUND
