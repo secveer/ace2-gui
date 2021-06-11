@@ -15,6 +15,6 @@ class AnalysisModuleType(Base):
 
     manual = Column(Boolean, default=False, nullable=False)
 
-    observable_types = relationship("ObservableType", secondary=analysis_module_type_observable_type_mapping)
+    observable_types = relationship("ObservableType", secondary=analysis_module_type_observable_type_mapping, passive_deletes=True)
 
     value = Column(String, nullable=False, unique=True, index=True)
