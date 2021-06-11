@@ -211,4 +211,4 @@ def test_delete_invalid_event_vector(client):
 
 def test_delete_nonexistent_event_vector(client):
     delete = client.delete(f"/api/event/vector/{uuid.uuid4()}")
-    assert delete.status_code == 400
+    assert delete.status_code == 404

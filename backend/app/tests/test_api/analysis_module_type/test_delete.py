@@ -22,7 +22,7 @@ def test_delete_invalid_analysis_module_type(client):
 
 def test_delete_nonexistent_analysis_module_type(client):
     delete = client.delete(f"/api/observable/type/{uuid.uuid4()}")
-    assert delete.status_code == status.HTTP_400_BAD_REQUEST
+    assert delete.status_code == status.HTTP_404_NOT_FOUND
 
 
 #

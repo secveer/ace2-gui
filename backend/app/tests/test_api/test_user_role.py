@@ -211,4 +211,4 @@ def test_delete_invalid_user_role(client):
 
 def test_delete_nonexistent_user_role(client):
     delete = client.delete(f"/api/user/role/{uuid.uuid4()}")
-    assert delete.status_code == 400
+    assert delete.status_code == 404

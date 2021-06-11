@@ -122,13 +122,20 @@ def delete(uuid: UUID, db_table: DeclarativeMeta, db: Session):
     """Deletes the object with the given UUID from the database.
     Designed to be called only by the API since it raises an HTTPException."""
 
+    # Make sure the resource exists so that better error messages can be returned. The read
+    # function will raise an exception and return a 404 status if the resource does not exist.
+    result = read(uuid=uuid, db_table=db_table, db=db)
+
     # NOTE: This will need to be updated to account for foreign key constraint errors.
     result = db.execute(sql_delete(db_table).where(db_table.uuid == uuid))
 
+    # If the rowcount is not 1, it means the resource could not be deleted. Because we know at
+    # this point that the resource actually exists, it could not be deleted due to a foreign
+    # key constraint.
     if result.rowcount != 1:
         raise HTTPException(
             status_code=400,
-            detail=f"Unable to delete UUID {uuid} or it does not exist.",
+            detail=f"Unable to delete {db_table} UUID {uuid}.",
         )
 
 

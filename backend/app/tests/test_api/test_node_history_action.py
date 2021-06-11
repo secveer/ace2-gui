@@ -211,4 +211,4 @@ def test_delete_invalid_node_history_action(client):
 
 def test_delete_nonexistent_node_history_action(client):
     delete = client.delete(f"/api/node/history/action/{uuid.uuid4()}")
-    assert delete.status_code == 400
+    assert delete.status_code == 404

@@ -208,4 +208,4 @@ def test_delete_invalid_node_directive(client):
 
 def test_delete_nonexistent_node_directive(client):
     delete = client.delete(f"/api/node/directive/{uuid.uuid4()}")
-    assert delete.status_code == 400
+    assert delete.status_code == 404

@@ -211,4 +211,4 @@ def test_delete_invalid_node_tag(client):
 
 def test_delete_nonexistent_node_tag(client):
     delete = client.delete(f"/api/node/tag/{uuid.uuid4()}")
-    assert delete.status_code == 400
+    assert delete.status_code == 404
