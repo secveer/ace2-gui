@@ -73,7 +73,7 @@ def read_by_values(values: List[str], db_table: DeclarativeMeta, db: Session):
         if not any(value == r.value for r in resources):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"{value} does not exist",
+                detail=f"The {value} {db_table} does not exist",
             )
 
     return resources
