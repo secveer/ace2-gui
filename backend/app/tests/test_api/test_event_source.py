@@ -165,12 +165,12 @@ def test_update_event_source_duplicate_value(client):
 
 
 def test_update_event_source_invalid_uuid(client):
-    update = client.put("/api/event/source/1", json={"value": "default"} )
+    update = client.put("/api/event/source/1", json={"value": "default"})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_update_event_source_invalid_value(client):
-    update = client.put(f"/api/event/source/{uuid.uuid4()}", json={"value": {"asdf": "asdf"}} )
+    update = client.put(f"/api/event/source/{uuid.uuid4()}", json={"value": {"asdf": "asdf"}})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 

@@ -17,6 +17,7 @@ config = alembic.context.config
 fileConfig(config.config_file_name)
 logger = logging.getLogger("alembic.env")
 
+
 def run_migrations_online() -> None:
     """
     Run migrations in "online" mode
@@ -36,15 +37,13 @@ def run_migrations_online() -> None:
             prefix="sqlalchemy.",
             poolclass=pool.NullPool,
         )
-        
+
     with connectable.connect() as connection:
-        alembic.context.configure(
-            connection=connection,
-            target_metadata=Base.metadata
-        )
+        alembic.context.configure(connection=connection, target_metadata=Base.metadata)
 
         with alembic.context.begin_transaction():
             alembic.context.run_migrations()
+
 
 def run_migrations_offline() -> None:
     """
@@ -58,6 +57,7 @@ def run_migrations_offline() -> None:
 
     with alembic.context.begin_transaction():
         alembic.context.run_migrations()
+
 
 if alembic.context.is_offline_mode():
     logger.info("Running migrations offline")

@@ -1,6 +1,5 @@
 import alembic
 import pytest
-import sqlalchemy
 
 from alembic.config import Config
 from fastapi.testclient import TestClient
@@ -16,7 +15,7 @@ def apply_migrations():
     This fixture applies the Alembic database migrations at the beginning of a Pytest session and performs
     a downgrade (effectively removing all database tables) at the very end of the session.
     """
-    
+
     config = Config("alembic.ini")
 
     alembic.command.upgrade(config, "head")

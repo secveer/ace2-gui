@@ -45,7 +45,10 @@ def test_create_node_threat_with_uuid(client):
 
     # Create a node threat using the type that was just created
     threat_uuid = str(uuid.uuid4())
-    create = client.post("/api/node/threat/", json={"uuid": threat_uuid, "value": "test", "types": ["test_type"]})
+    create = client.post(
+        "/api/node/threat/",
+        json={"uuid": threat_uuid, "value": "test", "types": ["test_type"]},
+    )
     assert create.status_code == status.HTTP_201_CREATED
     assert create.headers["Content-Location"]
 
@@ -70,7 +73,10 @@ def test_create_node_threat_multiple_types(client):
     client.post("/api/node/threat/type/", json={"value": "test_type2"})
 
     # Create a node threat using the types that were just created
-    create = client.post("/api/node/threat/", json={"value": "test", "types": ["test_type", "test_type2"]})
+    create = client.post(
+        "/api/node/threat/",
+        json={"value": "test", "types": ["test_type", "test_type2"]},
+    )
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
@@ -79,7 +85,6 @@ def test_create_node_threat_multiple_types(client):
     assert len(get.json()["types"]) == 2
     assert any(t["value"] == "test_type" for t in get.json()["types"])
     assert any(t["value"] == "test_type2" for t in get.json()["types"])
-
 
 
 def test_create_node_threat_repeated_type(client):
@@ -169,7 +174,7 @@ def test_get_all_node_threats(client):
     # Create some node threats using the type that was just created
     client.post("/api/node/threat/", json={"value": "test", "types": ["test_type"]})
     client.post("/api/node/threat/", json={"value": "test2", "types": ["test_type"]})
-    
+
     # Read them back
     get = client.get("/api/node/threat/")
     assert get.status_code == status.HTTP_200_OK
@@ -226,7 +231,8 @@ def test_update_node_threat_multiple_fields(client):
     # Update a single field
     update = client.put(
         create.headers["Content-Location"],
-        json={"description": "test", "value": "test_updated"})
+        json={"description": "test", "value": "test_updated"},
+    )
     assert update.status_code == status.HTTP_204_NO_CONTENT
     assert update.headers["Content-Location"]
 
@@ -243,7 +249,10 @@ def test_update_node_threat_remove_type(client):
     client.post("/api/node/threat/type/", json={"value": "test_type2"})
 
     # Create a node threat using the types that were just created
-    create = client.post("/api/node/threat/", json={"value": "test", "types": ["test_type", "test_type2"]})
+    create = client.post(
+        "/api/node/threat/",
+        json={"value": "test", "types": ["test_type", "test_type2"]},
+    )
     assert create.status_code == status.HTTP_201_CREATED
 
     # Update the node threat to remove one of the types

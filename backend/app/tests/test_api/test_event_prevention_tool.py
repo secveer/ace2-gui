@@ -4,8 +4,8 @@ from fastapi import status
 
 
 """
-NOTE: There are no tests for the foreign key constraints, namely deleting an EventPreventionTool that is tied to an Event.
-The DELETE endpoint will need to be updated once the Node endpoints are in place in order to account for this.
+NOTE: There are no tests for the foreign key constraints, namely deleting an EventPreventionTool that is tied to an
+Event. The DELETE endpoint will need to be updated once the Node endpoints are in place in order to account for this.
 """
 
 

@@ -36,7 +36,7 @@ def test_delete_analysis_module_type(client):
 
     # Create the analysis module type
     create = client.post(
-        f"/api/analysis/module_type/",
+        "/api/analysis/module_type/",
         json={"observable_types": ["test_type"], "value": "initial"},
     )
     assert create.status_code == status.HTTP_201_CREATED

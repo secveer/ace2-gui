@@ -75,7 +75,7 @@ def test_get_all_alert_types(client):
     # Create some alert types
     client.post("/api/alert/type/", json={"value": "default"})
     client.post("/api/alert/type/", json={"value": "intel"})
-    
+
     # Read them back
     get = client.get("/api/alert/type/")
     assert get.status_code == status.HTTP_200_OK
@@ -124,7 +124,10 @@ def test_update_alert_type_multiple_fields(client):
     create = client.post("/api/alert/type/", json={"value": "default"})
 
     # Update multiple fields
-    update = client.put(create.headers["Content-Location"], json={"description": "Test", "value": "test"})
+    update = client.put(
+        create.headers["Content-Location"],
+        json={"description": "Test", "value": "test"},
+    )
     assert update.status_code == status.HTTP_204_NO_CONTENT
     assert update.headers["Content-Location"]
 

@@ -3,7 +3,11 @@ from sqlalchemy.orm import Session
 from typing import List
 from uuid import UUID
 
-from api.models.node_history_action import NodeHistoryActionCreate, NodeHistoryActionRead, NodeHistoryActionUpdate
+from api.models.node_history_action import (
+    NodeHistoryActionCreate,
+    NodeHistoryActionRead,
+    NodeHistoryActionUpdate,
+)
 from api.routes import helpers
 from db import crud
 from db.database import get_db

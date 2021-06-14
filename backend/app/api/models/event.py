@@ -22,19 +22,29 @@ class Event(Node):
 
     creation_time: datetime = Field(description="The time the event was created")
 
-    disposition_time: Optional[datetime] = Field(description="The earliest time one of the alerts in the event was dispositioned")
+    disposition_time: Optional[datetime] = Field(
+        description="The earliest time one of the alerts in the event was dispositioned"
+    )
 
     event_time: Optional[datetime] = Field(description="The time at which the attack represented by the event occurred")
 
     name: str = Field(description="The name of the event")
 
-    ownership_time: Optional[datetime] = Field(description="The earliest time an analyst took ownership over an alert in the event")
+    ownership_time: Optional[datetime] = Field(
+        description="The earliest time an analyst took ownership over an alert in the event"
+    )
 
-    prevention_tools: Optional[List[EventPreventionTool]] = Field(description="A list of prevention tools involved in the event")
+    prevention_tools: Optional[List[EventPreventionTool]] = Field(
+        description="A list of prevention tools involved in the event"
+    )
 
-    remediation_time: Optional[datetime] = Field(description="The earliest time that any remediation was performed on the attack represented by the event")
+    remediation_time: Optional[datetime] = Field(
+        description="The earliest time that any remediation was performed on the attack represented by the event"
+    )
 
-    remediations: Optional[List[EventRemediation]] = Field(description="A list of remediations performed to clean up the attack represented by the event")
+    remediations: Optional[List[EventRemediation]] = Field(
+        description="A list of remediations performed to clean up the attack represented by the event"
+    )
 
     risk_level: Optional[str] = Field(description="The risk level assigned to the event")
 

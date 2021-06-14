@@ -4,9 +4,12 @@ from uuid import UUID
 
 
 class EventPreventionToolBase(BaseModel):
-    """Represents a prevention tool that can be applied to an event to denote which tool or process stopped the attack."""
+    """Represents a prevention tool that can be applied to an event to denote which tool or process stopped the
+    attack."""
 
-    description: Optional[str] = Field(description="An optional human-readable description of the event prevention tool")
+    description: Optional[str] = Field(
+        description="An optional human-readable description of the event prevention tool"
+    )
 
     uuid: Optional[UUID] = Field(description="The UUID of the event prevention tool")
 

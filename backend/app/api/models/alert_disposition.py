@@ -4,7 +4,8 @@ from uuid import UUID
 
 
 class AlertDispositionBase(BaseModel):
-    """Represents a disposition that can be applied to an alert to denote a status such as false positive or a stage in the cyber kill chain."""
+    """Represents a disposition that can be applied to an alert to denote a status such as false positive or a stage
+    in the cyber kill chain."""
 
     uuid: Optional[UUID] = Field(description="The UUID of the disposition")
 

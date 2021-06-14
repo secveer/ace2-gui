@@ -75,7 +75,7 @@ def test_get_all_alert_queues(client):
     # Create some alert queues
     client.post("/api/alert/queue/", json={"value": "default"})
     client.post("/api/alert/queue/", json={"value": "intel"})
-    
+
     # Read them back
     get = client.get("/api/alert/queue/")
     assert get.status_code == status.HTTP_200_OK
@@ -124,7 +124,10 @@ def test_update_alert_queue_multiple_fields(client):
     create = client.post("/api/alert/queue/", json={"value": "default"})
 
     # Update multiple fields
-    update = client.put(create.headers["Content-Location"], json={"description": "Test", "value": "test"})
+    update = client.put(
+        create.headers["Content-Location"],
+        json={"description": "Test", "value": "test"},
+    )
     assert update.status_code == status.HTTP_204_NO_CONTENT
     assert update.headers["Content-Location"]
 

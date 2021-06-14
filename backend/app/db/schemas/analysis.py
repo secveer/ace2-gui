@@ -2,7 +2,9 @@ from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
-from db.schemas.analysis_observable_instance_mapping import analysis_observable_instance_mapping
+from db.schemas.analysis_observable_instance_mapping import (
+    analysis_observable_instance_mapping,
+)
 from db.schemas.node import Node
 
 

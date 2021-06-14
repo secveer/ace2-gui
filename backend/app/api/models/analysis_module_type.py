@@ -24,7 +24,7 @@ class AnalysisModuleTypeBase(BaseModel):
     observable_types: Optional[List[StrictStr]] = Field(
         default_factory=list,
         description="""A list of observable types this analysis module type knows how to analyze.
-        An empty list means it supports ALL observable types."""
+        An empty list means it supports ALL observable types.""",
     )
 
     value: StrictStr = Field(description="The value of the analysis module type")
