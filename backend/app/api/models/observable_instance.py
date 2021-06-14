@@ -16,7 +16,9 @@ class ObservableInstance(Node):
 
     observable: Observable = Field(description="The observable represented by this instance")
 
-    redirection: Optional["ObservableInstance"] = Field(description="An optional field denoting another observable instance to which this one should point")
+    redirection: Optional["ObservableInstance"] = Field(
+        description="An optional field denoting another observable instance to which this one should point"
+    )
 
     time: datetime = Field(description="The time this observable instance was observed")
 

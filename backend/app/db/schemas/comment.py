@@ -21,6 +21,4 @@ class Comment(Base):
 
     value = Column(String)
 
-    __table_args__ = (
-        Index("node_uuid", node_uuid),
-    )
+    __table_args__ = (Index("node_uuid", node_uuid),)

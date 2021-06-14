@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, Field, Json, UUID4
+from pydantic import BaseModel, Field, Json
 
 from api.models.node import Node
 from api.models.node_history_action import NodeHistoryAction

@@ -31,9 +31,7 @@ from fastapi import status
     ],
 )
 def test_create_invalid_optional_fields(client, key, value):
-    create = client.post(
-        f"/api/analysis/module_type/", json={key: value, "value": "test"}
-    )
+    create = client.post("/api/analysis/module_type/", json={key: value, "value": "test"})
     assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -46,7 +44,7 @@ def test_create_invalid_optional_fields(client, key, value):
     ],
 )
 def test_create_invalid_value(client, value):
-    create = client.post(f"/api/analysis/module_type/", json={"value": value})
+    create = client.post("/api/analysis/module_type/", json={"value": value})
     assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -96,9 +94,7 @@ def test_create_analysis_module_type_nonexistent_type(client):
 )
 def test_create_valid_description(client, value):
     # Create the analysis module type
-    create = client.post(
-        f"/api/analysis/module_type/", json={"description": value, "value": "test"}
-    )
+    create = client.post("/api/analysis/module_type/", json={"description": value, "value": "test"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
@@ -115,9 +111,7 @@ def test_create_valid_description(client, value):
 )
 def test_create_valid_manual(client, value):
     # Create the analysis module type
-    create = client.post(
-        f"/api/analysis/module_type/", json={"manual": value, "value": "test"}
-    )
+    create = client.post("/api/analysis/module_type/", json={"manual": value, "value": "test"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
@@ -141,9 +135,7 @@ def test_create_valid_observable_types(client, value, list_length):
         client.post("/api/observable/type/", json={"value": observable_type})
 
     # Create the analysis module type
-    create = client.post(
-        f"/api/analysis/module_type/", json={"observable_types": value, "value": "test"}
-    )
+    create = client.post("/api/analysis/module_type/", json={"observable_types": value, "value": "test"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
@@ -155,9 +147,7 @@ def test_create_valid_uuid(client):
     uuid_ = str(uuid.uuid4())
 
     # Create the analysis module type
-    create = client.post(
-        f"/api/analysis/module_type/", json={"uuid": uuid_, "value": "test"}
-    )
+    create = client.post("/api/analysis/module_type/", json={"uuid": uuid_, "value": "test"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
@@ -167,7 +157,7 @@ def test_create_valid_uuid(client):
 
 def test_create_valid_value(client):
     # Create the analysis module type
-    create = client.post(f"/api/analysis/module_type/", json={"value": "test"})
+    create = client.post("/api/analysis/module_type/", json={"value": "test"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back

@@ -3,7 +3,9 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from db.database import Base
-from db.schemas.node_threat_node_threat_type_mapping import node_threat_node_threat_type_mapping
+from db.schemas.node_threat_node_threat_type_mapping import (
+    node_threat_node_threat_type_mapping,
+)
 
 
 class NodeThreat(Base):
@@ -13,6 +15,10 @@ class NodeThreat(Base):
 
     description = Column(String)
 
-    types = relationship("NodeThreatType", secondary=node_threat_node_threat_type_mapping, passive_deletes=True)
+    types = relationship(
+        "NodeThreatType",
+        secondary=node_threat_node_threat_type_mapping,
+        passive_deletes=True,
+    )
 
     value = Column(String, nullable=False, unique=True, index=True)

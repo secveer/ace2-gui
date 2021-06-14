@@ -4,7 +4,8 @@ from uuid import UUID
 
 
 class EventRemediationBase(BaseModel):
-    """Represents a remediation that can be applied to an event to denote which tasks were taken to clean up after the attack."""
+    """Represents a remediation that can be applied to an event to denote which tasks were taken to clean up after
+    the attack."""
 
     description: Optional[str] = Field(description="An optional human-readable description of the event remediation")
 

@@ -17,7 +17,9 @@ class User(Node):
 
     roles: List[str] = Field(description="A list of roles assigned to the user")
 
-    timezone: str = Field(description="The timezone that will be used when the user views timestamps in the application")
+    timezone: str = Field(
+        description="The timezone that will be used when the user views timestamps in the application"
+    )
 
     username: str = Field(description="The username used to sign into the application")
 

@@ -6,7 +6,8 @@ from api.models.node_threat_type import NodeThreatTypeRead
 
 
 class NodeThreatBase(BaseModel):
-    """Represents a threat that can be applied to a node to denote things like a family of malware or specific type of attack."""
+    """Represents a threat that can be applied to a node to denote things like a family of malware or specific type
+    of attack."""
 
     description: Optional[str] = Field(description="An optional human-readable description of the threat")
 

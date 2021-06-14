@@ -31,7 +31,10 @@ def test_create_disposition(client):
 def test_create_disposition_with_uuid(client):
     # Create a disposition and specify the UUID it should use
     u = str(uuid.uuid4())
-    create = client.post("/api/alert/disposition/", json={"uuid": u, "rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post(
+        "/api/alert/disposition/",
+        json={"uuid": u, "rank": 1, "value": "FALSE_POSITIVE"},
+    )
     assert create.status_code == status.HTTP_201_CREATED
     assert create.headers["Content-Location"]
 
@@ -68,7 +71,10 @@ def test_create_disposition_invalid_rank(client):
 
 
 def test_create_disposition_invalid_uuid(client):
-    create = client.post("/api/alert/disposition/", json={"uuid": 1, "rank": 1, "value": "FALSE_POSITIVE"})
+    create = client.post(
+        "/api/alert/disposition/",
+        json={"uuid": 1, "rank": 1, "value": "FALSE_POSITIVE"},
+    )
     assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -96,7 +102,7 @@ def test_get_all_dispositions(client):
     # Create some dispositions
     client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
     client.post("/api/alert/disposition/", json={"rank": 2, "value": "IGNORE"})
-    
+
     # Read them back
     get = client.get("/api/alert/disposition/")
     assert get.status_code == status.HTTP_200_OK
@@ -146,7 +152,10 @@ def test_update_disposition_multiple_fields(client):
     create = client.post("/api/alert/disposition/", json={"rank": 1, "value": "FALSE_POSITIVE"})
 
     # Update multiple fields
-    update = client.put(create.headers["Content-Location"], json={"description": "Test", "rank": 2, "value": "UPDATED"})
+    update = client.put(
+        create.headers["Content-Location"],
+        json={"description": "Test", "rank": 2, "value": "UPDATED"},
+    )
     assert update.status_code == status.HTTP_204_NO_CONTENT
     assert update.headers["Content-Location"]
 

@@ -17,9 +17,7 @@ def api_route_create(router: APIRouter, endpoint: Callable):
         responses={
             status.HTTP_201_CREATED: {
                 "headers": {
-                    "Content-Location": {
-                        "description": "The path to retrieve the resource"
-                    },
+                    "Content-Location": {"description": "The path to retrieve the resource"},
                 },
             },
             status.HTTP_409_CONFLICT: {"description": "The resource already exists"},
@@ -66,15 +64,9 @@ def api_route_update(router: APIRouter, endpoint: Callable):
         methods=["PUT"],
         responses={
             status.HTTP_204_NO_CONTENT: {
-                "headers": {
-                    "Content-Location": {
-                        "description": "The path to retrieve the resource"
-                    }
-                },
+                "headers": {"Content-Location": {"description": "The path to retrieve the resource"}},
             },
-            status.HTTP_400_BAD_REQUEST: {
-                "description": "The database returned an IntegrityError"
-            },
+            status.HTTP_400_BAD_REQUEST: {"description": "The database returned an IntegrityError"},
             status.HTTP_404_NOT_FOUND: {"description": "The UUID was not found"},
         },
         status_code=status.HTTP_204_NO_CONTENT,
@@ -92,9 +84,7 @@ def api_route_delete(router: APIRouter, endpoint: Callable):
         endpoint=endpoint,
         methods=["DELETE"],
         responses={
-            status.HTTP_400_BAD_REQUEST: {
-                "description": "Unable to delete the alert queue"
-            },
+            status.HTTP_400_BAD_REQUEST: {"description": "Unable to delete the alert queue"},
         },
         status_code=status.HTTP_204_NO_CONTENT,
     )

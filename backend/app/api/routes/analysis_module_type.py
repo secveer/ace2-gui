@@ -31,7 +31,7 @@ def create_analysis_module_type(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-):    
+):
     # Create the new analysis module type using the data from the request
     new_analysis_module_type = AnalysisModuleType(**analysis_module_type.dict())
 
@@ -68,9 +68,7 @@ def get_analysis_module_type(uuid: UUID, db: Session = Depends(get_db)):
     return crud.read(uuid=uuid, db_table=AnalysisModuleType, db=db)
 
 
-helpers.api_route_read_all(
-    router, get_all_analysis_module_types, List[AnalysisModuleTypeRead]
-)
+helpers.api_route_read_all(router, get_all_analysis_module_types, List[AnalysisModuleTypeRead])
 helpers.api_route_read(router, get_analysis_module_type, AnalysisModuleTypeRead)
 
 
@@ -87,9 +85,7 @@ def update_analysis_module_type(
     db: Session = Depends(get_db),
 ):
     # Read the current analysis module type from the database
-    db_analysis_module_type: AnalysisModuleType = crud.read(
-        uuid=uuid, db_table=AnalysisModuleType, db=db
-    )
+    db_analysis_module_type: AnalysisModuleType = crud.read(uuid=uuid, db_table=AnalysisModuleType, db=db)
 
     # Get the data that was given in the request and use it to update the database object
     update_data = analysis_module_type.dict(exclude_unset=True)
@@ -110,9 +106,7 @@ def update_analysis_module_type(
 
     crud.commit_update(db)
 
-    response.headers["Content-Location"] = request.url_for(
-        "get_analysis_module_type", uuid=uuid
-    )
+    response.headers["Content-Location"] = request.url_for("get_analysis_module_type", uuid=uuid)
 
 
 helpers.api_route_update(router, update_analysis_module_type)

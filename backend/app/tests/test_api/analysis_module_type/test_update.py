@@ -30,14 +30,12 @@ from fastapi import status
     ],
 )
 def test_update_invalid_fields(client, key, value):
-    update = client.put(
-        f"/api/analysis/module_type/{uuid.uuid4()}", json={key: value}
-    )
+    update = client.put(f"/api/analysis/module_type/{uuid.uuid4()}", json={key: value})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_update_invalid_uuid(client):
-    update = client.put(f"/api/analysis/module_type/1", json={"value": "test_type"})
+    update = client.put("/api/analysis/module_type/1", json={"value": "test_type"})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -52,9 +50,7 @@ def test_update_duplicate_value(client):
 
 
 def test_update_nonexistent_uuid(client):
-    update = client.put(
-        f"/api/analysis/module_type/{uuid.uuid4()}", json={"value": "test"}
-    )
+    update = client.put(f"/api/analysis/module_type/{uuid.uuid4()}", json={"value": "test"})
     assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -72,9 +68,7 @@ def test_update_nonexistent_uuid(client):
 )
 def test_update_valid_description(client, value):
     # Create the analysis module type
-    create = client.post(
-        f"/api/analysis/module_type/", json={"description": "initial", "value": "test"}
-    )
+    create = client.post("/api/analysis/module_type/", json={"description": "initial", "value": "test"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
@@ -99,9 +93,7 @@ def test_update_valid_description(client, value):
 )
 def test_update_valid_manual(client, value):
     # Create the analysis module type
-    create = client.post(
-        f"/api/analysis/module_type/", json={"manual": not value, "value": "test"}
-    )
+    create = client.post("/api/analysis/module_type/", json={"manual": not value, "value": "test"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
@@ -133,7 +125,7 @@ def test_update_valid_observable_types(client, value):
 
     # Create the analysis module type
     create = client.post(
-        f"/api/analysis/module_type/",
+        "/api/analysis/module_type/",
         json={"observable_types": initial_observable_types, "value": "test"},
     )
     assert create.status_code == status.HTTP_201_CREATED
@@ -147,9 +139,7 @@ def test_update_valid_observable_types(client, value):
         client.post("/api/observable/type/", json={"value": observable_type})
 
     # Update it
-    update = client.put(
-        create.headers["Content-Location"], json={"observable_types": value}
-    )
+    update = client.put(create.headers["Content-Location"], json={"observable_types": value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back
@@ -166,7 +156,7 @@ def test_update_valid_observable_types(client, value):
 )
 def test_update_valid_value(client, value):
     # Create the analysis module type
-    create = client.post(f"/api/analysis/module_type/", json={"value": "initial"})
+    create = client.post("/api/analysis/module_type/", json={"value": "initial"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back

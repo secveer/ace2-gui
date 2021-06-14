@@ -1,4 +1,13 @@
-from sqlalchemy import func, Boolean, Column, DateTime, ForeignKey, Index, String, UniqueConstraint
+from sqlalchemy import (
+    func,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Index,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -27,8 +36,6 @@ class Observable(Base):
             postgresql_ops={"value": "gin_trgm_ops"},
             postgresql_using="gin",
         ),
-
         Index("type_value", type_uuid, value),
-
         UniqueConstraint("type_uuid", "value", name="type_value_uc"),
     )

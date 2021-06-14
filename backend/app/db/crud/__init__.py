@@ -27,7 +27,7 @@ def create(obj: BaseModel, db_table: DeclarativeMeta, db: Session) -> int:
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"A similiar object already exists",
+            detail="A similiar object already exists",
         )
 
 
@@ -46,9 +46,7 @@ def read(uuid: UUID, db_table: DeclarativeMeta, db: Session):
     """Returns the single object with the given UUID if it exists, otherwise returns None.
     Designed to be called only by the API since it raises an HTTPException."""
 
-    result = (
-        db.execute(select(db_table).where(db_table.uuid == uuid)).scalars().one_or_none()
-    )
+    result = db.execute(select(db_table).where(db_table.uuid == uuid)).scalars().one_or_none()
 
     if result is None:
         raise HTTPException(status_code=404, detail=f"UUID {uuid} does not exist.")
@@ -142,6 +140,7 @@ def delete(uuid: UUID, db_table: DeclarativeMeta, db: Session):
 #
 # COMMIT
 #
+
 
 def _commit(db: Session, status_code: int):
     try:

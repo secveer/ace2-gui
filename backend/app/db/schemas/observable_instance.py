@@ -2,7 +2,9 @@ from sqlalchemy import Column, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from db.schemas.analysis_observable_instance_mapping import analysis_observable_instance_mapping
+from db.schemas.analysis_observable_instance_mapping import (
+    analysis_observable_instance_mapping,
+)
 from db.schemas.helpers import utcnow
 from db.schemas.node import Node
 

@@ -18,7 +18,7 @@ class Alert(Analysis):
     disposition = relationship("AlertDisposition")
 
     disposition_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_disposition.uuid"))
-    
+
     disposition_time = Column(DateTime)
 
     disposition_user_uuid = Column(UUID(as_uuid=True), ForeignKey("user.uuid"))
@@ -51,6 +51,4 @@ class Alert(Analysis):
         "polymorphic_identity": "alert",
     }
 
-    __table_args__ = (
-        Index("event_uuid", event_uuid),
-    )
+    __table_args__ = (Index("event_uuid", event_uuid),)

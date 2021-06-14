@@ -19,7 +19,7 @@ class Node(Base):
     directives = relationship("NodeDirective", secondary=node_directive_mapping)
 
     node_type = Column(String)
-    
+
     tags = relationship("NodeTag", secondary=node_tag_mapping)
 
     threat_actor = relationship("NodeThreatActor")
@@ -28,7 +28,4 @@ class Node(Base):
 
     threats = relationship("NodeThreat", secondary=node_threat_mapping)
 
-    __mapper_args__ = {
-        "polymorphic_identity": "node",
-        "polymorphic_on": node_type
-    }
+    __mapper_args__ = {"polymorphic_identity": "node", "polymorphic_on": node_type}
