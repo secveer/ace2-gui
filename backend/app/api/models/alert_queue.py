@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, StrictStr, validator
 from typing import Optional
 from uuid import UUID
 
@@ -8,9 +8,9 @@ class AlertQueueBase(BaseModel):
 
     uuid: Optional[UUID] = Field(description="The UUID of the alert queue")
 
-    description: Optional[str] = Field(description="An optional human-readable description of the alert queue")
+    description: Optional[StrictStr] = Field(description="An optional human-readable description of the alert queue")
 
-    value: str = Field(description="The value of the alert queue")
+    value: StrictStr = Field(description="The value of the alert queue")
 
 
 class AlertQueueCreate(AlertQueueBase):
@@ -25,7 +25,7 @@ class AlertQueueRead(AlertQueueBase):
 
 
 class AlertQueueUpdate(AlertQueueBase):
-    value: Optional[str] = Field(description="The value of the alert queue")
+    value: Optional[StrictStr] = Field(description="The value of the alert queue")
 
     @validator("value")
     def prevent_none(cls, v):

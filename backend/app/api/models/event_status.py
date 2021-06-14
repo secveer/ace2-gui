@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, StrictStr, validator
 from typing import Optional
 from uuid import UUID
 
@@ -6,11 +6,11 @@ from uuid import UUID
 class EventStatusBase(BaseModel):
     """Represents a status that can be applied to an event (open, closed, etc)."""
 
-    description: Optional[str] = Field(description="An optional human-readable description of the event status")
+    description: Optional[StrictStr] = Field(description="An optional human-readable description of the event status")
 
     uuid: Optional[UUID] = Field(description="The UUID of the event status")
 
-    value: str = Field(description="The value of the event status")
+    value: StrictStr = Field(description="The value of the event status")
 
 
 class EventStatusCreate(EventStatusBase):
@@ -25,7 +25,7 @@ class EventStatusRead(EventStatusBase):
 
 
 class EventStatusUpdate(EventStatusBase):
-    value: Optional[str] = Field(description="The value of the event status")
+    value: Optional[StrictStr] = Field(description="The value of the event status")
 
     @validator("value")
     def prevent_none(cls, v):

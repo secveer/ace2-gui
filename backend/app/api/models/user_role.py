@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, StrictStr, validator
 from typing import Optional
 from uuid import UUID
 
@@ -6,11 +6,11 @@ from uuid import UUID
 class UserRoleBase(BaseModel):
     """Represents a role that can be assigned to a user."""
 
-    description: Optional[str] = Field(description="An optional human-readable description of the role")
+    description: Optional[StrictStr] = Field(description="An optional human-readable description of the role")
 
     uuid: Optional[UUID] = Field(description="The UUID of the role")
 
-    value: str = Field(description="The value of the role")
+    value: StrictStr = Field(description="The value of the role")
 
 
 class UserRoleCreate(UserRoleBase):
@@ -25,7 +25,7 @@ class UserRoleRead(UserRoleBase):
 
 
 class UserRoleUpdate(UserRoleBase):
-    value: Optional[str] = Field(description="The value of the role")
+    value: Optional[StrictStr] = Field(description="The value of the role")
 
     @validator("value")
     def prevent_none(cls, v):

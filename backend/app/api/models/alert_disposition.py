@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, StrictInt, StrictStr, validator
 from typing import Optional
 from uuid import UUID
 
@@ -9,11 +9,11 @@ class AlertDispositionBase(BaseModel):
 
     uuid: Optional[UUID] = Field(description="The UUID of the disposition")
 
-    description: Optional[str] = Field(description="An optional human-readable description of the disposition")
+    description: Optional[StrictStr] = Field(description="An optional human-readable description of the disposition")
 
-    rank: int = Field(description="A numeric value used to sort the dispositions")
+    rank: StrictInt = Field(description="A numeric value used to sort the dispositions")
 
-    value: str = Field(description="The value of the disposition")
+    value: StrictStr = Field(description="The value of the disposition")
 
 
 class AlertDispositionCreate(AlertDispositionBase):
@@ -28,9 +28,9 @@ class AlertDispositionRead(AlertDispositionBase):
 
 
 class AlertDispositionUpdate(AlertDispositionBase):
-    rank: Optional[int] = Field(description="A numeric value used to sort the dispositions")
+    rank: Optional[StrictInt] = Field(description="A numeric value used to sort the dispositions")
 
-    value: Optional[str] = Field(description="The value of the disposition")
+    value: Optional[StrictStr] = Field(description="The value of the disposition")
 
     @validator("rank")
     def prevent_none_rank(cls, v):

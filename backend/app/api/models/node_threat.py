@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, StrictStr, validator
 from typing import List, Optional
 from uuid import UUID
 
@@ -9,13 +9,13 @@ class NodeThreatBase(BaseModel):
     """Represents a threat that can be applied to a node to denote things like a family of malware or specific type
     of attack."""
 
-    description: Optional[str] = Field(description="An optional human-readable description of the threat")
+    description: Optional[StrictStr] = Field(description="An optional human-readable description of the threat")
 
-    types: List[str] = Field(description="A list of types the threat represents")
+    types: List[StrictStr] = Field(description="A list of types the threat represents")
 
     uuid: Optional[UUID] = Field(description="The UUID of the threat")
 
-    value: str = Field(description="The value of the threat")
+    value: StrictStr = Field(description="The value of the threat")
 
     @validator("types")
     def prevent_empty(cls, v):
@@ -37,9 +37,9 @@ class NodeThreatRead(NodeThreatBase):
 
 
 class NodeThreatUpdate(NodeThreatBase):
-    types: Optional[List[str]] = Field(description="A list of types the threat represents")
+    types: Optional[List[StrictStr]] = Field(description="A list of types the threat represents")
 
-    value: Optional[str] = Field(description="The value of the threat")
+    value: Optional[StrictStr] = Field(description="The value of the threat")
 
     @validator("value")
     def prevent_none(cls, v):
