@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, StrictStr, validator
 from typing import Optional
 from uuid import UUID
 
@@ -6,11 +6,13 @@ from uuid import UUID
 class NodeThreatTypeBase(BaseModel):
     """Represents a type that can be applied to a threat (fraud, keylogger, ransomware, etc)."""
 
-    description: Optional[str] = Field(description="An optional human-readable description of the node threat type")
+    description: Optional[StrictStr] = Field(
+        description="An optional human-readable description of the node threat type"
+    )
 
     uuid: Optional[UUID] = Field(description="The UUID of the node threat type")
 
-    value: str = Field(description="The value of the node threat type")
+    value: StrictStr = Field(description="The value of the node threat type")
 
 
 class NodeThreatTypeCreate(NodeThreatTypeBase):
@@ -25,7 +27,7 @@ class NodeThreatTypeRead(NodeThreatTypeBase):
 
 
 class NodeThreatTypeUpdate(NodeThreatTypeBase):
-    value: Optional[str] = Field(description="The value of the node threat type")
+    value: Optional[StrictStr] = Field(description="The value of the node threat type")
 
     @validator("value")
     def prevent_none(cls, v):

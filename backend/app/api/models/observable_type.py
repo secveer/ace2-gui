@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, StrictStr, validator
 from typing import Optional
 from uuid import UUID
 
@@ -6,11 +6,13 @@ from uuid import UUID
 class ObservableTypeBase(BaseModel):
     """Represents a type of observable that the application knows about."""
 
-    description: Optional[str] = Field(description="An optional human-readable description of the observable type")
+    description: Optional[StrictStr] = Field(
+        description="An optional human-readable description of the observable type"
+    )
 
     uuid: Optional[UUID] = Field(description="The UUID of the observable type")
 
-    value: str = Field(description="The value of the observable type")
+    value: StrictStr = Field(description="The value of the observable type")
 
 
 class ObservableTypeCreate(ObservableTypeBase):
@@ -25,7 +27,7 @@ class ObservableTypeRead(ObservableTypeBase):
 
 
 class ObservableTypeUpdate(ObservableTypeBase):
-    value: Optional[str] = Field(description="The value of the observable type")
+    value: Optional[StrictStr] = Field(description="The value of the observable type")
 
     @validator("value")
     def prevent_none(cls, v):
