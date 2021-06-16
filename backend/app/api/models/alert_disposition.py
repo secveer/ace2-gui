@@ -15,6 +15,17 @@ class AlertDispositionBase(BaseModel):
 
     value: StrictStr = Field(description="The value of the disposition")
 
+    @validator("description", "value")
+    def prevent_empty_string(cls, v):
+        if isinstance(v, str):
+            assert 0 < len(v), "Field can not be an empty string"
+        return v
+
+    @validator("rank", "uuid", "value")
+    def prevent_none(cls, v):
+        assert v is not None, "Field can not be None"
+        return v
+
 
 class AlertDispositionCreate(AlertDispositionBase):
     pass
@@ -31,13 +42,3 @@ class AlertDispositionUpdate(AlertDispositionBase):
     rank: Optional[StrictInt] = Field(description="A numeric value used to sort the dispositions")
 
     value: Optional[StrictStr] = Field(description="The value of the disposition")
-
-    @validator("rank")
-    def prevent_none_rank(cls, v):
-        assert v is not None, "rank may not be None"
-        return v
-
-    @validator("value")
-    def prevent_none(cls, v):
-        assert v is not None, "value may not be None"
-        return v
