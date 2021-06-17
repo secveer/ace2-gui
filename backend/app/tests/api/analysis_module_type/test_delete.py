@@ -15,13 +15,13 @@ for this.
 #
 
 
-def test_delete_invalid_analysis_module_type(client):
-    delete = client.delete("/api/observable/type/1")
+def test_delete_invalid_uuid(client):
+    delete = client.delete("/api/analysis/module_type/1")
     assert delete.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_delete_nonexistent_analysis_module_type(client):
-    delete = client.delete(f"/api/observable/type/{uuid.uuid4()}")
+def test_delete_nonexistent_uuid(client):
+    delete = client.delete(f"/api/analysis/module_type/{uuid.uuid4()}")
     assert delete.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -30,7 +30,7 @@ def test_delete_nonexistent_analysis_module_type(client):
 #
 
 
-def test_delete_analysis_module_type(client):
+def test_delete(client):
     # Create an observable type
     type_create = client.post("/api/observable/type/", json={"value": "test_type"})
 
@@ -40,6 +40,10 @@ def test_delete_analysis_module_type(client):
         json={"observable_types": ["test_type"], "value": "initial"},
     )
     assert create.status_code == status.HTTP_201_CREATED
+
+    # Read it back
+    get = client.get(create.headers["Content-Location"])
+    assert get.status_code == status.HTTP_200_OK
 
     # Delete it
     delete = client.delete(create.headers["Content-Location"])

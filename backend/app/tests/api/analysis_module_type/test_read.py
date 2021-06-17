@@ -8,12 +8,12 @@ from fastapi import status
 #
 
 
-def test_get_invalid_analysis_module_type(client):
+def test_get_invalid_uuid(client):
     get = client.get("/api/analysis/module_type/1")
     assert get.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_get_nonexistent_analysis_module_type(client):
+def test_get_nonexistent_uuid(client):
     get = client.get(f"/api/analysis/module_type/{uuid.uuid4()}")
     assert get.status_code == status.HTTP_404_NOT_FOUND
 
@@ -23,8 +23,8 @@ def test_get_nonexistent_analysis_module_type(client):
 #
 
 
-def test_get_all_analysis_module_types(client):
-    # Create some analysis module types
+def test_get_all(client):
+    # Create some objects
     client.post("/api/analysis/module_type/", json={"value": "test"})
     client.post("/api/analysis/module_type/", json={"value": "test2"})
 
@@ -34,7 +34,7 @@ def test_get_all_analysis_module_types(client):
     assert len(get.json()) == 2
 
 
-def test_get_all_analysis_module_types_empty(client):
+def test_get_all_empty(client):
     get = client.get("/api/analysis/module_type/")
     assert get.status_code == status.HTTP_200_OK
     assert get.json() == []

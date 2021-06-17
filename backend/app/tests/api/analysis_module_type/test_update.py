@@ -39,13 +39,22 @@ def test_update_invalid_uuid(client):
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_update_duplicate_value(client):
-    # Create some analysis module types
-    client.post("/api/analysis/module_type/", json={"value": "default"})
-    create = client.post("/api/analysis/module_type/", json={"value": "test_type"})
+@pytest.mark.parametrize(
+    "key",
+    [
+        ("value"),
+    ],
+)
+def test_update_duplicate_unique_fields(client, key):
+    # Create some objects
+    create1_json = {"value": "test"}
+    client.post("/api/analysis/module_type/", json=create1_json)
 
-    # Ensure you cannot update an analysis module type value to one that already exists
-    update = client.put(create.headers["Content-Location"], json={"value": "default"})
+    create2_json = {"value": "test2"}
+    create2 = client.post("/api/analysis/module_type/", json=create2_json)
+
+    # Ensure you cannot update a unique field to a value that already exists
+    update = client.put(create2.headers["Content-Location"], json={key: create1_json[key]})
     assert update.status_code == status.HTTP_400_BAD_REQUEST
 
 
@@ -57,56 +66,6 @@ def test_update_nonexistent_uuid(client):
 #
 # VALID TESTS
 #
-
-
-@pytest.mark.parametrize(
-    "value",
-    [
-        (None),
-        ("Test"),
-    ],
-)
-def test_update_valid_description(client, value):
-    # Create the analysis module type
-    create = client.post("/api/analysis/module_type/", json={"description": "initial", "value": "test"})
-    assert create.status_code == status.HTTP_201_CREATED
-
-    # Read it back
-    get = client.get(create.headers["Content-Location"])
-    assert get.json()["description"] == "initial"
-
-    # Update it
-    update = client.put(create.headers["Content-Location"], json={"description": value})
-    assert update.status_code == status.HTTP_204_NO_CONTENT
-
-    # Read it back
-    get = client.get(create.headers["Content-Location"])
-    assert get.json()["description"] == value
-
-
-@pytest.mark.parametrize(
-    "value",
-    [
-        (True),
-        (False),
-    ],
-)
-def test_update_valid_manual(client, value):
-    # Create the analysis module type
-    create = client.post("/api/analysis/module_type/", json={"manual": not value, "value": "test"})
-    assert create.status_code == status.HTTP_201_CREATED
-
-    # Read it back
-    get = client.get(create.headers["Content-Location"])
-    assert get.json()["manual"] is not value
-
-    # Update it
-    update = client.put(create.headers["Content-Location"], json={"manual": value})
-    assert update.status_code == status.HTTP_204_NO_CONTENT
-
-    # Read it back
-    get = client.get(create.headers["Content-Location"])
-    assert get.json()["manual"] is value
 
 
 @pytest.mark.parametrize(
@@ -148,25 +107,31 @@ def test_update_valid_observable_types(client, value):
 
 
 @pytest.mark.parametrize(
-    "value",
+    "key,initial_value,updated_value",
     [
-        ("initial"),
-        ("new_value"),
+        ("description", None, "test"),
+        ("description", "test", "test"),
+        ("manual", True, False),
+        ("manual", False, True),
+        ("value", "test", "test2"),
+        ("value", "test", "test"),
     ],
 )
-def test_update_valid_value(client, value):
-    # Create the analysis module type
-    create = client.post("/api/analysis/module_type/", json={"value": "initial"})
+def test_update(client, key, initial_value, updated_value):
+    # Create the object
+    create_json = {"value": "test"}
+    create_json[key] = initial_value
+    create = client.post("/api/analysis/module_type/", json=create_json)
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
     get = client.get(create.headers["Content-Location"])
-    assert get.json()["value"] == "initial"
+    assert get.json()[key] == initial_value
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"value": value})
+    update = client.put(create.headers["Content-Location"], json={key: updated_value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back
     get = client.get(create.headers["Content-Location"])
-    assert get.json()["value"] == value
+    assert get.json()[key] == updated_value
