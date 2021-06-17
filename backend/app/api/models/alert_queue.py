@@ -12,6 +12,17 @@ class AlertQueueBase(BaseModel):
 
     value: StrictStr = Field(description="The value of the alert queue")
 
+    @validator("description", "value")
+    def prevent_empty_string(cls, v):
+        if isinstance(v, str):
+            assert 0 < len(v), "Field can not be an empty string"
+        return v
+
+    @validator("uuid", "value")
+    def prevent_none(cls, v):
+        assert v is not None, "Field can not be None"
+        return v
+
 
 class AlertQueueCreate(AlertQueueBase):
     pass
@@ -26,8 +37,3 @@ class AlertQueueRead(AlertQueueBase):
 
 class AlertQueueUpdate(AlertQueueBase):
     value: Optional[StrictStr] = Field(description="The value of the alert queue")
-
-    @validator("value")
-    def prevent_none(cls, v):
-        assert v is not None, "value may not be None"
-        return v
