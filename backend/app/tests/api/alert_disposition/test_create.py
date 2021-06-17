@@ -97,15 +97,3 @@ def test_create_valid_required_fields(client):
     get = client.get(create.headers["Content-Location"])
     assert get.json()["rank"] == 1
     assert get.json()["value"] == "test"
-
-
-def test_create_with_uuid(client):
-    # Create an object and specify the UUID it should use
-    u = str(uuid.uuid4())
-    create = client.post("/api/alert/disposition/", json={"uuid": u, "rank": 1, "value": "test"})
-    assert create.status_code == status.HTTP_201_CREATED
-
-    # Read it back using the UUID
-    get = client.get(f"/api/alert/disposition/{u}")
-    assert get.status_code == status.HTTP_200_OK
-    assert get.json()["uuid"] == u
