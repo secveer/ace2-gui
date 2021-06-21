@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field, StrictStr, validator
+from pydantic import BaseModel, conlist, constr, Field
 from typing import List, Optional
 from uuid import UUID
 
+from api.models import validators
 from api.models.node_threat_type import NodeThreatTypeRead
 
 
@@ -9,18 +10,19 @@ class NodeThreatBase(BaseModel):
     """Represents a threat that can be applied to a node to denote things like a family of malware or specific type
     of attack."""
 
-    description: Optional[StrictStr] = Field(description="An optional human-readable description of the threat")
+    description: Optional[constr(strict=True, min_length=1)] = Field(
+        description="An optional human-readable description of the threat"
+    )
 
-    types: List[StrictStr] = Field(description="A list of types the threat represents")
+    types: conlist(constr(strict=True, min_length=1), min_items=1) = Field(
+        description="A list of types the threat represents"
+    )
 
     uuid: Optional[UUID] = Field(description="The UUID of the threat")
 
-    value: StrictStr = Field(description="The value of the threat")
+    value: constr(strict=True, min_length=1) = Field(description="The value of the threat")
 
-    @validator("types")
-    def prevent_empty(cls, v):
-        assert len(v), "types may not be empty"
-        return v
+    _prevent_none: classmethod = validators.prevent_none("types", "uuid", "value")
 
 
 class NodeThreatCreate(NodeThreatBase):
@@ -37,11 +39,8 @@ class NodeThreatRead(NodeThreatBase):
 
 
 class NodeThreatUpdate(NodeThreatBase):
-    types: Optional[List[StrictStr]] = Field(description="A list of types the threat represents")
+    types: Optional[conlist(constr(strict=True, min_length=1), min_items=1)] = Field(
+        description="A list of types the threat represents"
+    )
 
-    value: Optional[StrictStr] = Field(description="The value of the threat")
-
-    @validator("value")
-    def prevent_none(cls, v):
-        assert v is not None, "value may not be None"
-        return v
+    value: Optional[constr(strict=True, min_length=1)] = Field(description="The value of the threat")
