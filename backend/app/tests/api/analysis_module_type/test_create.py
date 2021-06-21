@@ -49,7 +49,6 @@ def test_create_invalid_fields(client, key, value):
 )
 def test_create_duplicate_unique_fields(client, key):
     # Create an object
-    # Create an object
     create1_json = {"value": "test"}
     client.post("/api/analysis/module_type/", json=create1_json)
 
