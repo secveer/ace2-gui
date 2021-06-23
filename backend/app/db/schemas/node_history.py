@@ -23,8 +23,6 @@ class NodeHistory(Base):
 
     before = Column(JSONB)
 
-    feedback = relationship("NodeHistoryFeedback")
-
     node_uuid = Column(UUID(as_uuid=True), ForeignKey("node.uuid"))
 
     node = relationship("Node", foreign_keys=[node_uuid])

@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: ee3f55fdc921
+Revision ID: 617c2b93b426
 Revises: 
-Create Date: 2021-06-23 20:00:15.442344
+Create Date: 2021-06-23 20:36:35.683303
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'ee3f55fdc921'
+revision = '617c2b93b426'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -97,15 +97,6 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_index(op.f('ix_event_vector_value'), 'event_vector', ['value'], unique=True)
-    op.create_table('feedback_type',
-    sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.Column('icon', sa.String(), nullable=False),
-    sa.Column('value', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('uuid'),
-    sa.UniqueConstraint('icon')
-    )
-    op.create_index(op.f('ix_feedback_type_value'), 'feedback_type', ['value'], unique=True)
     op.create_table('node_directive',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
@@ -356,17 +347,6 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('event_uuid', 'vector_uuid')
     )
     op.create_index(op.f('ix_event_vector_mapping_event_uuid'), 'event_vector_mapping', ['event_uuid'], unique=False)
-    op.create_table('node_history_feedback',
-    sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
-    sa.Column('feedback_type_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('node_history_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('timestamp', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=True),
-    sa.Column('user_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.ForeignKeyConstraint(['feedback_type_uuid'], ['feedback_type.uuid'], ),
-    sa.ForeignKeyConstraint(['node_history_uuid'], ['node_history.uuid'], ),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.uuid'], ),
-    sa.PrimaryKeyConstraint('uuid')
-    )
     op.create_table('observable_instance',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('alert_uuid', postgresql.UUID(as_uuid=True), nullable=True),
@@ -394,7 +374,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_analysis_observable_instance_mapping_analysis_uuid'), table_name='analysis_observable_instance_mapping')
     op.drop_table('analysis_observable_instance_mapping')
     op.drop_table('observable_instance')
-    op.drop_table('node_history_feedback')
     op.drop_index(op.f('ix_event_vector_mapping_event_uuid'), table_name='event_vector_mapping')
     op.drop_table('event_vector_mapping')
     op.drop_index(op.f('ix_event_remediation_mapping_event_uuid'), table_name='event_remediation_mapping')
@@ -441,8 +420,6 @@ def downgrade() -> None:
     op.drop_table('node_history_action')
     op.drop_index(op.f('ix_node_directive_value'), table_name='node_directive')
     op.drop_table('node_directive')
-    op.drop_index(op.f('ix_feedback_type_value'), table_name='feedback_type')
-    op.drop_table('feedback_type')
     op.drop_index(op.f('ix_event_vector_value'), table_name='event_vector')
     op.drop_table('event_vector')
     op.drop_index(op.f('ix_event_type_value'), table_name='event_type')

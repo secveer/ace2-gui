@@ -22,13 +22,11 @@ from db.schemas.event_status import EventStatus
 from db.schemas.event_type import EventType
 from db.schemas.event_vector import EventVector
 from db.schemas.event_vector_mapping import event_vector_mapping
-from db.schemas.feedback_type import FeedbackType
 from db.schemas.node import Node
 from db.schemas.node_directive import NodeDirective
 from db.schemas.node_directive_mapping import node_directive_mapping
 from db.schemas.node_history import NodeHistory
 from db.schemas.node_history_action import NodeHistoryAction
-from db.schemas.node_history_feedback import NodeHistoryFeedback
 from db.schemas.node_tag import NodeTag
 from db.schemas.node_tag_mapping import node_tag_mapping
 from db.schemas.node_threat import NodeThreat
