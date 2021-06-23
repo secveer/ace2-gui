@@ -15,12 +15,12 @@ are in place in order to account for this.
 
 
 def test_delete_invalid_uuid(client):
-    delete = client.delete("/api/alert/queue/1")
+    delete = client.delete("/api/event/vector/1")
     assert delete.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_delete_nonexistent_uuid(client):
-    delete = client.delete(f"/api/alert/queue/{uuid.uuid4()}")
+    delete = client.delete(f"/api/event/vector/{uuid.uuid4()}")
     assert delete.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -31,7 +31,7 @@ def test_delete_nonexistent_uuid(client):
 
 def test_delete(client):
     # Create the object
-    create = client.post("/api/alert/queue/", json={"value": "test"})
+    create = client.post("/api/event/vector/", json={"value": "test"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back

@@ -4,9 +4,8 @@ from fastapi import status
 
 
 """
-NOTE: There are no tests for the foreign key constraints, namely deleting an AlertDisposition that is tied to an
-Alert. The DELETE endpoint will need to be updated once the Alert endpoints are in place in order to account
-for this.
+NOTE: There are no tests for the foreign key constraints. The DELETE endpoint will need to be updated once the endpoints
+are in place in order to account for this.
 """
 
 
