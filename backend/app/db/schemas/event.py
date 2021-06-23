@@ -28,6 +28,10 @@ class Event(Node):
 
     name = Column(String)
 
+    owner_uuid = Column(UUID(as_uuid=True), ForeignKey("user.uuid"), nullable=True)
+
+    owner = relationship("User", foreign_keys=[owner_uuid])
+
     ownership_time = Column(DateTime)
 
     prevention_tools = relationship("EventPreventionTool", secondary=event_prevention_tool_mapping)

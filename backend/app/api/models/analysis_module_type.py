@@ -1,14 +1,15 @@
-from pydantic import BaseModel, Field, StrictStr, StrictBool, validator
+from pydantic import BaseModel, Field, StrictBool
 from typing import List, Optional
 from uuid import UUID
 
+from api.models import type_str, validators
 from api.models.observable_type import ObservableTypeRead
 
 
 class AnalysisModuleTypeBase(BaseModel):
     """Represents a type of analysis module registered with the core."""
 
-    description: Optional[StrictStr] = Field(
+    description: Optional[type_str] = Field(
         description="An optional human-readable description of the analysis module type"
     )
 
@@ -21,29 +22,15 @@ class AnalysisModuleTypeBase(BaseModel):
 
     # The default_factory parameter allows you to create an analysis module type without specifying the observable
     # types. This will automatically fill in the field with an empty list in that case.
-    observable_types: Optional[List[StrictStr]] = Field(
+    observable_types: Optional[List[type_str]] = Field(
         default_factory=list,
         description="""A list of observable types this analysis module type knows how to analyze.
         An empty list means it supports ALL observable types.""",
     )
 
-    value: StrictStr = Field(description="The value of the analysis module type")
+    value: type_str = Field(description="The value of the analysis module type")
 
-    @validator("description", "value")
-    def prevent_empty_string(cls, v):
-        if isinstance(v, str):
-            assert 0 < len(v), "Field can not be an empty string"
-        return v
-
-    @validator("observable_types")
-    def prevent_empty_string_in_list(cls, v):
-        assert all(0 < len(x) for x in v if isinstance(x, str)), "List can not have an empty string"
-        return v
-
-    @validator("manual", "observable_types", "uuid", "value")
-    def prevent_none(cls, v):
-        assert v is not None, "Field can not be None"
-        return v
+    _prevent_none: classmethod = validators.prevent_none("manual", "observable_types", "uuid", "value")
 
 
 class AnalysisModuleTypeCreate(AnalysisModuleTypeBase):
@@ -63,4 +50,4 @@ class AnalysisModuleTypeRead(AnalysisModuleTypeBase):
 
 
 class AnalysisModuleTypeUpdate(AnalysisModuleTypeBase):
-    value: Optional[StrictStr] = Field(description="The value of the analysis module type")
+    value: Optional[type_str] = Field(description="The value of the analysis module type")

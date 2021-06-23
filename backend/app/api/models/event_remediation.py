@@ -1,19 +1,23 @@
-from pydantic import BaseModel, Field, StrictStr, validator
+from pydantic import BaseModel, Field
 from typing import Optional
 from uuid import UUID
+
+from api.models import type_str, validators
 
 
 class EventRemediationBase(BaseModel):
     """Represents a remediation that can be applied to an event to denote which tasks were taken to clean up after
     the attack."""
 
-    description: Optional[StrictStr] = Field(
+    description: Optional[type_str] = Field(
         description="An optional human-readable description of the event remediation"
     )
 
     uuid: Optional[UUID] = Field(description="The UUID of the event remediation")
 
-    value: StrictStr = Field(description="The value of the event remediation")
+    value: type_str = Field(description="The value of the event remediation")
+
+    _prevent_none: classmethod = validators.prevent_none("uuid", "value")
 
 
 class EventRemediationCreate(EventRemediationBase):
@@ -28,9 +32,4 @@ class EventRemediationRead(EventRemediationBase):
 
 
 class EventRemediationUpdate(EventRemediationBase):
-    value: Optional[StrictStr] = Field(description="The value of the event remediation")
-
-    @validator("value")
-    def prevent_none(cls, v):
-        assert v is not None, "value may not be None"
-        return v
+    value: Optional[type_str] = Field(description="The value of the event remediation")

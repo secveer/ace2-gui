@@ -77,25 +77,22 @@ def update_node_threat(
     db: Session = Depends(get_db),
 ):
     # Read the current node threat from the database
-    db_node_threat = crud.read(uuid=uuid, db_table=NodeThreat, db=db)
+    db_node_threat: NodeThreat = crud.read(uuid=uuid, db_table=NodeThreat, db=db)
 
-    # Update the description if one was given
-    if node_threat.description:
-        db_node_threat.description = node_threat.description
+    # Get the data that was given in the request and use it to update the database object
+    update_data = node_threat.dict(exclude_unset=True)
 
-    # Update the value if one was given
-    if node_threat.value:
-        db_node_threat.value = node_threat.value
+    if "description" in update_data:
+        db_node_threat.description = update_data["description"]
 
-    # Update the types if they were given
-    if node_threat.types:
-        # Make sure that all the threat types that were given actually exist
-        db_threat_types = crud.read_by_values(values=node_threat.types, db_table=NodeThreatType, db=db)
+    if "value" in update_data:
+        db_node_threat.value = update_data["value"]
 
-        # Update the types on the node threat
-        db_node_threat.types = db_threat_types
+    if "types" in update_data:
+        db_node_threat.types = crud.read_by_values(
+            values=update_data["types"], db_table=NodeThreatType, db=db
+        )
 
-    # Save the updated node threat to the database
     crud.commit_update(db)
 
     response.headers["Content-Location"] = request.url_for("get_node_threat", uuid=uuid)

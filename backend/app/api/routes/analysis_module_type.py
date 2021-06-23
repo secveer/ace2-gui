@@ -101,7 +101,7 @@ def update_analysis_module_type(
 
     if "observable_types" in update_data:
         db_analysis_module_type.observable_types = crud.read_by_values(
-            values=analysis_module_type.observable_types, db_table=ObservableType, db=db
+            values=update_data["observable_types"], db_table=ObservableType, db=db
         )
 
     crud.commit_update(db)
