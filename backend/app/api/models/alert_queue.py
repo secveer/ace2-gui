@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field, StrictStr, validator
+from pydantic import BaseModel, Field
 from typing import Optional
 from uuid import UUID
+
+from api.models import type_str, validators
 
 
 class AlertQueueBase(BaseModel):
@@ -8,20 +10,11 @@ class AlertQueueBase(BaseModel):
 
     uuid: Optional[UUID] = Field(description="The UUID of the alert queue")
 
-    description: Optional[StrictStr] = Field(description="An optional human-readable description of the alert queue")
+    description: Optional[type_str] = Field(description="An optional human-readable description of the alert queue")
 
-    value: StrictStr = Field(description="The value of the alert queue")
+    value: type_str = Field(description="The value of the alert queue")
 
-    @validator("description", "value")
-    def prevent_empty_string(cls, v):
-        if isinstance(v, str):
-            assert 0 < len(v), "Field can not be an empty string"
-        return v
-
-    @validator("uuid", "value")
-    def prevent_none(cls, v):
-        assert v is not None, "Field can not be None"
-        return v
+    _prevent_none: classmethod = validators.prevent_none("uuid", "value")
 
 
 class AlertQueueCreate(AlertQueueBase):
@@ -36,4 +29,4 @@ class AlertQueueRead(AlertQueueBase):
 
 
 class AlertQueueUpdate(AlertQueueBase):
-    value: Optional[StrictStr] = Field(description="The value of the alert queue")
+    value: Optional[type_str] = Field(description="The value of the alert queue")

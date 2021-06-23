@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field, StrictInt, StrictStr, validator
+from pydantic import BaseModel, Field
 from typing import Optional
 from uuid import UUID
+
+from api.models import type_int, type_str, validators
 
 
 class AlertDispositionBase(BaseModel):
@@ -9,22 +11,13 @@ class AlertDispositionBase(BaseModel):
 
     uuid: Optional[UUID] = Field(description="The UUID of the disposition")
 
-    description: Optional[StrictStr] = Field(description="An optional human-readable description of the disposition")
+    description: Optional[type_str] = Field(description="An optional human-readable description of the disposition")
 
-    rank: StrictInt = Field(description="A numeric value used to sort the dispositions")
+    rank: type_int = Field(description="An integer value used to sort the dispositions")
 
-    value: StrictStr = Field(description="The value of the disposition")
+    value: type_str = Field(description="The value of the disposition")
 
-    @validator("description", "value")
-    def prevent_empty_string(cls, v):
-        if isinstance(v, str):
-            assert 0 < len(v), "Field can not be an empty string"
-        return v
-
-    @validator("rank", "uuid", "value")
-    def prevent_none(cls, v):
-        assert v is not None, "Field can not be None"
-        return v
+    _prevent_none: classmethod = validators.prevent_none("rank", "uuid", "value")
 
 
 class AlertDispositionCreate(AlertDispositionBase):
@@ -39,6 +32,6 @@ class AlertDispositionRead(AlertDispositionBase):
 
 
 class AlertDispositionUpdate(AlertDispositionBase):
-    rank: Optional[StrictInt] = Field(description="A numeric value used to sort the dispositions")
+    rank: Optional[type_int] = Field(description="An integer value used to sort the dispositions")
 
-    value: Optional[StrictStr] = Field(description="The value of the disposition")
+    value: Optional[type_str] = Field(description="The value of the disposition")
