@@ -33,12 +33,13 @@ def test_create_invalid_fields(client, key, value):
 @pytest.mark.parametrize(
     "key",
     [
+        ("uuid"),
         ("value"),
     ],
 )
 def test_create_duplicate_unique_fields(client, key):
     # Create an object
-    create1_json = {"value": "test"}
+    create1_json = {"uuid": str(uuid.uuid4()), "value": "test"}
     client.post("/api/event/risk_level/", json=create1_json)
 
     # Ensure you cannot create another object with the same unique field value

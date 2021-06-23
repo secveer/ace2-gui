@@ -37,12 +37,13 @@ def test_create_invalid_fields(client, key, value):
     "key",
     [
         ("rank"),
+        ("uuid"),
         ("value"),
     ],
 )
 def test_create_duplicate_unique_fields(client, key):
     # Create an object
-    create1_json = {"rank": 1, "value": "test"}
+    create1_json = {"rank": 1, "uuid": str(uuid.uuid4()), "value": "test"}
     client.post("/api/alert/disposition/", json=create1_json)
 
     # Ensure you cannot create another object with the same unique field value
