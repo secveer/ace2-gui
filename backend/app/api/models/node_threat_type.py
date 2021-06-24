@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from api.models import type_str, validators
 
@@ -12,11 +12,9 @@ class NodeThreatTypeBase(BaseModel):
         description="An optional human-readable description of the node threat type"
     )
 
-    uuid: Optional[UUID] = Field(description="The UUID of the node threat type")
+    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the node threat type")
 
     value: type_str = Field(description="The value of the node threat type")
-
-    _prevent_none: classmethod = validators.prevent_none("uuid", "value")
 
 
 class NodeThreatTypeCreate(NodeThreatTypeBase):
@@ -24,11 +22,11 @@ class NodeThreatTypeCreate(NodeThreatTypeBase):
 
 
 class NodeThreatTypeRead(NodeThreatTypeBase):
-    uuid: UUID = Field(description="The UUID of the node threat type")
-
     class Config:
         orm_mode = True
 
 
 class NodeThreatTypeUpdate(NodeThreatTypeBase):
     value: Optional[type_str] = Field(description="The value of the node threat type")
+
+    _prevent_none: classmethod = validators.prevent_none("value")
