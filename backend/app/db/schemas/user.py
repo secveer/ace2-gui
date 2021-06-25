@@ -13,23 +13,21 @@ class User(Node):
 
     default_alert_queue = relationship("AlertQueue")
 
-    default_alert_queue_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_queue.uuid"))
+    default_alert_queue_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_queue.uuid"), nullable=False)
 
-    display_name = Column(String)
+    display_name = Column(String, nullable=False)
 
-    email = Column(String, unique=True)
+    email = Column(String, unique=True, nullable=False)
 
-    enabled = Column(Boolean, default=True)
+    enabled = Column(Boolean, default=True, nullable=False)
 
-    password = Column(String)
+    password = Column(String, nullable=False)
 
     roles = relationship("UserRole", secondary=user_role_mapping)
 
-    salt = Column(String)
+    timezone = Column(String, default="UTC", nullable=False)
 
-    timezone = Column(String, default="UTC")
-
-    username = Column(String, unique=True)
+    username = Column(String, unique=True, nullable=False)
 
     __mapper_args__ = {
         "polymorphic_identity": "user",

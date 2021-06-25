@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: fff14f7fb969
+Revision ID: fb94039d7a4d
 Revises: 
-Create Date: 2021-06-24 19:00:17.634553
+Create Date: 2021-06-25 15:53:35.301388
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'fff14f7fb969'
+revision = 'fb94039d7a4d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -228,14 +228,13 @@ def upgrade() -> None:
     op.create_index(op.f('ix_node_threat_mapping_node_uuid'), 'node_threat_mapping', ['node_uuid'], unique=False)
     op.create_table('user',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('default_alert_queue_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('display_name', sa.String(), nullable=True),
-    sa.Column('email', sa.String(), nullable=True),
-    sa.Column('enabled', sa.Boolean(), nullable=True),
-    sa.Column('password', sa.String(), nullable=True),
-    sa.Column('salt', sa.String(), nullable=True),
-    sa.Column('timezone', sa.String(), nullable=True),
-    sa.Column('username', sa.String(), nullable=True),
+    sa.Column('default_alert_queue_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('display_name', sa.String(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('enabled', sa.Boolean(), nullable=False),
+    sa.Column('password', sa.String(), nullable=False),
+    sa.Column('timezone', sa.String(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['default_alert_queue_uuid'], ['alert_queue.uuid'], ),
     sa.ForeignKeyConstraint(['uuid'], ['node.uuid'], ),
     sa.PrimaryKeyConstraint('uuid'),
