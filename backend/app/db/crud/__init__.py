@@ -4,6 +4,7 @@ from sqlalchemy import delete as sql_delete, select, update as sql_update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta
+from sqlalchemy.orm.exc import NoResultFound
 from typing import List
 from uuid import UUID
 
@@ -13,22 +14,14 @@ from uuid import UUID
 #
 
 
-def create(obj: BaseModel, db_table: DeclarativeMeta, db: Session) -> int:
+def create(obj: BaseModel, db_table: DeclarativeMeta, db: Session) -> UUID:
     """Creates a new object in the given database table. Returns the new object's UUID.
     Designed to be called only by the API since it raises an HTTPException."""
 
     new_obj = db_table(**obj.dict())
     db.add(new_obj)
-
-    try:
-        db.commit()
-        return new_obj.uuid
-    except IntegrityError:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="A similiar object already exists",
-        )
+    commit(db)
+    return new_obj.uuid
 
 
 #
@@ -52,6 +45,21 @@ def read(uuid: UUID, db_table: DeclarativeMeta, db: Session):
         raise HTTPException(status_code=404, detail=f"UUID {uuid} does not exist.")
 
     return result
+
+
+def read_by_value(value: str, db_table: DeclarativeMeta, db: Session):
+    """Returns an object from the given database table with the given value.
+    Designed to be called only by the API since it raises an HTTPException."""
+
+    try:
+        return db.execute(select(db_table).where(db_table.value == value)).scalars().one()
+    # MultipleResultsFound exception is not caught since each database table that has a
+    # value column should be configured to have that column be unique.
+    except NoResultFound:
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"The {value} {db_table} does not exist",
+            )
 
 
 def read_by_values(values: List[str], db_table: DeclarativeMeta, db: Session):
@@ -106,7 +114,7 @@ def update(uuid: UUID, obj: BaseModel, db_table: DeclarativeMeta, db: Session):
     except IntegrityError:
         db.rollback()
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_409_CONFLICT,
             detail=f"Got an IntegrityError while updating UUID {uuid}.",
         )
 
@@ -133,7 +141,7 @@ def delete(uuid: UUID, db_table: DeclarativeMeta, db: Session):
     if result.rowcount != 1:
         raise HTTPException(
             status_code=400,
-            detail=f"Unable to delete {db_table} UUID {uuid}.",
+            detail=f"Unable to delete {db_table} UUID {uuid} due to a foreign key constraint.",
         )
 
 
@@ -142,27 +150,12 @@ def delete(uuid: UUID, db_table: DeclarativeMeta, db: Session):
 #
 
 
-def _commit(db: Session, status_code: int):
+def commit(db: Session):
     try:
         db.commit()
     except IntegrityError as e:
         db.rollback()
         raise HTTPException(
-            status_code=status_code,
+            status_code=status.HTTP_409_CONFLICT,
             detail=f"Got an IntegrityError while committing the database session: {e}",
         )
-
-
-def commit_create(db: Session):
-    """Tries to commit any create changes made in the session.
-    Designed to be called only by the API since it raises an HTTPException."""
-
-    _commit(db=db, status_code=status.HTTP_409_CONFLICT)
-
-
-def commit_update(db: Session):
-    """Tries to commit any update changes made in the session. Raises an HTTP 400 error if the database
-    raises an IntegrityError because it could be due to invalid or conflicting data.
-    Designed to be called only by the API since it raises an HTTPException."""
-
-    _commit(db=db, status_code=status.HTTP_400_BAD_REQUEST)

@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 617c2b93b426
+Revision ID: 6eeaf9dad692
 Revises: 
-Create Date: 2021-06-23 20:36:35.683303
+Create Date: 2021-06-25 16:23:00.778948
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = '617c2b93b426'
+revision = '6eeaf9dad692'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -228,19 +228,16 @@ def upgrade() -> None:
     op.create_index(op.f('ix_node_threat_mapping_node_uuid'), 'node_threat_mapping', ['node_uuid'], unique=False)
     op.create_table('user',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('api_key', sa.String(), nullable=True),
-    sa.Column('default_queue_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('display_name', sa.String(), nullable=True),
-    sa.Column('email', sa.String(), nullable=True),
-    sa.Column('enabled', sa.Boolean(), nullable=True),
-    sa.Column('password', sa.String(), nullable=True),
-    sa.Column('salt', sa.String(), nullable=True),
-    sa.Column('timezone', sa.String(), nullable=True),
-    sa.Column('username', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['default_queue_uuid'], ['alert_queue.uuid'], ),
+    sa.Column('default_alert_queue_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('display_name', sa.String(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('enabled', sa.Boolean(), nullable=False),
+    sa.Column('password', sa.String(), nullable=False),
+    sa.Column('timezone', sa.String(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['default_alert_queue_uuid'], ['alert_queue.uuid'], ),
     sa.ForeignKeyConstraint(['uuid'], ['node.uuid'], ),
     sa.PrimaryKeyConstraint('uuid'),
-    sa.UniqueConstraint('api_key'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
     )
@@ -295,7 +292,7 @@ def upgrade() -> None:
     sa.Column('user_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('user_role_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.ForeignKeyConstraint(['user_role_uuid'], ['user_role.uuid'], ),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.uuid'], ),
+    sa.ForeignKeyConstraint(['user_uuid'], ['user.uuid'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('user_uuid', 'user_role_uuid')
     )
     op.create_index(op.f('ix_user_role_mapping_user_uuid'), 'user_role_mapping', ['user_uuid'], unique=False)

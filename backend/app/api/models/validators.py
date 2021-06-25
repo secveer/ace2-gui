@@ -1,4 +1,5 @@
 import pydantic
+import pytz
 
 from typing import Any, Callable
 
@@ -11,11 +12,23 @@ def _build_decorator(validator: Callable, *fields: str) -> classmethod:
 def prevent_none(*fields: str) -> classmethod:
     """
     Pydantic validator for optional fields that, if given in the request, can not be None. Using a validator is
-    currently the only way to accomplish this behavior.
+    currently the only way to accomplish this behavior. Pydantic v2 is slated to have a better way to address this.
     """
 
     def _validate(value: Any) -> str:
         assert value is not None, "Field can not be None"
+        return value
+
+    return _build_decorator(_validate, *fields)
+
+
+def timezone(*fields: str) -> classmethod:
+    """
+    Pydantic validator to ensure that a given timezone string is valid.
+    """
+
+    def _validate(value: str) -> str:
+        assert value in pytz.all_timezones, f"{value} is not a valid timezone"
         return value
 
     return _build_decorator(_validate, *fields)

@@ -10,7 +10,7 @@ user_role_mapping = Table(
     Column(
         "user_uuid",
         UUID(as_uuid=True),
-        ForeignKey("user.uuid"),
+        ForeignKey("user.uuid", ondelete="CASCADE"),
         index=True,
         primary_key=True,
     ),

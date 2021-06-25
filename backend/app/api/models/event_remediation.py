@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from api.models import type_str, validators
 
@@ -13,11 +13,9 @@ class EventRemediationBase(BaseModel):
         description="An optional human-readable description of the event remediation"
     )
 
-    uuid: Optional[UUID] = Field(description="The UUID of the event remediation")
+    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the event remediation")
 
     value: type_str = Field(description="The value of the event remediation")
-
-    _prevent_none: classmethod = validators.prevent_none("uuid", "value")
 
 
 class EventRemediationCreate(EventRemediationBase):
@@ -25,11 +23,11 @@ class EventRemediationCreate(EventRemediationBase):
 
 
 class EventRemediationRead(EventRemediationBase):
-    uuid: UUID = Field(description="The UUID of the event remediation")
-
     class Config:
         orm_mode = True
 
 
 class EventRemediationUpdate(EventRemediationBase):
     value: Optional[type_str] = Field(description="The value of the event remediation")
+
+    _prevent_none: classmethod = validators.prevent_none("value")
