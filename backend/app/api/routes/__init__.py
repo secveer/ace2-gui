@@ -20,6 +20,7 @@ from api.routes.node_threat_actor import router as node_threat_actor_router
 from api.routes.node_threat_type import router as node_threat_type_router
 from api.routes.observable_type import router as observable_type_router
 from api.routes.ping import router as ping_router
+from api.routes.user import router as user_router
 from api.routes.user_role import router as user_role_router
 
 
@@ -45,4 +46,5 @@ router.include_router(node_threat_actor_router)
 router.include_router(node_threat_type_router)
 router.include_router(observable_type_router)
 router.include_router(ping_router)
+router.include_router(user_router)
 router.include_router(user_role_router)
