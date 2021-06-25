@@ -45,12 +45,10 @@ class AnalysisModuleTypeRead(AnalysisModuleTypeBase):
 
 class AnalysisModuleTypeUpdate(AnalysisModuleTypeBase):
     manual: Optional[StrictBool] = Field(
-        default=False,
         description="Whether or not this analysis module type runs in manual mode.",
     )
 
     observable_types: Optional[List[type_str]] = Field(
-        default_factory=list,
         description="""A list of observable types this analysis module type knows how to analyze.
         An empty list means it supports ALL observable types.""",
     )
