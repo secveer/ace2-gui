@@ -45,7 +45,7 @@ def create_analysis_module_type(
 
     # Save the new analysis module type to the database
     db.add(new_analysis_module_type)
-    crud.commit_create(db)
+    crud.commit(db)
 
     response.headers["Content-Location"] = request.url_for(
         "get_analysis_module_type", uuid=new_analysis_module_type.uuid
@@ -104,7 +104,7 @@ def update_analysis_module_type(
             values=update_data["observable_types"], db_table=ObservableType, db=db
         )
 
-    crud.commit_update(db)
+    crud.commit(db)
 
     response.headers["Content-Location"] = request.url_for("get_analysis_module_type", uuid=uuid)
 

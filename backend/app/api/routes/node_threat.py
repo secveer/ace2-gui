@@ -39,7 +39,7 @@ def create_node_threat(
 
     # Save the new node threat to the database
     db.add(new_threat)
-    crud.commit_create(db)
+    crud.commit(db)
 
     response.headers["Content-Location"] = request.url_for("get_node_threat", uuid=new_threat.uuid)
 
@@ -93,7 +93,7 @@ def update_node_threat(
             values=update_data["types"], db_table=NodeThreatType, db=db
         )
 
-    crud.commit_update(db)
+    crud.commit(db)
 
     response.headers["Content-Location"] = request.url_for("get_node_threat", uuid=uuid)
 

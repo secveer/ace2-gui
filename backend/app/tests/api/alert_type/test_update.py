@@ -45,7 +45,7 @@ def test_update_duplicate_unique_fields(client, key):
 
     # Ensure you cannot update a unique field to a value that already exists
     update = client.put(create2.headers["Content-Location"], json={key: create1_json[key]})
-    assert update.status_code == status.HTTP_400_BAD_REQUEST
+    assert update.status_code == status.HTTP_409_CONFLICT
 
 
 def test_update_nonexistent_uuid(client):
