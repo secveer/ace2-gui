@@ -11,11 +11,9 @@ class User(Node):
 
     uuid = Column(UUID(as_uuid=True), ForeignKey("node.uuid"), primary_key=True)
 
-    api_key = Column(String, unique=True)
+    default_alert_queue = relationship("AlertQueue")
 
-    default_queue = relationship("AlertQueue")
-
-    default_queue_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_queue.uuid"))
+    default_alert_queue_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_queue.uuid"))
 
     display_name = Column(String)
 
