@@ -23,7 +23,7 @@ class User(Node):
 
     password = Column(String, nullable=False)
 
-    roles = relationship("UserRole", secondary=user_role_mapping)
+    roles = relationship("UserRole", secondary=user_role_mapping, passive_deletes=True)
 
     timezone = Column(String, default="UTC", nullable=False)
 

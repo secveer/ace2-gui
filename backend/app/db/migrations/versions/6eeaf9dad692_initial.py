@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: fb94039d7a4d
+Revision ID: 6eeaf9dad692
 Revises: 
-Create Date: 2021-06-25 15:53:35.301388
+Create Date: 2021-06-25 16:23:00.778948
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'fb94039d7a4d'
+revision = '6eeaf9dad692'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -292,7 +292,7 @@ def upgrade() -> None:
     sa.Column('user_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('user_role_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.ForeignKeyConstraint(['user_role_uuid'], ['user_role.uuid'], ),
-    sa.ForeignKeyConstraint(['user_uuid'], ['user.uuid'], ),
+    sa.ForeignKeyConstraint(['user_uuid'], ['user.uuid'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('user_uuid', 'user_role_uuid')
     )
     op.create_index(op.f('ix_user_role_mapping_user_uuid'), 'user_role_mapping', ['user_uuid'], unique=False)
