@@ -4,6 +4,7 @@ from sqlalchemy import delete as sql_delete, select, update as sql_update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta
+from sqlalchemy.orm.exc import NoResultFound
 from typing import List
 from uuid import UUID
 
@@ -44,6 +45,21 @@ def read(uuid: UUID, db_table: DeclarativeMeta, db: Session):
         raise HTTPException(status_code=404, detail=f"UUID {uuid} does not exist.")
 
     return result
+
+
+def read_by_value(value: str, db_table: DeclarativeMeta, db: Session):
+    """Returns an object from the given database table with the given value.
+    Designed to be called only by the API since it raises an HTTPException."""
+
+    try:
+        return db.execute(select(db_table).where(db_table.value == value)).scalars().one()
+    # MultipleResultsFound exception is not caught since each database table that has a
+    # value column should be configured to have that column be unique.
+    except NoResultFound:
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"The {value} {db_table} does not exist",
+            )
 
 
 def read_by_values(values: List[str], db_table: DeclarativeMeta, db: Session):
