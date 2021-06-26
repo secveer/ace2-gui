@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 6eeaf9dad692
+Revision ID: b84152b158a3
 Revises: 
-Create Date: 2021-06-25 16:23:00.778948
+Create Date: 2021-06-26 04:40:59.993207
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = '6eeaf9dad692'
+revision = 'b84152b158a3'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -179,9 +179,9 @@ def upgrade() -> None:
     op.create_table('observable',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('expires_on', sa.DateTime(), nullable=True),
-    sa.Column('for_detection', sa.Boolean(), nullable=True),
-    sa.Column('type_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('value', sa.String(), nullable=True),
+    sa.Column('for_detection', sa.Boolean(), nullable=False),
+    sa.Column('type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('value', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['type_uuid'], ['observable_type.uuid'], ),
     sa.PrimaryKeyConstraint('uuid'),
     sa.UniqueConstraint('type_uuid', 'value', name='type_value_uc')

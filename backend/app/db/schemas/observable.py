@@ -1,9 +1,9 @@
 from sqlalchemy import (
-    func,
     Boolean,
     Column,
     DateTime,
     ForeignKey,
+    func,
     Index,
     String,
     UniqueConstraint,
@@ -21,13 +21,13 @@ class Observable(Base):
 
     expires_on = Column(DateTime)
 
-    for_detection = Column(Boolean, default=False)
+    for_detection = Column(Boolean, default=False, nullable=False)
 
     type = relationship("ObservableType")
 
-    type_uuid = Column(UUID(as_uuid=True), ForeignKey("observable_type.uuid"))
+    type_uuid = Column(UUID(as_uuid=True), ForeignKey("observable_type.uuid"), nullable=False)
 
-    value = Column(String)
+    value = Column(String, nullable=False)
 
     __table_args__ = (
         Index(
