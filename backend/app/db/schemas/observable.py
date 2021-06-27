@@ -19,7 +19,9 @@ class Observable(Base):
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
-    expires_on = Column(DateTime)
+    # Using timezone=True causes PostgreSQL to store the datetime as UTC. Datetimes without timezone
+    # information will be assumed to be UTC, whereas datetimes with timezone data will be converted to UTC.
+    expires_on = Column(DateTime(timezone=True))
 
     for_detection = Column(Boolean, default=False, nullable=False)
 

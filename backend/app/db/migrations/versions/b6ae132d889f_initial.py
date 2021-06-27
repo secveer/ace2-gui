@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: b84152b158a3
+Revision ID: b6ae132d889f
 Revises: 
-Create Date: 2021-06-26 04:40:59.993207
+Create Date: 2021-06-27 20:32:39.173164
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'b84152b158a3'
+revision = 'b6ae132d889f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -178,7 +178,7 @@ def upgrade() -> None:
     op.create_index(op.f('ix_node_threat_node_threat_type_mapping_node_threat_uuid'), 'node_threat_node_threat_type_mapping', ['node_threat_uuid'], unique=False)
     op.create_table('observable',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
-    sa.Column('expires_on', sa.DateTime(), nullable=True),
+    sa.Column('expires_on', sa.DateTime(timezone=True), nullable=True),
     sa.Column('for_detection', sa.Boolean(), nullable=False),
     sa.Column('type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('value', sa.String(), nullable=False),
