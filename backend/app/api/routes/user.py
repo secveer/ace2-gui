@@ -38,12 +38,10 @@ def create_user(
     new_user = User(**user.dict())
 
     # Get the alert queue from the database to associate with the new user
-    db_alert_queue = crud.read_by_value(user.default_alert_queue, db_table=AlertQueue, db=db)
-    new_user.default_alert_queue = db_alert_queue
+    new_user.default_alert_queue = crud.read_by_value(user.default_alert_queue, db_table=AlertQueue, db=db)
 
     # Get the user roles from the database to associate with the new user
-    db_user_roles = crud.read_by_values(user.roles, db_table=UserRole, db=db)
-    new_user.roles = db_user_roles
+    new_user.roles = crud.read_by_values(user.roles, db_table=UserRole, db=db)
 
     # Securely hash and salt the password. Bcrypt_256 is used to get around the Bcrypt limitations
     # of silently truncating passwords longer than 72 characters as well as not handling NULL bytes.
@@ -88,7 +86,7 @@ def update_user(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    # Read the current analysis module type from the database
+    # Read the current user from the database
     db_user: User = crud.read(uuid=uuid, db_table=User, db=db)
 
     # Get the data that was given in the request and use it to update the database object
