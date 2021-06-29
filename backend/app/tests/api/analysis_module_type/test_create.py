@@ -1,3 +1,4 @@
+import json
 import pytest
 import uuid
 
@@ -14,6 +15,9 @@ from fastapi import status
     [
         ("description", 123),
         ("description", ""),
+        ("extended_version", 123),
+        ("extended_version", ""),
+        ("extended_version", []),
         ("manual", 123),
         ("manual", None),
         ("manual", "True"),
@@ -24,6 +28,20 @@ from fastapi import status
         ("observable_types", [None]),
         ("observable_types", [""]),
         ("observable_types", ["abc", 123]),
+        ("required_directives", 123),
+        ("required_directives", None),
+        ("required_directives", "test_type"),
+        ("required_directives", [123]),
+        ("required_directives", [None]),
+        ("required_directives", [""]),
+        ("required_directives", ["abc", 123]),
+        ("required_tags", 123),
+        ("required_tags", None),
+        ("required_tags", "test_type"),
+        ("required_tags", [123]),
+        ("required_tags", [None]),
+        ("required_tags", [""]),
+        ("required_tags", ["abc", 123]),
         ("uuid", 123),
         ("uuid", None),
         ("uuid", ""),
@@ -32,6 +50,10 @@ from fastapi import status
         ("value", 123),
         ("value", None),
         ("value", ""),
+        ("version", 123),
+        ("version", None),
+        ("version", ""),
+        ("version", "v1.0"),
     ],
 )
 def test_create_invalid_fields(client, key, value):
@@ -45,39 +67,53 @@ def test_create_invalid_fields(client, key, value):
     "key",
     [
         ("uuid"),
-        ("value"),
     ],
 )
 def test_create_duplicate_unique_fields(client, key):
     # Create an object
-    create1_json = {"uuid": str(uuid.uuid4()), "value": "test"}
+    create1_json = {"uuid": str(uuid.uuid4()), "value": "test", "version": "1.0.0"}
     client.post("/api/analysis/module_type/", json=create1_json)
 
     # Ensure you cannot create another object with the same unique field value
-    create2_json = {"value": "test2"}
+    create2_json = {"value": "test2", "version": "1.0.0"}
     create2_json[key] = create1_json[key]
     create2 = client.post("/api/analysis/module_type/", json=create2_json)
     assert create2.status_code == status.HTTP_409_CONFLICT
+
+
+def test_create_duplicate_version_value(client):
+    # Create an object
+    client.post("/api/analysis/module_type/", json={"value": "test", "version": "1.0.0"})
+
+    # Ensure you cannot create another object with the same unique value+version combination
+    create = client.post("/api/analysis/module_type/", json={"value": "test", "version": "1.0.0"})
+    assert create.status_code == status.HTTP_409_CONFLICT
 
 
 @pytest.mark.parametrize(
     "key",
     [
         ("value"),
+        ("version"),
     ],
 )
 def test_create_missing_required_fields(client, key):
-    create_json = {"value": "test"}
+    create_json = {"value": "test", "version": "1.0.0"}
     del create_json[key]
     create = client.post("/api/analysis/module_type/", json=create_json)
     assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_create_nonexistent_type(client):
-    create = client.post(
-        "/api/analysis/module_type/",
-        json={"value": "test", "observable_types": ["test_type"]},
-    )
+@pytest.mark.parametrize(
+    "key",
+    [
+        ("observable_types"),
+        ("required_directives"),
+        ("required_tags"),
+    ],
+)
+def test_create_nonexistent_list_values(client, key):
+    create = client.post("/api/analysis/module_type/", json={"value": "test", "version": "1.0.0", key: ["test_value"]})
     assert create.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -91,6 +127,8 @@ def test_create_nonexistent_type(client):
     [
         ("description", None),
         ("description", "test"),
+        ("extended_version", None),
+        ("extended_version", '{"foo": "bar"}'),
         ("manual", True),
         ("manual", False),
         ("uuid", str(uuid.uuid4()))
@@ -98,41 +136,54 @@ def test_create_nonexistent_type(client):
 )
 def test_create_valid_optional_fields(client, key, value):
     # Create the object
-    create = client.post("/api/analysis/module_type/", json={key: value, "value": "test"})
+    create = client.post("/api/analysis/module_type/", json={key: value, "value": "test", "version": "1.0.0"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
     get = client.get(create.headers["Content-Location"])
-    assert get.json()[key] == value
+
+    # If the test is for extended_version, make sure the JSON form of the supplied string matches
+    if key == "extended_version" and value:
+        assert get.json()[key] == json.loads(value)
+    else:
+        assert get.json()[key] == value
 
 
 @pytest.mark.parametrize(
-    "value,list_length",
+    "api_endpoint,key,values",
     [
-        ([], 0),
-        (["test_type"], 1),
-        (["test_type1", "test_type2"], 2),
-        (["test_type", "test_type"], 1),
+        ("/api/observable/type/", "observable_types", []),
+        ("/api/observable/type/", "observable_types", ["test"]),
+        ("/api/observable/type/", "observable_types", ["test1", "test2"]),
+        ("/api/observable/type/", "observable_types", ["test", "test"]),
+        ("/api/node/directive/", "required_directives", []),
+        ("/api/node/directive/", "required_directives", ["test"]),
+        ("/api/node/directive/", "required_directives", ["test1", "test2"]),
+        ("/api/node/directive/", "required_directives", ["test", "test"]),
+        ("/api/node/tag/", "required_tags", []),
+        ("/api/node/tag/", "required_tags", ["test"]),
+        ("/api/node/tag/", "required_tags", ["test1", "test2"]),
+        ("/api/node/tag/", "required_tags", ["test", "test"]),
     ],
 )
-def test_create_valid_observable_types(client, value, list_length):
-    # Create the observable types. Need to only create unique values, otherwise the database will return a 409
+def test_create_valid_list_fields(client, api_endpoint, key, values):
+    # Create the objects. Need to only create unique values, otherwise the database will return a 409
     # conflict exception and will roll back the test's database session (causing the test to fail).
-    for observable_type in list(set(value)):
-        client.post("/api/observable/type/", json={"value": observable_type})
+    for value in list(set(values)):
+        client.post(api_endpoint, json={"value": value})
 
     # Create the analysis module type
-    create = client.post("/api/analysis/module_type/", json={"observable_types": value, "value": "test"})
+    create = client.post("/api/analysis/module_type/", json={key: values, "value": "test", "version": "1.0.0"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back
     get = client.get(create.headers["Content-Location"])
-    assert len(get.json()["observable_types"]) == list_length
+    assert len(get.json()[key]) == len(list(set(values)))
 
 
 def test_create_valid_required_fields(client):
     # Create the object
-    create = client.post("/api/analysis/module_type/", json={"value": "test"})
+    create = client.post("/api/analysis/module_type/", json={"value": "test", "version": "1.0.0"})
     assert create.status_code == status.HTTP_201_CREATED
 
     # Read it back

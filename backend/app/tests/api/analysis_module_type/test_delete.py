@@ -30,13 +30,25 @@ def test_delete_nonexistent_uuid(client):
 
 
 def test_delete(client):
+    # Create a node directive
+    directive_create = client.post("/api/node/directive/", json={"value": "test_directive"})
+
+    # Create a node tag
+    tag_create = client.post("/api/node/tag/", json={"value": "test_tag"})
+
     # Create an observable type
     type_create = client.post("/api/observable/type/", json={"value": "test_type"})
 
     # Create the analysis module type
     create = client.post(
         "/api/analysis/module_type/",
-        json={"observable_types": ["test_type"], "value": "initial"},
+        json={
+            "observable_types": ["test_type"],
+            "required_directives": ["test_directive"],
+            "required_tags": ["test_tag"],
+            "value": "initial",
+            "version": "1.0.0",
+        },
     )
     assert create.status_code == status.HTTP_201_CREATED
 
@@ -51,6 +63,16 @@ def test_delete(client):
     # Make sure it is gone
     get = client.get(create.headers["Content-Location"])
     assert get.status_code == status.HTTP_404_NOT_FOUND
+
+    # Make sure the node directive is still there
+    get = client.get(directive_create.headers["Content-Location"])
+    assert get.status_code == status.HTTP_200_OK
+    assert get.json()["value"] == "test_directive"
+
+    # Make sure the node tag is still there
+    get = client.get(tag_create.headers["Content-Location"])
+    assert get.status_code == status.HTTP_200_OK
+    assert get.json()["value"] == "test_tag"
 
     # Make sure the observable type is still there
     get = client.get(type_create.headers["Content-Location"])

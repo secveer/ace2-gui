@@ -25,8 +25,8 @@ def test_get_nonexistent_uuid(client):
 
 def test_get_all(client):
     # Create some objects
-    client.post("/api/analysis/module_type/", json={"value": "test"})
-    client.post("/api/analysis/module_type/", json={"value": "test2"})
+    client.post("/api/analysis/module_type/", json={"value": "test", "version": "1.0.0"})
+    client.post("/api/analysis/module_type/", json={"value": "test2", "version": "1.0.0"})
 
     # Read them back
     get = client.get("/api/analysis/module_type/")
