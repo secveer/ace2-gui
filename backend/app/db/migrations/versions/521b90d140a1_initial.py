@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: b6ae132d889f
+Revision ID: 521b90d140a1
 Revises: 
-Create Date: 2021-06-27 20:32:39.173164
+Create Date: 2021-06-29 15:11:44.094241
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'b6ae132d889f'
+revision = '521b90d140a1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -43,11 +43,14 @@ def upgrade() -> None:
     op.create_table('analysis_module_type',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
+    sa.Column('extended_version', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     sa.Column('manual', sa.Boolean(), nullable=False),
     sa.Column('value', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('uuid')
+    sa.Column('version', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('uuid'),
+    sa.UniqueConstraint('value', 'version', name='value_version_uc')
     )
-    op.create_index(op.f('ix_analysis_module_type_value'), 'analysis_module_type', ['value'], unique=True)
+    op.create_index(op.f('ix_analysis_module_type_value'), 'analysis_module_type', ['value'], unique=False)
     op.create_table('event_prevention_tool',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
@@ -153,6 +156,14 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_index(op.f('ix_user_role_value'), 'user_role', ['value'], unique=True)
+    op.create_table('analysis_module_type_directive_mapping',
+    sa.Column('analysis_module_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('directive_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.ForeignKeyConstraint(['analysis_module_type_uuid'], ['analysis_module_type.uuid'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['directive_uuid'], ['node_directive.uuid'], ),
+    sa.PrimaryKeyConstraint('analysis_module_type_uuid', 'directive_uuid')
+    )
+    op.create_index(op.f('ix_analysis_module_type_directive_mapping_analysis_module_type_uuid'), 'analysis_module_type_directive_mapping', ['analysis_module_type_uuid'], unique=False)
     op.create_table('analysis_module_type_observable_type_mapping',
     sa.Column('analysis_module_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('observable_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
@@ -161,6 +172,14 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('analysis_module_type_uuid', 'observable_type_uuid')
     )
     op.create_index(op.f('ix_analysis_module_type_observable_type_mapping_analysis_module_type_uuid'), 'analysis_module_type_observable_type_mapping', ['analysis_module_type_uuid'], unique=False)
+    op.create_table('analysis_module_type_tag_mapping',
+    sa.Column('analysis_module_type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('tag_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.ForeignKeyConstraint(['analysis_module_type_uuid'], ['analysis_module_type.uuid'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['tag_uuid'], ['node_tag.uuid'], ),
+    sa.PrimaryKeyConstraint('analysis_module_type_uuid', 'tag_uuid')
+    )
+    op.create_index(op.f('ix_analysis_module_type_tag_mapping_analysis_module_type_uuid'), 'analysis_module_type_tag_mapping', ['analysis_module_type_uuid'], unique=False)
     op.create_table('node',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('node_type', sa.String(), nullable=True),
@@ -194,8 +213,6 @@ def upgrade() -> None:
     sa.Column('details', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     sa.Column('error_message', sa.String(), nullable=True),
     sa.Column('event_summary', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
-    sa.Column('module_extended_version', sa.String(), nullable=True),
-    sa.Column('module_version', sa.String(), nullable=True),
     sa.Column('stack_trace', sa.String(), nullable=True),
     sa.Column('summary', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['analysis_module_type_uuid'], ['analysis_module_type.uuid'], ),
@@ -399,8 +416,12 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_node_threat_node_threat_type_mapping_node_threat_uuid'), table_name='node_threat_node_threat_type_mapping')
     op.drop_table('node_threat_node_threat_type_mapping')
     op.drop_table('node')
+    op.drop_index(op.f('ix_analysis_module_type_tag_mapping_analysis_module_type_uuid'), table_name='analysis_module_type_tag_mapping')
+    op.drop_table('analysis_module_type_tag_mapping')
     op.drop_index(op.f('ix_analysis_module_type_observable_type_mapping_analysis_module_type_uuid'), table_name='analysis_module_type_observable_type_mapping')
     op.drop_table('analysis_module_type_observable_type_mapping')
+    op.drop_index(op.f('ix_analysis_module_type_directive_mapping_analysis_module_type_uuid'), table_name='analysis_module_type_directive_mapping')
+    op.drop_table('analysis_module_type_directive_mapping')
     op.drop_index(op.f('ix_user_role_value'), table_name='user_role')
     op.drop_table('user_role')
     op.drop_index(op.f('ix_observable_type_value'), table_name='observable_type')
