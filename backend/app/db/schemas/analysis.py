@@ -1,10 +1,8 @@
-from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy import Boolean, Column, ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import relationship
 
-from db.schemas.analysis_observable_instance_mapping import (
-    analysis_observable_instance_mapping,
-)
+from db.schemas.analysis_observable_instance_mapping import analysis_observable_instance_mapping
 from db.schemas.node import Node
 
 
@@ -19,15 +17,14 @@ class Analysis(Node):
 
     details = Column(JSONB)
 
+    discovered_observables = relationship("ObservableInstance", secondary=analysis_observable_instance_mapping)
+
     error_message = Column(String)
 
-    event_summary = Column(JSONB)
+    # Commenting this out until this functionality is fleshed out
+    # event_summary = Column(JSONB)
 
-    module_extended_version = Column(String)
-
-    module_version = Column(String)
-
-    observables = relationship("ObservableInstance", secondary=analysis_observable_instance_mapping)
+    manual = Column(Boolean, default=False, nullable=False)
 
     stack_trace = Column(String)
 
