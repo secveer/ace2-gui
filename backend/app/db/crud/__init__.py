@@ -47,6 +47,29 @@ def read(uuid: UUID, db_table: DeclarativeMeta, db: Session):
     return result
 
 
+def read_by_uuids(uuids: List[UUID], db_table: DeclarativeMeta, db: Session):
+    """Returns a list of objects with the given UUIDs. Designed to be called only by the API
+    since it raises an HTTPException."""
+
+    # Return without performing a database query if the list of values is empty
+    if uuids == []:
+        return uuids
+
+    # Only search the database for unique UUIDs
+    uuids = list(set(uuids))
+
+    resources = db.execute(select(db_table).where(db_table.uuid.in_(uuids))).scalars().all()
+
+    for uuid in uuids:
+        if not any(uuid == r.uuid for r in resources):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"The {uuid} {db_table} does not exist",
+            )
+
+    return resources
+
+
 def read_by_value(value: str, db_table: DeclarativeMeta, db: Session):
     """Returns an object from the given database table with the given value.
     Designed to be called only by the API since it raises an HTTPException."""
