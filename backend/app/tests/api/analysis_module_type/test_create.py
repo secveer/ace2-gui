@@ -46,7 +46,6 @@ from fastapi import status
         ("uuid", None),
         ("uuid", ""),
         ("uuid", "abc"),
-        ("uuid", ""),
         ("value", 123),
         ("value", None),
         ("value", ""),
