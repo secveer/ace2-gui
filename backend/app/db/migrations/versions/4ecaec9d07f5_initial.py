@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 3772678962d3
+Revision ID: 4ecaec9d07f5
 Revises: 
-Create Date: 2021-07-06 17:30:55.729136
+Create Date: 2021-07-06 20:53:58.866612
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = '3772678962d3'
+revision = '4ecaec9d07f5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,6 +33,20 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_index(op.f('ix_alert_queue_value'), 'alert_queue', ['value'], unique=True)
+    op.create_table('alert_tool',
+    sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('value', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('uuid')
+    )
+    op.create_index(op.f('ix_alert_tool_value'), 'alert_tool', ['value'], unique=True)
+    op.create_table('alert_tool_instance',
+    sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('value', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('uuid')
+    )
+    op.create_index(op.f('ix_alert_tool_instance_value'), 'alert_tool_instance', ['value'], unique=True)
     op.create_table('alert_type',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
@@ -326,8 +340,8 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('owner_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('queue_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('tool', sa.String(), nullable=True),
-    sa.Column('tool_instance', sa.String(), nullable=True),
+    sa.Column('tool_uuid', postgresql.UUID(as_uuid=True), nullable=True),
+    sa.Column('tool_instance_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('version', postgresql.UUID(as_uuid=True), nullable=True),
     sa.ForeignKeyConstraint(['disposition_user_uuid'], ['user.uuid'], ),
@@ -335,6 +349,8 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['event_uuid'], ['event.uuid'], ),
     sa.ForeignKeyConstraint(['owner_uuid'], ['user.uuid'], ),
     sa.ForeignKeyConstraint(['queue_uuid'], ['alert_queue.uuid'], ),
+    sa.ForeignKeyConstraint(['tool_instance_uuid'], ['alert_tool_instance.uuid'], ),
+    sa.ForeignKeyConstraint(['tool_uuid'], ['alert_tool.uuid'], ),
     sa.ForeignKeyConstraint(['type_uuid'], ['alert_type.uuid'], ),
     sa.ForeignKeyConstraint(['uuid'], ['analysis.uuid'], ),
     sa.PrimaryKeyConstraint('uuid')
@@ -462,6 +478,10 @@ def downgrade() -> None:
     op.drop_table('analysis_module_type')
     op.drop_index(op.f('ix_alert_type_value'), table_name='alert_type')
     op.drop_table('alert_type')
+    op.drop_index(op.f('ix_alert_tool_instance_value'), table_name='alert_tool_instance')
+    op.drop_table('alert_tool_instance')
+    op.drop_index(op.f('ix_alert_tool_value'), table_name='alert_tool')
+    op.drop_table('alert_tool')
     op.drop_index(op.f('ix_alert_queue_value'), table_name='alert_queue')
     op.drop_table('alert_queue')
     op.drop_index(op.f('ix_alert_disposition_value'), table_name='alert_disposition')

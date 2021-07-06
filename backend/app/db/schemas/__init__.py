@@ -6,6 +6,8 @@ from db.schemas.analysis_module_type_tag_mapping import analysis_module_type_tag
 from db.schemas.alert import Alert
 from db.schemas.alert_disposition import AlertDisposition
 from db.schemas.alert_queue import AlertQueue
+from db.schemas.alert_tool import AlertTool
+from db.schemas.alert_tool_instance import AlertToolInstance
 from db.schemas.alert_type import AlertType
 from db.schemas.analysis_module_type import AnalysisModuleType
 from db.schemas.comment import Comment
