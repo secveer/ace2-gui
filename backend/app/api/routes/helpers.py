@@ -8,9 +8,9 @@ from typing import Callable
 #
 
 
-def api_route_create(router: APIRouter, endpoint: Callable):
+def api_route_create(router: APIRouter, endpoint: Callable, path: str = "/"):
     router.add_api_route(
-        path="/",
+        path=path,
         endpoint=endpoint,
         methods=["POST"],
         response_class=Response,  # This allows to respond with a 201 and no body listed in the documentation
@@ -31,18 +31,18 @@ def api_route_create(router: APIRouter, endpoint: Callable):
 #
 
 
-def api_route_read_all(router: APIRouter, endpoint: Callable, response_model: BaseModel):
+def api_route_read_all(router: APIRouter, endpoint: Callable, response_model: BaseModel, path: str = "/"):
     router.add_api_route(
-        path="/",
+        path=path,
         endpoint=endpoint,
         methods=["GET"],
         response_model=response_model,
     )
 
 
-def api_route_read(router: APIRouter, endpoint: Callable, response_model: BaseModel):
+def api_route_read(router: APIRouter, endpoint: Callable, response_model: BaseModel, path: str = "/{uuid}"):
     router.add_api_route(
-        path="/{uuid}",
+        path=path,
         endpoint=endpoint,
         methods=["GET"],
         response_model=response_model,
@@ -57,17 +57,17 @@ def api_route_read(router: APIRouter, endpoint: Callable, response_model: BaseMo
 #
 
 
-def api_route_update(router: APIRouter, endpoint: Callable):
+def api_route_update(router: APIRouter, endpoint: Callable, path: str = "/{uuid}"):
     router.add_api_route(
-        path="/{uuid}",
+        path=path,
         endpoint=endpoint,
         methods=["PUT"],
         responses={
             status.HTTP_204_NO_CONTENT: {
                 "headers": {"Content-Location": {"description": "The path to retrieve the resource"}},
             },
-            status.HTTP_400_BAD_REQUEST: {"description": "The database returned an IntegrityError"},
             status.HTTP_404_NOT_FOUND: {"description": "The UUID was not found"},
+            status.HTTP_409_CONFLICT: {"description": "The database returned an IntegrityError"},
         },
         status_code=status.HTTP_204_NO_CONTENT,
     )
@@ -78,9 +78,9 @@ def api_route_update(router: APIRouter, endpoint: Callable):
 #
 
 
-def api_route_delete(router: APIRouter, endpoint: Callable):
+def api_route_delete(router: APIRouter, endpoint: Callable, path: str = "/{uuid}"):
     router.add_api_route(
-        path="/{uuid}",
+        path=path,
         endpoint=endpoint,
         methods=["DELETE"],
         responses={
