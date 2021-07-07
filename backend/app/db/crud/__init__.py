@@ -74,6 +74,10 @@ def read_by_value(value: str, db_table: DeclarativeMeta, db: Session):
     """Returns an object from the given database table with the given value.
     Designed to be called only by the API since it raises an HTTPException."""
 
+    # Return early if the value is None
+    if not value:
+        return None
+
     try:
         return db.execute(select(db_table).where(db_table.value == value)).scalars().one()
     # MultipleResultsFound exception is not caught since each database table that has a
@@ -89,9 +93,9 @@ def read_by_values(values: List[str], db_table: DeclarativeMeta, db: Session):
     """Returns a list of objects from the given database table with the given values.
     Designed to be called only by the API since it raises an HTTPException."""
 
-    # Return without performing a database query if the list of values is empty
-    if values == []:
-        return values
+    # Return without performing a database query if the list of values is empty or None
+    if not values:
+        return []
 
     # Only search the database for unique values
     values = list(set(values))
