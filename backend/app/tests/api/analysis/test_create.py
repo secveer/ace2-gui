@@ -43,9 +43,40 @@ from fastapi import status
     ],
 )
 def test_create_invalid_fields(client, key, value):
-    create_json = {"value": "test"}
-    create_json[key] = value
-    create = client.post("/api/analysis/", json=create_json)
+    create = client.post("/api/analysis/", json={key: value})
+    assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.parametrize(
+    "key,value",
+    [
+        ("directives", 123),
+        ("directives", ""),
+        ("directives", "abc"),
+        ("directives", [123]),
+        ("directives", [None]),
+        ("directives", [""]),
+        ("directives", ["abc", 123]),
+        ("tags", 123),
+        ("tags", ""),
+        ("tags", "abc"),
+        ("tags", [123]),
+        ("tags", [None]),
+        ("tags", [""]),
+        ("tags", ["abc", 123]),
+        ("threat_actor", 123),
+        ("threat_actor", ""),
+        ("threats", 123),
+        ("threats", ""),
+        ("threats", "abc"),
+        ("threats", [123]),
+        ("threats", [None]),
+        ("threats", [""]),
+        ("threats", ["abc", 123]),
+    ],
+)
+def test_create_invalid_node_fields(client, key, value):
+    create = client.post("/api/analysis/", json={key: value})
     assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -74,6 +105,20 @@ def test_create_nonexistent_analysis_module_type(client):
 
 def test_create_nonexistent_discovered_observables(client):
     create = client.post("/api/analysis/", json={"discovered_observables": [str(uuid.uuid4())]})
+    assert create.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.parametrize(
+    "key,value",
+    [
+        ("directives", ["abc"]),
+        ("tags", ["abc"]),
+        ("threat_actor", "abc"),
+        ("threats", ["abc"]),
+    ],
+)
+def test_create_nonexistent_node_fields(client, key, value):
+    create = client.post("/api/analysis/", json={key: value})
     assert create.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -144,3 +189,103 @@ def test_create_valid_required_fields(client):
     # Read it back, but since there are no required fields to create the analysis, there is nothing to verify.
     get = client.get(create.headers["Content-Location"])
     assert get.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        ([]),
+        (["test"]),
+        (["test1", "test2"]),
+        (["test", "test"]),
+    ],
+)
+def test_create_valid_node_directives(client, values):
+    # Create the directives. Need to only create unique values, otherwise the database will return a 409
+    # conflict exception and will roll back the test's database session (causing the test to fail).
+    for value in list(set(values)):
+        client.post("/api/node/directive/", json={"value": value})
+
+    # Create the node
+    create = client.post("/api/analysis/", json={"directives": values})
+    assert create.status_code == status.HTTP_201_CREATED
+
+    # Read it back
+    get = client.get(create.headers["Content-Location"])
+    assert len(get.json()["directives"]) == len(list(set(values)))
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        ([]),
+        (["test"]),
+        (["test1", "test2"]),
+        (["test", "test"]),
+    ],
+)
+def test_create_valid_node_tags(client, values):
+    # Create the tags. Need to only create unique values, otherwise the database will return a 409
+    # conflict exception and will roll back the test's database session (causing the test to fail).
+    for value in list(set(values)):
+        client.post("/api/node/tag/", json={"value": value})
+
+    # Create the node
+    create = client.post("/api/analysis/", json={"tags": values})
+    assert create.status_code == status.HTTP_201_CREATED
+
+    # Read it back
+    get = client.get(create.headers["Content-Location"])
+    assert len(get.json()["tags"]) == len(list(set(values)))
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        (None),
+        ("test"),
+    ],
+)
+def test_create_valid_node_threat_actor(client, value):
+    # Create the threat actor. Need to only create unique values, otherwise the database will return a 409
+    # conflict exception and will roll back the test's database session (causing the test to fail).
+    if value:
+        client.post("/api/node/threat_actor/", json={"value": value})
+
+    # Create the node
+    create = client.post("/api/analysis/", json={"threat_actor": value})
+    assert create.status_code == status.HTTP_201_CREATED
+
+    # Read it back
+    get = client.get(create.headers["Content-Location"])
+    if value:
+        assert get.json()["threat_actor"]["value"] == value
+    else:
+        assert get.json()["threat_actor"] is None
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        ([]),
+        (["test"]),
+        (["test1", "test2"]),
+        (["test", "test"]),
+    ],
+)
+def test_create_valid_node_threats(client, values):
+    # Create a threat type
+    client.post("/api/node/threat/type/", json={"value": "test_type"})
+
+    # Create the threats. Need to only create unique values, otherwise the database will return a 409
+    # conflict exception and will roll back the test's database session (causing the test to fail).
+    for value in list(set(values)):
+        client.post("/api/node/threat/", json={"types": ["test_type"], "value": value})
+
+    # Create the node
+    create = client.post("/api/analysis/", json={"threats": values})
+    assert create.status_code == status.HTTP_201_CREATED
+
+    # Read it back
+    get = client.get(create.headers["Content-Location"])
+    assert len(get.json()["threats"]) == len(list(set(values)))
