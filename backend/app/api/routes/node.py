@@ -17,7 +17,7 @@ def create_node(node_create: NodeCreate, db_node_type: DeclarativeMeta, db: Sess
     """
     Helper function when creating a new Node that sets the attributes inherited from Node.
     """
-    
+
     db_node: Node = db_node_type(**node_create.dict())
 
     if node_create.directives:
