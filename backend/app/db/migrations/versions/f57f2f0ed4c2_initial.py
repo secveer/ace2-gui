@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: e4cb11c76785
+Revision ID: f57f2f0ed4c2
 Revises: 
-Create Date: 2021-07-07 15:44:37.284216
+Create Date: 2021-07-07 21:03:44.211184
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'e4cb11c76785'
+revision = 'f57f2f0ed4c2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -222,6 +222,20 @@ def upgrade() -> None:
     )
     op.create_index('type_value', 'observable', ['type_uuid', 'value'], unique=False)
     op.create_index('value_trgm', 'observable', ['value'], unique=False, postgresql_ops={'value': 'gin_trgm_ops'}, postgresql_using='gin')
+    op.create_table('user',
+    sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
+    sa.Column('default_alert_queue_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('display_name', sa.String(), nullable=False),
+    sa.Column('email', sa.String(), nullable=False),
+    sa.Column('enabled', sa.Boolean(), nullable=False),
+    sa.Column('password', sa.String(), nullable=False),
+    sa.Column('timezone', sa.String(), nullable=False),
+    sa.Column('username', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['default_alert_queue_uuid'], ['alert_queue.uuid'], ),
+    sa.PrimaryKeyConstraint('uuid'),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('username')
+    )
     op.create_table('analysis',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('analysis_module_type_uuid', postgresql.UUID(as_uuid=True), nullable=True),
@@ -233,45 +247,6 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['analysis_module_type_uuid'], ['analysis_module_type.uuid'], ),
     sa.ForeignKeyConstraint(['uuid'], ['node.uuid'], ),
     sa.PrimaryKeyConstraint('uuid')
-    )
-    op.create_table('node_directive_mapping',
-    sa.Column('node_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('directive_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.ForeignKeyConstraint(['directive_uuid'], ['node_directive.uuid'], ),
-    sa.ForeignKeyConstraint(['node_uuid'], ['node.uuid'], ),
-    sa.PrimaryKeyConstraint('node_uuid', 'directive_uuid')
-    )
-    op.create_index(op.f('ix_node_directive_mapping_node_uuid'), 'node_directive_mapping', ['node_uuid'], unique=False)
-    op.create_table('node_tag_mapping',
-    sa.Column('node_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('tag_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.ForeignKeyConstraint(['node_uuid'], ['node.uuid'], ),
-    sa.ForeignKeyConstraint(['tag_uuid'], ['node_tag.uuid'], ),
-    sa.PrimaryKeyConstraint('node_uuid', 'tag_uuid')
-    )
-    op.create_index(op.f('ix_node_tag_mapping_node_uuid'), 'node_tag_mapping', ['node_uuid'], unique=False)
-    op.create_table('node_threat_mapping',
-    sa.Column('node_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('threat_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.ForeignKeyConstraint(['node_uuid'], ['node.uuid'], ),
-    sa.ForeignKeyConstraint(['threat_uuid'], ['node_threat.uuid'], ),
-    sa.PrimaryKeyConstraint('node_uuid', 'threat_uuid')
-    )
-    op.create_index(op.f('ix_node_threat_mapping_node_uuid'), 'node_threat_mapping', ['node_uuid'], unique=False)
-    op.create_table('user',
-    sa.Column('uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('default_alert_queue_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('display_name', sa.String(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
-    sa.Column('enabled', sa.Boolean(), nullable=False),
-    sa.Column('password', sa.String(), nullable=False),
-    sa.Column('timezone', sa.String(), nullable=False),
-    sa.Column('username', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['default_alert_queue_uuid'], ['alert_queue.uuid'], ),
-    sa.ForeignKeyConstraint(['uuid'], ['node.uuid'], ),
-    sa.PrimaryKeyConstraint('uuid'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('username')
     )
     op.create_table('comment',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
@@ -307,6 +282,14 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['uuid'], ['node.uuid'], ),
     sa.PrimaryKeyConstraint('uuid')
     )
+    op.create_table('node_directive_mapping',
+    sa.Column('node_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('directive_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.ForeignKeyConstraint(['directive_uuid'], ['node_directive.uuid'], ),
+    sa.ForeignKeyConstraint(['node_uuid'], ['node.uuid'], ),
+    sa.PrimaryKeyConstraint('node_uuid', 'directive_uuid')
+    )
+    op.create_index(op.f('ix_node_directive_mapping_node_uuid'), 'node_directive_mapping', ['node_uuid'], unique=False)
     op.create_table('node_history',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('action_uuid', postgresql.UUID(as_uuid=True), nullable=True),
@@ -320,6 +303,22 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['node_uuid'], ['node.uuid'], ),
     sa.PrimaryKeyConstraint('uuid')
     )
+    op.create_table('node_tag_mapping',
+    sa.Column('node_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('tag_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.ForeignKeyConstraint(['node_uuid'], ['node.uuid'], ),
+    sa.ForeignKeyConstraint(['tag_uuid'], ['node_tag.uuid'], ),
+    sa.PrimaryKeyConstraint('node_uuid', 'tag_uuid')
+    )
+    op.create_index(op.f('ix_node_tag_mapping_node_uuid'), 'node_tag_mapping', ['node_uuid'], unique=False)
+    op.create_table('node_threat_mapping',
+    sa.Column('node_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('threat_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.ForeignKeyConstraint(['node_uuid'], ['node.uuid'], ),
+    sa.ForeignKeyConstraint(['threat_uuid'], ['node_threat.uuid'], ),
+    sa.PrimaryKeyConstraint('node_uuid', 'threat_uuid')
+    )
+    op.create_index(op.f('ix_node_threat_mapping_node_uuid'), 'node_threat_mapping', ['node_uuid'], unique=False)
     op.create_table('user_role_mapping',
     sa.Column('user_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('user_role_uuid', postgresql.UUID(as_uuid=True), nullable=False),
@@ -420,18 +419,18 @@ def downgrade() -> None:
     op.drop_table('alert')
     op.drop_index(op.f('ix_user_role_mapping_user_uuid'), table_name='user_role_mapping')
     op.drop_table('user_role_mapping')
-    op.drop_table('node_history')
-    op.drop_table('event')
-    op.drop_index('node_uuid', table_name='comment')
-    op.drop_table('comment')
-    op.drop_table('user')
     op.drop_index(op.f('ix_node_threat_mapping_node_uuid'), table_name='node_threat_mapping')
     op.drop_table('node_threat_mapping')
     op.drop_index(op.f('ix_node_tag_mapping_node_uuid'), table_name='node_tag_mapping')
     op.drop_table('node_tag_mapping')
+    op.drop_table('node_history')
     op.drop_index(op.f('ix_node_directive_mapping_node_uuid'), table_name='node_directive_mapping')
     op.drop_table('node_directive_mapping')
+    op.drop_table('event')
+    op.drop_index('node_uuid', table_name='comment')
+    op.drop_table('comment')
     op.drop_table('analysis')
+    op.drop_table('user')
     op.drop_index('value_trgm', table_name='observable', postgresql_ops={'value': 'gin_trgm_ops'}, postgresql_using='gin')
     op.drop_index('type_value', table_name='observable')
     op.drop_table('observable')

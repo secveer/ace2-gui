@@ -1,15 +1,15 @@
-from sqlalchemy import Boolean, Column, ForeignKey, String
+from sqlalchemy import Boolean, Column, ForeignKey, func, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from db.schemas.node import Node
+from db.database import Base
 from db.schemas.user_role_mapping import user_role_mapping
 
 
-class User(Node):
+class User(Base):
     __tablename__ = "user"
 
-    uuid = Column(UUID(as_uuid=True), ForeignKey("node.uuid"), primary_key=True)
+    uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
     default_alert_queue = relationship("AlertQueue")
 
@@ -28,7 +28,3 @@ class User(Node):
     timezone = Column(String, default="UTC", nullable=False)
 
     username = Column(String, unique=True, nullable=False)
-
-    __mapper_args__ = {
-        "polymorphic_identity": "user",
-    }
