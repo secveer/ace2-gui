@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 4ecaec9d07f5
+Revision ID: e4cb11c76785
 Revises: 
-Create Date: 2021-07-06 20:53:58.866612
+Create Date: 2021-07-07 15:44:37.284216
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = '4ecaec9d07f5'
+revision = 'e4cb11c76785'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -198,6 +198,7 @@ def upgrade() -> None:
     sa.Column('uuid', postgresql.UUID(as_uuid=True), server_default=sa.text('gen_random_uuid()'), nullable=False),
     sa.Column('node_type', sa.String(), nullable=True),
     sa.Column('threat_actor_uuid', postgresql.UUID(as_uuid=True), nullable=True),
+    sa.Column('version', postgresql.UUID(as_uuid=True), nullable=False),
     sa.ForeignKeyConstraint(['threat_actor_uuid'], ['node_threat_actor.uuid'], ),
     sa.PrimaryKeyConstraint('uuid')
     )
@@ -343,7 +344,6 @@ def upgrade() -> None:
     sa.Column('tool_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('tool_instance_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('version', postgresql.UUID(as_uuid=True), nullable=True),
     sa.ForeignKeyConstraint(['disposition_user_uuid'], ['user.uuid'], ),
     sa.ForeignKeyConstraint(['disposition_uuid'], ['alert_disposition.uuid'], ),
     sa.ForeignKeyConstraint(['event_uuid'], ['event.uuid'], ),
