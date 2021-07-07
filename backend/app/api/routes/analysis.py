@@ -5,6 +5,7 @@ from uuid import UUID
 
 from api.models.analysis import AnalysisCreate, AnalysisRead, AnalysisUpdate, DiscoveredObservable
 from api.routes import helpers
+from api.routes.node import create_node, update_node
 from db import crud
 from db.database import get_db
 from db.schemas.analysis import Analysis
@@ -29,8 +30,8 @@ def create_analysis(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    # Create the new analysis using the data from the request
-    new_analysis = Analysis(**analysis.dict())
+    # Create the new analysis Node using the data from the request
+    new_analysis: Analysis = create_node(node_create=analysis, db_node_type=Analysis, db=db)
 
     # If an analysis module type was given, get it from the database to use with the new analysis
     if analysis.analysis_module_type:
@@ -46,7 +47,7 @@ def create_analysis(
         )
     new_analysis.discovered_observables = db_discovered_observables
 
-    # Save the new analysis module type to the database
+    # Save the new analysis to the database
     db.add(new_analysis)
     crud.commit(db)
 
@@ -88,8 +89,8 @@ def update_analysis(
     response: Response,
     db: Session = Depends(get_db),
 ):
-    # Read the current analysis from the database
-    db_analysis: Analysis = crud.read(uuid=uuid, db_table=Analysis, db=db)
+    # Update the Node attributes
+    db_analysis: Analysis = update_node(node_update=analysis, uuid=uuid, db_table=Analysis, db=db)
 
     # Get the data that was given in the request and use it to update the database object
     update_data = analysis.dict(exclude_unset=True)
