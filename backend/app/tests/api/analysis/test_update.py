@@ -4,6 +4,15 @@ import uuid
 
 from fastapi import status
 
+from tests.api.node import (
+    INVALID_UPDATE_FIELDS,
+    NONEXISTENT_FIELDS,
+    VALID_DIRECTIVES,
+    VALID_TAGS,
+    VALID_THREAT_ACTOR,
+    VALID_THREATS,
+)
+
 
 #
 # INVALID TESTS
@@ -20,18 +29,8 @@ from fastapi import status
         ("details", ""),
         ("details", "abc"),
         ("details", []),
-        ("discovered_observables", 123),
-        ("discovered_observables", ""),
-        ("discovered_observables", "abc"),
-        ("discovered_observables", [123]),
-        ("discovered_observables", [None]),
-        ("discovered_observables", [""]),
-        ("discovered_observables", ["abc", 123]),
         ("error_message", 123),
         ("error_message", ""),
-        ("manual", 123),
-        ("manual", None),
-        ("manual", "True"),
         ("stack_trace", 123),
         ("stack_trace", ""),
         ("summary", 123),
@@ -39,41 +38,19 @@ from fastapi import status
     ],
 )
 def test_update_invalid_fields(client, key, value):
-    update = client.put(f"/api/analysis/{uuid.uuid4()}", json={key: value})
+    update = client.put(f"/api/analysis/{uuid.uuid4()}", json={key: value, "version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert key in update.text
 
 
 @pytest.mark.parametrize(
     "key,value",
-    [
-        ("directives", 123),
-        ("directives", ""),
-        ("directives", "abc"),
-        ("directives", [123]),
-        ("directives", [None]),
-        ("directives", [""]),
-        ("directives", ["abc", 123]),
-        ("tags", 123),
-        ("tags", ""),
-        ("tags", "abc"),
-        ("tags", [123]),
-        ("tags", [None]),
-        ("tags", [""]),
-        ("tags", ["abc", 123]),
-        ("threat_actor", 123),
-        ("threat_actor", ""),
-        ("threats", 123),
-        ("threats", ""),
-        ("threats", "abc"),
-        ("threats", [123]),
-        ("threats", [None]),
-        ("threats", [""]),
-        ("threats", ["abc", 123]),
-    ],
+    INVALID_UPDATE_FIELDS,
 )
 def test_update_invalid_node_fields(client, key, value):
     update = client.put(f"/api/analysis/{uuid.uuid4()}", json={"version": str(uuid.uuid4()), key: value})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert key in update.text
 
 
 def test_update_invalid_uuid(client):
@@ -94,27 +71,9 @@ def test_update_nonexistent_analysis_module_type(client):
     assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_update_nonexistent_discovered_observables(client):
-    # Create an analysis
-    version = str(uuid.uuid4())
-    create = client.post("/api/analysis/", json={"version": version})
-
-    # Make sure you cannot update it to use a nonexistent discovered observable
-    update = client.put(
-        create.headers["Content-Location"],
-        json={"discovered_observables": [str(uuid.uuid4())], "version": version}
-    )
-    assert update.status_code == status.HTTP_404_NOT_FOUND
-
-
 @pytest.mark.parametrize(
     "key,value",
-    [
-        ("directives", ["abc"]),
-        ("tags", ["abc"]),
-        ("threat_actor", "abc"),
-        ("threats", ["abc"]),
-    ],
+    NONEXISTENT_FIELDS,
 )
 def test_update_nonexistent_node_fields(client, key, value):
     # Create an analysis
@@ -184,12 +143,7 @@ def test_update_detected_observables(client):
 
 @pytest.mark.parametrize(
     "values",
-    [
-        ([]),
-        (["test"]),
-        (["test1", "test2"]),
-        (["test", "test"]),
-    ],
+    VALID_DIRECTIVES,
 )
 def test_update_valid_node_directives(client, values):
     # Create a node
@@ -220,12 +174,7 @@ def test_update_valid_node_directives(client, values):
 
 @pytest.mark.parametrize(
     "values",
-    [
-        ([]),
-        (["test"]),
-        (["test1", "test2"]),
-        (["test", "test"]),
-    ],
+    VALID_TAGS,
 )
 def test_update_valid_node_tags(client, values):
     # Create a node
@@ -256,10 +205,7 @@ def test_update_valid_node_tags(client, values):
 
 @pytest.mark.parametrize(
     "value",
-    [
-        (None),
-        ("test"),
-    ],
+    VALID_THREAT_ACTOR,
 )
 def test_update_valid_node_threat_actor(client, value):
     # Create a node
@@ -292,12 +238,7 @@ def test_update_valid_node_threat_actor(client, value):
 
 @pytest.mark.parametrize(
     "values",
-    [
-        ([]),
-        (["test"]),
-        (["test1", "test2"]),
-        (["test", "test"]),
-    ],
+    VALID_THREATS,
 )
 def test_update_valid_node_threats(client, values):
     # Create a node

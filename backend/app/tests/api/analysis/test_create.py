@@ -4,6 +4,15 @@ import uuid
 
 from fastapi import status
 
+from tests.api.node import (
+    INVALID_CREATE_FIELDS,
+    NONEXISTENT_FIELDS,
+    VALID_DIRECTIVES,
+    VALID_TAGS,
+    VALID_THREAT_ACTOR,
+    VALID_THREATS,
+)
+
 
 #
 # INVALID TESTS
@@ -20,18 +29,8 @@ from fastapi import status
         ("details", ""),
         ("details", "abc"),
         ("details", []),
-        ("discovered_observables", 123),
-        ("discovered_observables", ""),
-        ("discovered_observables", "abc"),
-        ("discovered_observables", [123]),
-        ("discovered_observables", [None]),
-        ("discovered_observables", [""]),
-        ("discovered_observables", ["abc", 123]),
         ("error_message", 123),
         ("error_message", ""),
-        ("manual", 123),
-        ("manual", None),
-        ("manual", "True"),
         ("stack_trace", 123),
         ("stack_trace", ""),
         ("summary", 123),
@@ -49,31 +48,7 @@ def test_create_invalid_fields(client, key, value):
 
 @pytest.mark.parametrize(
     "key,value",
-    [
-        ("directives", 123),
-        ("directives", ""),
-        ("directives", "abc"),
-        ("directives", [123]),
-        ("directives", [None]),
-        ("directives", [""]),
-        ("directives", ["abc", 123]),
-        ("tags", 123),
-        ("tags", ""),
-        ("tags", "abc"),
-        ("tags", [123]),
-        ("tags", [None]),
-        ("tags", [""]),
-        ("tags", ["abc", 123]),
-        ("threat_actor", 123),
-        ("threat_actor", ""),
-        ("threats", 123),
-        ("threats", ""),
-        ("threats", "abc"),
-        ("threats", [123]),
-        ("threats", [None]),
-        ("threats", [""]),
-        ("threats", ["abc", 123]),
-    ],
+    INVALID_CREATE_FIELDS,
 )
 def test_create_invalid_node_fields(client, key, value):
     create = client.post("/api/analysis/", json={key: value})
@@ -103,19 +78,9 @@ def test_create_nonexistent_analysis_module_type(client):
     assert create.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_create_nonexistent_discovered_observables(client):
-    create = client.post("/api/analysis/", json={"discovered_observables": [str(uuid.uuid4())]})
-    assert create.status_code == status.HTTP_404_NOT_FOUND
-
-
 @pytest.mark.parametrize(
     "key,value",
-    [
-        ("directives", ["abc"]),
-        ("tags", ["abc"]),
-        ("threat_actor", "abc"),
-        ("threats", ["abc"]),
-    ],
+    NONEXISTENT_FIELDS,
 )
 def test_create_nonexistent_node_fields(client, key, value):
     create = client.post("/api/analysis/", json={key: value})
@@ -135,13 +100,11 @@ def test_create_nonexistent_node_fields(client, key, value):
         ("details", '{"foo": "bar"}'),
         ("error_message", None),
         ("error_message", "test"),
-        ("manual", True),
-        ("manual", False),
         ("stack_trace", None),
         ("stack_trace", "test"),
         ("summary", None),
         ("summary", "test"),
-        ("uuid", str(uuid.uuid4()))
+        ("uuid", str(uuid.uuid4())),
     ],
 )
 def test_create_valid_optional_fields(client, key, value):
@@ -163,8 +126,7 @@ def test_create_valid_analysis_module_type(client):
     # Create an analysis module type
     analysis_module_type_uuid = str(uuid.uuid4())
     client.post(
-        "/api/analysis/module_type/",
-        json={"uuid": analysis_module_type_uuid, "value": "test", "version": "1.0.0"}
+        "/api/analysis/module_type/", json={"uuid": analysis_module_type_uuid, "value": "test", "version": "1.0.0"}
     )
 
     # Use the analysis module type to create a new analysis
@@ -193,12 +155,7 @@ def test_create_valid_required_fields(client):
 
 @pytest.mark.parametrize(
     "values",
-    [
-        ([]),
-        (["test"]),
-        (["test1", "test2"]),
-        (["test", "test"]),
-    ],
+    VALID_DIRECTIVES,
 )
 def test_create_valid_node_directives(client, values):
     # Create the directives. Need to only create unique values, otherwise the database will return a 409
@@ -217,12 +174,7 @@ def test_create_valid_node_directives(client, values):
 
 @pytest.mark.parametrize(
     "values",
-    [
-        ([]),
-        (["test"]),
-        (["test1", "test2"]),
-        (["test", "test"]),
-    ],
+    VALID_TAGS,
 )
 def test_create_valid_node_tags(client, values):
     # Create the tags. Need to only create unique values, otherwise the database will return a 409
@@ -241,10 +193,7 @@ def test_create_valid_node_tags(client, values):
 
 @pytest.mark.parametrize(
     "value",
-    [
-        (None),
-        ("test"),
-    ],
+    VALID_THREAT_ACTOR,
 )
 def test_create_valid_node_threat_actor(client, value):
     # Create the threat actor. Need to only create unique values, otherwise the database will return a 409
@@ -266,12 +215,7 @@ def test_create_valid_node_threat_actor(client, value):
 
 @pytest.mark.parametrize(
     "values",
-    [
-        ([]),
-        (["test"]),
-        (["test1", "test2"]),
-        (["test", "test"]),
-    ],
+    VALID_THREATS,
 )
 def test_create_valid_node_threats(client, values):
     # Create a threat type
