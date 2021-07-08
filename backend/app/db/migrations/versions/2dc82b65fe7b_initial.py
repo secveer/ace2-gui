@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: f57f2f0ed4c2
+Revision ID: 2dc82b65fe7b
 Revises: 
-Create Date: 2021-07-07 21:03:44.211184
+Create Date: 2021-07-08 18:02:34.880082
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = 'f57f2f0ed4c2'
+revision = '2dc82b65fe7b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -241,7 +241,6 @@ def upgrade() -> None:
     sa.Column('analysis_module_type_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('details', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     sa.Column('error_message', sa.String(), nullable=True),
-    sa.Column('manual', sa.Boolean(), nullable=False),
     sa.Column('stack_trace', sa.String(), nullable=True),
     sa.Column('summary', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['analysis_module_type_uuid'], ['analysis_module_type.uuid'], ),
@@ -329,13 +328,14 @@ def upgrade() -> None:
     op.create_index(op.f('ix_user_role_mapping_user_uuid'), 'user_role_mapping', ['user_uuid'], unique=False)
     op.create_table('alert',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('analysis_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('disposition_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('disposition_time', sa.DateTime(), nullable=True),
+    sa.Column('disposition_time', sa.DateTime(timezone=True), nullable=True),
     sa.Column('disposition_user_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('event_time', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=False),
+    sa.Column('event_time', sa.DateTime(timezone=True), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=False),
     sa.Column('event_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('insert_time', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=False),
+    sa.Column('insert_time', sa.DateTime(timezone=True), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=False),
     sa.Column('instructions', sa.String(), nullable=True),
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('owner_uuid', postgresql.UUID(as_uuid=True), nullable=True),
@@ -343,6 +343,7 @@ def upgrade() -> None:
     sa.Column('tool_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('tool_instance_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('type_uuid', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.ForeignKeyConstraint(['analysis_uuid'], ['analysis.uuid'], ),
     sa.ForeignKeyConstraint(['disposition_user_uuid'], ['user.uuid'], ),
     sa.ForeignKeyConstraint(['disposition_uuid'], ['alert_disposition.uuid'], ),
     sa.ForeignKeyConstraint(['event_uuid'], ['event.uuid'], ),
@@ -351,8 +352,9 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['tool_instance_uuid'], ['alert_tool_instance.uuid'], ),
     sa.ForeignKeyConstraint(['tool_uuid'], ['alert_tool.uuid'], ),
     sa.ForeignKeyConstraint(['type_uuid'], ['alert_type.uuid'], ),
-    sa.ForeignKeyConstraint(['uuid'], ['analysis.uuid'], ),
-    sa.PrimaryKeyConstraint('uuid')
+    sa.ForeignKeyConstraint(['uuid'], ['node.uuid'], ),
+    sa.PrimaryKeyConstraint('uuid'),
+    sa.UniqueConstraint('analysis_uuid')
     )
     op.create_index('event_uuid', 'alert', ['event_uuid'], unique=False)
     op.create_table('event_prevention_tool_mapping',
@@ -382,7 +384,6 @@ def upgrade() -> None:
     op.create_table('observable_instance',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('alert_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('manual', sa.Boolean(), nullable=False),
     sa.Column('observable_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('redirection', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('time', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=False),
