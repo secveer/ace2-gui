@@ -3,7 +3,7 @@ from fastapi.exceptions import HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
 
-from api.models.analysis import AnalysisCreate, AnalysisRead, AnalysisUpdate, DiscoveredObservable
+from api.models.analysis import AnalysisCreate, AnalysisRead, AnalysisUpdate
 from api.routes import helpers
 from api.routes.node import create_node, update_node
 from db import crud
@@ -23,6 +23,8 @@ router = APIRouter(
 # CREATE
 #
 
+# TODO: Create/add a discovered observable to an analysis
+
 
 def create_analysis(
     analysis: AnalysisCreate,
@@ -38,14 +40,6 @@ def create_analysis(
         new_analysis.analysis_module_type = crud.read(
             uuid=analysis.analysis_module_type, db_table=AnalysisModuleType, db=db
         )
-
-    # If discovered observables were given, get them from the database and use them in the new analysis
-    db_discovered_observables = []
-    if analysis.discovered_observables:
-        db_discovered_observables = crud.read_by_uuids(
-            uuids=analysis.discovered_observables, db_table=ObservableInstance, db=db
-        )
-    new_analysis.discovered_observables = db_discovered_observables
 
     # Save the new analysis to the database
     db.add(new_analysis)
@@ -104,13 +98,6 @@ def update_analysis(
     if "details" in update_data:
         db_analysis.details = update_data["details"]
 
-    if "discovered_observables" in update_data:
-        # Discovered observables are appended to the existing ones and do not replace them.
-        db_discovered_observables = crud.read_by_uuids(
-            uuids=update_data["discovered_observables"], db_table=ObservableInstance, db=db
-        )
-        db_analysis.discovered_observables += db_discovered_observables
-
     if "error_message" in update_data:
         db_analysis.error_message = update_data["error_message"]
 
@@ -133,51 +120,4 @@ helpers.api_route_update(router, update_analysis)
 #
 
 
-def delete_analysis(uuid: UUID, db: Session = Depends(get_db)):
-    """
-    Deletes an analysis from the database, but only if it was manually added by an analyst. This is to prevent
-    deleting analyses that were automatically added by the ACE Core.
-    """
-
-    db_analysis: Analysis = crud.read(uuid=uuid, db_table=Analysis, db=db)
-    if db_analysis.manual is True:
-        crud.delete(uuid=uuid, db_table=Analysis, db=db)
-    else:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, detail=f"{uuid} is not a manually created analysis")
-
-
-def delete_analysis_discovered_observable(
-    analysis_uuid: UUID,
-    discovered_observable: DiscoveredObservable,
-    db: Session = Depends(get_db)
-):
-    # Read the current analysis from the database
-    db_analysis: Analysis = crud.read(uuid=analysis_uuid, db_table=Analysis, db=db)
-
-    # Read the current discovered observable from the database
-    db_discovered_observable: ObservableInstance = crud.read(
-        uuid=discovered_observable.uuid, db_table=ObservableInstance, db=db
-    )
-
-    # Raise an exception if this discovered observable is not in this analysis.
-    if db_discovered_observable not in db_analysis.discovered_observables:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND,
-            detail=f"The discovered observable {discovered_observable.uuid} does not exist in analysis {analysis_uuid}"
-        )
-
-    # Raise an exception if this discovered observable was not manually added by an analyst
-    # TODO: Figure out how to best add this return value to the API route created by the helper.
-    if not db_discovered_observable.manual:
-        raise HTTPException(
-            status.HTTP_403_FORBIDDEN,
-            detail="Unable to remove discovered observable that was not manually added"
-        )
-
-    db_analysis.discovered_observables.remove(db_discovered_observable)
-
-    crud.commit(db)
-
-
-helpers.api_route_delete(router, delete_analysis)
-helpers.api_route_delete(router, delete_analysis_discovered_observable, path="/{analysis_uuid}/discovered_observable")
+# We currently do not support deleting any Nodes.
