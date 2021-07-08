@@ -2,8 +2,6 @@ from pydantic import Field, Json, StrictBool
 from typing import List, Optional
 from uuid import UUID, uuid4
 
-from pydantic.main import BaseModel
-
 from api.models import type_str
 from api.models.analysis_module_type import AnalysisModuleTypeRead
 from api.models.node import NodeBase, NodeCreate, NodeRead, NodeUpdate
@@ -19,12 +17,6 @@ class AnalysisBase(NodeBase):
     )
 
     details: Optional[Json] = Field(description="A JSON representation of the details produced by the analysis")
-
-    # Any UUIDs given in this field when updating will be added to the existing ones and will not replace them.
-    discovered_observables: Optional[List[UUID]] = Field(
-        default_factory=list,
-        description="A list of observable instance UUIDs discovered while performing this analysis"
-    )
 
     error_message: Optional[type_str] = Field(description="An optional error message that occurred during analysis")
 
@@ -42,9 +34,7 @@ class AnalysisBase(NodeBase):
 
 
 class AnalysisCreate(NodeCreate, AnalysisBase):
-    manual: StrictBool = Field(
-        default=False, description="Whether or not this analysis was manually created by an analyst"
-    )
+    pass
 
 
 class AnalysisRead(NodeRead, AnalysisBase):
@@ -58,17 +48,9 @@ class AnalysisRead(NodeRead, AnalysisBase):
         description="A list of observable instances discovered while performing this analysis"
     )
 
-    manual: StrictBool = Field(description="Whether or not this analysis was manually created by an analyst")
-
     class Config:
         orm_mode = True
 
 
 class AnalysisUpdate(NodeUpdate, AnalysisBase):
     pass
-
-
-class DiscoveredObservable(BaseModel):
-    """Represents the UUID of an observable discovered during analysis."""
-
-    uuid: UUID = Field(description="The UUID of the observable instance discovered during analysis")
