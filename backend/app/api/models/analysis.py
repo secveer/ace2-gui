@@ -1,4 +1,4 @@
-from pydantic import Field, Json, StrictBool
+from pydantic import Field, Json
 from typing import List, Optional
 from uuid import UUID, uuid4
 

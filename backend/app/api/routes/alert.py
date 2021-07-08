@@ -1,6 +1,5 @@
 from datetime import datetime
-from fastapi import APIRouter, Depends, Request, Response, status
-from fastapi.exceptions import HTTPException
+from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 from uuid import UUID
 
@@ -18,7 +17,6 @@ from db.schemas.alert_tool_instance import AlertToolInstance
 from db.schemas.alert_type import AlertType
 from db.schemas.analysis import Analysis
 from db.schemas.event import Event
-from db.schemas.user import User
 
 
 router = APIRouter(

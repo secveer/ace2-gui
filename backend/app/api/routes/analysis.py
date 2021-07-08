@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, Request, Response, status
-from fastapi.exceptions import HTTPException
+from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
 from uuid import UUID
 
@@ -10,7 +9,6 @@ from db import crud
 from db.database import get_db
 from db.schemas.analysis import Analysis
 from db.schemas.analysis_module_type import AnalysisModuleType
-from db.schemas.observable_instance import ObservableInstance
 
 
 router = APIRouter(
