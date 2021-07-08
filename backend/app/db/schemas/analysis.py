@@ -24,8 +24,6 @@ class Analysis(Node):
     # Commenting this out until this functionality is fleshed out
     # event_summary = Column(JSONB)
 
-    manual = Column(Boolean, default=False, nullable=False)
-
     stack_trace = Column(String)
 
     summary = Column(String)
