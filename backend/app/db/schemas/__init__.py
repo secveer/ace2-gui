@@ -36,6 +36,7 @@ from db.schemas.node_threat_node_threat_type_mapping import node_threat_node_thr
 from db.schemas.node_threat_type import NodeThreatType
 from db.schemas.observable import Observable
 from db.schemas.observable_instance import ObservableInstance
+from db.schemas.observable_instance_analysis_mapping import observable_instance_analysis_mapping
 from db.schemas.observable_type import ObservableType
 from db.schemas.user import User
 from db.schemas.user_role import UserRole
