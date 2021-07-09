@@ -6,8 +6,22 @@ from typing import Any, Callable
 
 
 def _build_decorator(validator: Callable, *fields: str) -> classmethod:
-    decorator = pydantic.validator(*fields, allow_reuse=True, check_fields=False)
+    decorator = pydantic.validator(*fields, allow_reuse=True, check_fields=False, pre=True)
     return decorator(validator)
+
+
+def convert_association_list(*fields: str) -> classmethod:
+    """
+    Pydantic validator that converts SQLAlchemy _AssociationList objects to a regular list.
+
+    This is a "hack" since Pydantic does not support list-like elements such as SQLAlchemy's _AssociationList.
+    https://github.com/samuelcolvin/pydantic/issues/1038
+    """
+
+    def _validate(value: Any) -> str:
+        return list(value)
+
+    return _build_decorator(_validate, *fields)
 
 
 def prevent_none(*fields: str) -> classmethod:
