@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from api.models.observable_instance import ObservableInstanceCreate, ObservableInstanceRead, ObservableInstanceUpdate
 from api.routes import helpers
@@ -45,11 +45,17 @@ def create_observable_instance(
         uuid=observable_instance.parent_analysis_uuid, db_table=Analysis, db=db
     )
 
+    # Adding an observable instance counts as modifying the alert and the analysis, so they should both get new versions
+    new_observable_instance.alert.version = uuid4()
+    new_observable_instance.parent_analysis.version = uuid4()
+
     # Set any performed analyses that were given
     for performed_analysis_uuid in observable_instance.performed_analysis_uuids:
-        new_observable_instance.performed_analyses.append(
-            crud.read(uuid=performed_analysis_uuid, db_table=Analysis, db=db)
-        )
+        db_analysis = crud.read(uuid=performed_analysis_uuid, db_table=Analysis, db=db)
+        new_observable_instance.performed_analyses.append(db_analysis)
+
+        # This counts as editing the analysis, so it should receive an updated version
+        db_analysis.version = uuid4()
 
     # Set the redirection observable instance if one was given
     if observable_instance.redirection_uuid:
