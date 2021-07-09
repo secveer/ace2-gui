@@ -13,12 +13,20 @@ from db.schemas.node_threat import NodeThreat
 from db.schemas.node_threat_actor import NodeThreatActor
 
 
-def create_node(node_create: NodeCreate, db_node_type: DeclarativeMeta, db: Session) -> DeclarativeMeta:
+def create_node(
+    node_create: NodeCreate,
+    db_node_type: DeclarativeMeta,
+    db: Session,
+    exclude: dict = None,
+) -> DeclarativeMeta:
     """
     Helper function when creating a new Node that sets the attributes inherited from Node.
     """
 
-    db_node: Node = db_node_type(**node_create.dict())
+    if exclude:
+        db_node: Node = db_node_type(**node_create.dict(exclude=exclude))
+    else:
+        db_node: Node = db_node_type(**node_create.dict())
 
     if node_create.directives:
         db_node.directives = crud.read_by_values(values=node_create.directives, db_table=NodeDirective, db=db)
@@ -35,12 +43,7 @@ def create_node(node_create: NodeCreate, db_node_type: DeclarativeMeta, db: Sess
     return db_node
 
 
-def update_node(
-    node_update: NodeUpdate,
-    uuid: UUID,
-    db_table: DeclarativeMeta,
-    db: Session
-) -> DeclarativeMeta:
+def update_node(node_update: NodeUpdate, uuid: UUID, db_table: DeclarativeMeta, db: Session) -> DeclarativeMeta:
     """
     Helper function when updating a Node that enforces version matching and updates the attributes inherited from Node.
     """
@@ -54,8 +57,7 @@ def update_node(
     # Return an exception if the passed in version does not match the Node's current version
     if update_data["version"] != db_node.version:
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Unable to update Node due to version mismatch"
+            status_code=status.HTTP_409_CONFLICT, detail="Unable to update Node due to version mismatch"
         )
 
     if "directives" in update_data:
