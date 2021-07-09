@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from api.models.analysis import AnalysisCreate, AnalysisRead, AnalysisUpdate
 from api.routes import helpers
@@ -9,6 +9,7 @@ from db import crud
 from db.database import get_db
 from db.schemas.analysis import Analysis
 from db.schemas.analysis_module_type import AnalysisModuleType
+from db.schemas.observable_instance import ObservableInstance
 
 
 router = APIRouter(
@@ -31,7 +32,12 @@ def create_analysis(
     db: Session = Depends(get_db),
 ):
     # Create the new analysis Node using the data from the request
-    new_analysis: Analysis = create_node(node_create=analysis, db_node_type=Analysis, db=db)
+    new_analysis: Analysis = create_node(
+        node_create=analysis,
+        db_node_type=Analysis,
+        db=db,
+        exclude={"parent_observable_uuid"}
+    )
 
     # If an analysis module type was given, get it from the database to use with the new analysis
     if analysis.analysis_module_type:
@@ -39,13 +45,20 @@ def create_analysis(
             uuid=analysis.analysis_module_type, db_table=AnalysisModuleType, db=db
         )
 
+    # Set the parent observable if one was given
+    if analysis.parent_observable_uuid:
+        new_analysis.parent_observable = crud.read(
+            uuid=analysis.parent_observable_uuid, db_table=ObservableInstance, db=db
+        )
+
+        # This counts as editing the observable instance, so it should receive an updated version
+        new_analysis.parent_observable.version = uuid4()
+
     # Save the new analysis to the database
     db.add(new_analysis)
     crud.commit(db)
 
-    response.headers["Content-Location"] = request.url_for(
-        "get_analysis", uuid=new_analysis.uuid
-    )
+    response.headers["Content-Location"] = request.url_for("get_analysis", uuid=new_analysis.uuid)
 
 
 helpers.api_route_create(router, create_analysis)
