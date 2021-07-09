@@ -5,8 +5,12 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 from sqlalchemy.orm.exc import NoResultFound
-from typing import List
+from typing import List, Union
 from uuid import UUID
+
+from db.schemas.observable import Observable
+from db.schemas.observable_type import ObservableType
+from db.schemas.user import User
 
 
 #
@@ -68,6 +72,27 @@ def read_by_uuids(uuids: List[UUID], db_table: DeclarativeMeta, db: Session):
             )
 
     return resources
+
+
+def read_observable(type: str, value: str, db: Session) -> Union[Observable, None]:
+    """Returns the Observable with the given type and value if it exists."""
+
+    return db.execute(
+        select(Observable).join(ObservableType).where(ObservableType.value == type, Observable.value == value)
+    ).scalars().one_or_none()
+
+
+def read_user_by_username(username: str, db: Session) -> User:
+    """Returns the User with the given username if it exists. Designed to be called only
+    by the API since it raises an HTTPException."""
+
+    try:
+        return db.execute(select(User).where(User.username == username)).scalars().one()
+    except NoResultFound:
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"The user {username} does not exist",
+            )
 
 
 def read_by_value(value: str, db_table: DeclarativeMeta, db: Session):
