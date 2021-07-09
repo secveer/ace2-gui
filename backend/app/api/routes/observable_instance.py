@@ -6,7 +6,6 @@ from api.models.observable_instance import ObservableInstanceCreate, ObservableI
 from api.routes import helpers
 from api.routes.node import create_node, update_node
 from db import crud
-#from db.crud import observable_instance
 from db.database import get_db
 from db.schemas.alert import Alert
 from db.schemas.analysis import Analysis
