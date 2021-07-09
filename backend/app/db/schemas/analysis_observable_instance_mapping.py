@@ -20,5 +20,6 @@ analysis_observable_instance_mapping = Table(
         ForeignKey("observable_instance.uuid"),
         index=True,
         primary_key=True,
+        unique=True,
     ),
 )
