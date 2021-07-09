@@ -2,10 +2,9 @@ from pydantic import Field, Json
 from typing import List, Optional
 from uuid import UUID, uuid4
 
-from api.models import type_str
+from api.models import type_str, validators
 from api.models.analysis_module_type import AnalysisModuleTypeRead
 from api.models.node import NodeBase, NodeCreate, NodeRead, NodeUpdate
-from api.models.observable_instance import ObservableInstanceRead
 
 
 class AnalysisBase(NodeBase):
@@ -34,7 +33,7 @@ class AnalysisBase(NodeBase):
 
 
 class AnalysisCreate(NodeCreate, AnalysisBase):
-    pass
+    parent_observable_uuid: Optional[UUID] = Field(description="The UUID of the observable containing this analysis")
 
 
 class AnalysisRead(NodeRead, AnalysisBase):
@@ -44,13 +43,18 @@ class AnalysisRead(NodeRead, AnalysisBase):
 
     details: Optional[dict] = Field(description="A JSON representation of the details produced by the analysis")
 
-    discovered_observables: List[ObservableInstanceRead] = Field(
+    discovered_observable_uuids: List[UUID] = Field(
         description="A list of observable instances discovered while performing this analysis"
     )
+
+    parent_observable_uuid: Optional[UUID] = Field(description="The UUID of the observable containing this analysis")
+
+    _convert_association_list: classmethod = validators.convert_association_list("discovered_observable_uuids")
 
     class Config:
         orm_mode = True
 
 
 class AnalysisUpdate(NodeUpdate, AnalysisBase):
+    # Currently we do not support editing an analysis' parent observable UUID once it is created.
     pass
