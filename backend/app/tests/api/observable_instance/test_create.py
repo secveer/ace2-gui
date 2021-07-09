@@ -301,6 +301,7 @@ def test_create_valid_optional_fields(client, key, value):
 
 
 def test_create_valid_performed_analysis_uuids(client):
+    # TODO: Read the analysis back, make sure its parent_observable is correct and has a new version
     # Create an alert
     alert_uuid, analysis_uuid = create_alert(client=client)
 
@@ -365,14 +366,26 @@ def test_create_valid_required_fields(client):
     # Create an alert
     alert_uuid, analysis_uuid = create_alert(client=client)
 
+    # Read the alert back to get its current version
+    # TODO: Fix this hardcoded URL
+    get_alert = client.get(f"http://testserver/api/alert/{alert_uuid}")
+    initial_alert_version = get_alert.json()["version"]
+
+    # Read the analysis back to get its current version
+    # TODO: Fix this hardcoded URL
+    get_analysis = client.get(f"http://testserver/api/analysis/{analysis_uuid}")
+    initial_analysis_version = get_analysis.json()["version"]
+
     # Create an observable type
     client.post("/api/observable/type/", json={"value": "test_type"})
 
     # Create an observable instance
+    observable_uuid = str(uuid.uuid4())
     create_json = {
         "alert_uuid": alert_uuid,
         "parent_analysis_uuid": analysis_uuid,
         "type": "test_type",
+        "uuid": observable_uuid,
         "value": "test",
     }
     create = client.post("/api/observable/instance/", json=create_json)
@@ -384,7 +397,22 @@ def test_create_valid_required_fields(client):
     assert get.json()["alert_uuid"] == alert_uuid
     assert get.json()["parent_analysis_uuid"] == analysis_uuid
     assert get.json()["observable"]["type"]["value"] == "test_type"
+    assert get.json()["uuid"] == observable_uuid
     assert get.json()["observable"]["value"] == "test"
+
+    # Read the alert back to get its current version
+    # TODO: Fix this hardcoded URL
+    get_alert = client.get(f"http://testserver/api/alert/{alert_uuid}")
+
+    # Read the parent analysis back. You should see this observable instance in its discovered_observable_uuids list
+    # even though it was not explicitly added.
+    # TODO: Fix this hardcoded URL
+    get_analysis = client.get(f"http://testserver/api/analysis/{analysis_uuid}")
+    assert get_analysis.json()["discovered_observable_uuids"] == [observable_uuid]
+
+    # Additionally, creating an observable instance should trigger the alert and analysis to get a new version.
+    assert get_alert.json()["version"] != initial_alert_version
+    assert get_analysis.json()["version"] != initial_analysis_version
 
 
 @pytest.mark.parametrize(

@@ -136,11 +136,6 @@ def test_update_analysis_module_type(client):
     assert get.json()["analysis_module_type"]["uuid"] == analysis_module_type_uuid2
 
 
-def test_update_detected_observables(client):
-    # TODO: Write this test when the observable instance endpoints are finished
-    pass
-
-
 @pytest.mark.parametrize(
     "values",
     VALID_DIRECTIVES,
