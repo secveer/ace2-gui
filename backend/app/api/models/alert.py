@@ -9,6 +9,7 @@ from api.models.alert_queue import AlertQueueRead
 from api.models.alert_tool import AlertToolRead
 from api.models.alert_tool_instance import AlertToolInstanceRead
 from api.models.alert_type import AlertTypeRead
+from api.models.analysis import AnalysisRead
 from api.models.node import NodeBase, NodeCreate, NodeRead, NodeUpdate
 from api.models.user import UserRead
 
@@ -52,6 +53,8 @@ class AlertCreate(NodeCreate, AlertBase):
 
 
 class AlertRead(NodeRead, AlertBase):
+    analysis: AnalysisRead = Field(description="The analysis representing this alert")
+
     disposition: Optional[AlertDispositionRead] = Field(
         description="The disposition assigned to this alert"
     )
