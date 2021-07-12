@@ -6,10 +6,8 @@ from api.models import type_str
 from api.models.user import UserRead
 
 
-class CommentBase(BaseModel):
+class NodeCommentBase(BaseModel):
     """Represents a comment that can be added to a node."""
-
-    insert_time: datetime = Field(default_factory=datetime.utcnow, description="The time the comment was made")
 
     node_uuid: UUID = Field(description="The UUID of the node associated with this comment")
 
@@ -20,19 +18,20 @@ class CommentBase(BaseModel):
     value: type_str = Field(description="The value of the comment")
 
 
-class CommentCreate(CommentBase):
+class NodeCommentCreate(NodeCommentBase):
     pass
 
 
-class CommentRead(CommentBase):
+class NodeCommentRead(NodeCommentBase):
+    insert_time: datetime = Field(description="The time the comment was made")
+
     user: UserRead = Field(description="The user that created the comment")
 
     class Config:
         orm_mode = True
 
 
-class CommentUpdate(BaseModel):
+class NodeCommentUpdate(BaseModel):
     # The only thing that makes sense to be able to update is the actual value of the comment.
-    # Otherwise, you would delete the comment and create a new comment on a new node. Since value
-    # is the only field to update, it does not use Optional like the other Pydantic models.
+    # Otherwise, you would delete the comment and create a new comment on a new node.
     value: type_str = Field(description="The value of the comment")
