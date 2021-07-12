@@ -19,49 +19,56 @@ class Alert(Node):
 
     disposition = relationship("AlertDisposition")
 
-    disposition_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_disposition.uuid"))
+    disposition_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_disposition.uuid"), index=True)
 
-    disposition_time = Column(DateTime(timezone=True))
+    disposition_time = Column(DateTime(timezone=True), index=True)
 
-    disposition_user_uuid = Column(UUID(as_uuid=True), ForeignKey("user.uuid"))
+    disposition_user_uuid = Column(UUID(as_uuid=True), ForeignKey("user.uuid"), index=True)
 
     disposition_user = relationship("User", foreign_keys=[disposition_user_uuid])
 
-    event_time = Column(DateTime(timezone=True), server_default=utcnow(), nullable=False)
+    event_time = Column(DateTime(timezone=True), server_default=utcnow(), nullable=False, index=True)
 
-    event_uuid = Column(UUID(as_uuid=True), ForeignKey("event.uuid"))
+    event_uuid = Column(UUID(as_uuid=True), ForeignKey("event.uuid"), index=True)
 
     event = relationship("Event", foreign_keys=[event_uuid])
 
-    insert_time = Column(DateTime(timezone=True), server_default=utcnow(), nullable=False)
+    insert_time = Column(DateTime(timezone=True), server_default=utcnow(), nullable=False, index=True)
 
     instructions = Column(String)
 
     name = Column(String)
 
-    owner_uuid = Column(UUID(as_uuid=True), ForeignKey("user.uuid"))
+    owner_uuid = Column(UUID(as_uuid=True), ForeignKey("user.uuid"), index=True)
 
     owner = relationship("User", foreign_keys=[owner_uuid])
 
     queue = relationship("AlertQueue")
 
-    queue_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_queue.uuid"), nullable=False)
+    queue_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_queue.uuid"), nullable=False, index=True)
 
     tool = relationship("AlertTool")
 
-    tool_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_tool.uuid"))
+    tool_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_tool.uuid"), index=True)
 
     tool_instance = relationship("AlertToolInstance")
 
-    tool_instance_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_tool_instance.uuid"))
+    tool_instance_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_tool_instance.uuid"), index=True)
 
     type = relationship("AlertType")
 
-    type_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_type.uuid"), nullable=False)
+    type_uuid = Column(UUID(as_uuid=True), ForeignKey("alert_type.uuid"), nullable=False, index=True)
 
     __mapper_args__ = {
         "polymorphic_identity": "alert",
     }
 
     # TODO: We need a lot more indices here for when we introduce searching API endpoints.
-    __table_args__ = (Index("event_uuid", event_uuid),)
+    __table_args__ = (
+        Index(
+            "name_trgm",
+            name,
+            postgresql_ops={"name": "gin_trgm_ops"},
+            postgresql_using="gin",
+        ),
+    )
