@@ -33,7 +33,7 @@ class Observable(Base):
 
     __table_args__ = (
         Index(
-            "value_trgm",
+            "observable_value_trgm",
             value,
             postgresql_ops={"value": "gin_trgm_ops"},
             postgresql_using="gin",
