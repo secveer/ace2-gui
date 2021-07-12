@@ -131,9 +131,11 @@ def update_observable_instance(
     # Any UUIDs given in this list add to the existing ones and do not replace them
     if "performed_analysis_uuids" in update_data:
         for performed_analysis_uuid in update_data["performed_analysis_uuids"]:
-            db_observable_instance.performed_analyses.append(
-                crud.read(uuid=performed_analysis_uuid, db_table=Analysis, db=db)
-            )
+            db_analysis = crud.read(uuid=performed_analysis_uuid, db_table=Analysis, db=db)
+            db_observable_instance.performed_analyses.append(db_analysis)
+
+            # This counts as editing the analysis, so it should receive an updated version
+            db_analysis.version = uuid4()
 
     if "redirection_uuid" in update_data:
         db_observable_instance.redirection = crud.read(

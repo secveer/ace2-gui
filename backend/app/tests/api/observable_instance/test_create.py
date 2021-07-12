@@ -301,24 +301,25 @@ def test_create_valid_optional_fields(client, key, value):
 
 
 def test_create_valid_performed_analysis_uuids(client):
-    # TODO: Read the analysis back, make sure its parent_observable is correct and has a new version
     # Create an alert
     alert_uuid, analysis_uuid = create_alert(client=client)
 
     # Create an observable type
     client.post("/api/observable/type/", json={"value": "test_type"})
 
-    # Create some child analyses for the observable instance
-    child_analysis_uuid1 = str(uuid.uuid4())
-    child_analysis_uuid2 = str(uuid.uuid4())
-    client.post("/api/analysis/", json={"uuid": child_analysis_uuid1})
-    client.post("/api/analysis/", json={"uuid": child_analysis_uuid2})
+    # Create a child analysis for the observable instance
+    child_analysis_uuid = str(uuid.uuid4())
+    analysis_create = client.post("/api/analysis/", json={"uuid": child_analysis_uuid})
+
+    # Read the analysis back to get its current version
+    get_analysis = client.get(analysis_create.headers["Content-Location"])
+    initial_version = get_analysis.json()["version"]
 
     # Create the observable instance
     create_json = {
         "alert_uuid": alert_uuid,
         "parent_analysis_uuid": analysis_uuid,
-        "performed_analysis_uuids": [child_analysis_uuid1, child_analysis_uuid2],
+        "performed_analysis_uuids": [child_analysis_uuid],
         "type": "test_type",
         "value": "test",
     }
@@ -326,7 +327,16 @@ def test_create_valid_performed_analysis_uuids(client):
 
     # Read it back
     get = client.get(create.headers["Content-Location"])
-    assert sorted(get.json()["performed_analysis_uuids"]) == sorted([child_analysis_uuid1, child_analysis_uuid2])
+    assert get.json()["performed_analysis_uuids"] == [child_analysis_uuid]
+
+    # Read the analysis back. By creating the observable instance and setting its performed_analysis_uuids, you should
+    # be able to read the analysis back and see the observable instance listed as its parent_observable_uuid even
+    # though it was not explicitly added.
+    get_analysis = client.get(analysis_create.headers["Content-Location"])
+    assert get_analysis.json()["parent_observable_uuid"] == get.json()["uuid"]
+
+    # Additionally, adding the observable instance as the parent should trigger the analysis to have a new version.
+    assert get_analysis.json()["version"] != initial_version
 
 
 def test_create_valid_redirection(client):

@@ -157,6 +157,7 @@ def test_update_disposition(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["disposition"]["value"] == "test"
+    assert get.json()["version"] != version
 
 
 def test_update_event(client):
@@ -201,6 +202,7 @@ def test_update_owner(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["owner"]["username"] == "johndoe"
+    assert get.json()["version"] != version
 
 
 def test_update_queue(client):
@@ -229,6 +231,7 @@ def test_update_queue(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["queue"]["value"] == "test_queue2"
+    assert get.json()["version"] != version
 
 
 def test_update_tool(client):
@@ -257,6 +260,7 @@ def test_update_tool(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["tool"]["value"] == "test"
+    assert get.json()["version"] != version
 
 
 def test_update_tool_instance(client):
@@ -285,6 +289,7 @@ def test_update_tool_instance(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["tool_instance"]["value"] == "test"
+    assert get.json()["version"] != version
 
 
 def test_update_type(client):
@@ -313,6 +318,7 @@ def test_update_type(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["type"]["value"] == "test_type2"
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -347,6 +353,7 @@ def test_update_valid_node_directives(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["directives"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -381,6 +388,7 @@ def test_update_valid_node_tags(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["tags"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -418,6 +426,8 @@ def test_update_valid_node_threat_actor(client, value):
     else:
         assert get.json()["threat_actor"] is None
 
+    assert get.json()["version"] != version
+
 
 @pytest.mark.parametrize(
     "values",
@@ -454,6 +464,7 @@ def test_update_valid_node_threats(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["threats"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -503,3 +514,5 @@ def test_update(client, key, initial_value, updated_value):
         assert get.json()[key] == "2022-01-01T00:00:00+00:00"
     else:
         assert get.json()[key] == updated_value
+
+    assert get.json()["version"] != version

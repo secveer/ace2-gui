@@ -178,7 +178,11 @@ def test_update_performed_analysis_uuids(client):
 
     # Create a child analysis
     child_analysis_uuid = str(uuid.uuid4())
-    client.post("/api/analysis/", json={"uuid": child_analysis_uuid})
+    analysis_create = client.post("/api/analysis/", json={"uuid": child_analysis_uuid})
+
+    # Read the analysis back to get its current version
+    get_analysis = client.get(analysis_create.headers["Content-Location"])
+    initial_version = get_analysis.json()["version"]
 
     # Update the performed analyses
     update = client.put(
@@ -190,6 +194,16 @@ def test_update_performed_analysis_uuids(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["performed_analysis_uuids"] == [child_analysis_uuid]
+    assert get.json()["version"] != version
+
+    # Read the analysis back. By updating the observable instance and setting its performed_analysis_uuids, you should
+    # be able to read the analysis back and see the observable instance listed as its parent_observable_uuid even
+    # though it was not explicitly added.
+    get_analysis = client.get(analysis_create.headers["Content-Location"])
+    assert get_analysis.json()["parent_observable_uuid"] == get.json()["uuid"]
+
+    # Additionally, adding the observable instance as the parent should trigger the analysis to have a new version.
+    assert get_analysis.json()["version"] != initial_version
 
 
 def test_update_redirection_uuid(client):
@@ -226,7 +240,7 @@ def test_update_redirection_uuid(client):
     }
     client.post("/api/observable/instance/", json=create2_json)
 
-    # Update the performed analyses
+    # Update the redirection UUID
     update = client.put(
         create.headers["Content-Location"],
         json={"redirection_uuid": redirection_uuid, "version": version}
@@ -236,6 +250,7 @@ def test_update_redirection_uuid(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["redirection_uuid"] == redirection_uuid
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -279,6 +294,7 @@ def test_update_valid_node_directives(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["directives"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -322,6 +338,7 @@ def test_update_valid_node_tags(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["tags"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -368,6 +385,8 @@ def test_update_valid_node_threat_actor(client, value):
     else:
         assert get.json()["threat_actor"] is None
 
+    assert get.json()["version"] != version
+
 
 @pytest.mark.parametrize(
     "values",
@@ -413,6 +432,7 @@ def test_update_valid_node_threats(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["threats"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -463,3 +483,5 @@ def test_update(client, key, initial_value, updated_value):
         assert get.json()[key] == "2022-01-01T00:00:00+00:00"
     else:
         assert get.json()[key] == updated_value
+
+    assert get.json()["version"] != version

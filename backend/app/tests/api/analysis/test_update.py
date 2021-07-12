@@ -134,6 +134,7 @@ def test_update_analysis_module_type(client):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert get.json()["analysis_module_type"]["uuid"] == analysis_module_type_uuid2
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -165,6 +166,7 @@ def test_update_valid_node_directives(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["directives"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -196,6 +198,7 @@ def test_update_valid_node_tags(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["tags"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -230,6 +233,8 @@ def test_update_valid_node_threat_actor(client, value):
     else:
         assert get.json()["threat_actor"] is None
 
+    assert get.json()["version"] != version
+
 
 @pytest.mark.parametrize(
     "values",
@@ -263,6 +268,7 @@ def test_update_valid_node_threats(client, values):
     # Read it back
     get = client.get(create.headers["Content-Location"])
     assert len(get.json()["threats"]) == len(list(set(values)))
+    assert get.json()["version"] != version
 
 
 @pytest.mark.parametrize(
@@ -307,3 +313,5 @@ def test_update(client, key, initial_value, updated_value):
         assert get.json()[key] == json.loads(updated_value)
     else:
         assert get.json()[key] == updated_value
+
+    assert get.json()["version"] != version
