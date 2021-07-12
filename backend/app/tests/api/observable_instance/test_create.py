@@ -410,10 +410,6 @@ def test_create_valid_required_fields(client):
     assert get.json()["uuid"] == observable_uuid
     assert get.json()["observable"]["value"] == "test"
 
-    # Read the alert back to get its current version
-    # TODO: Fix this hardcoded URL
-    get_alert = client.get(f"http://testserver/api/alert/{alert_uuid}")
-
     # Read the parent analysis back. You should see this observable instance in its discovered_observable_uuids list
     # even though it was not explicitly added.
     # TODO: Fix this hardcoded URL
@@ -421,6 +417,8 @@ def test_create_valid_required_fields(client):
     assert get_analysis.json()["discovered_observable_uuids"] == [observable_uuid]
 
     # Additionally, creating an observable instance should trigger the alert and analysis to get a new version.
+    # TODO: Fix this hardcoded URL
+    get_alert = client.get(f"http://testserver/api/alert/{alert_uuid}")
     assert get_alert.json()["version"] != initial_alert_version
     assert get_analysis.json()["version"] != initial_analysis_version
 
