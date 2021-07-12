@@ -162,6 +162,8 @@ def update(uuid: UUID, obj: BaseModel, db_table: DeclarativeMeta, db: Session):
         if result.rowcount != 1:
             raise HTTPException(status_code=404, detail=f"UUID {uuid} does not exist.")
 
+        commit(db)
+
     # An IntegrityError will happen if value already exists or was set to None
     except IntegrityError:
         db.rollback()
@@ -195,6 +197,8 @@ def delete(uuid: UUID, db_table: DeclarativeMeta, db: Session):
             status_code=400,
             detail=f"Unable to delete {db_table} UUID {uuid} due to a foreign key constraint.",
         )
+
+    commit(db)
 
 
 #
