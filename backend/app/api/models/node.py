@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from uuid import UUID, uuid4
 
 from api.models import type_str
-from api.models.comment import CommentRead
+from api.models.node_comment import NodeCommentRead
 from api.models.node_directive import NodeDirectiveRead
 from api.models.node_tag import NodeTagRead
 from api.models.node_threat import NodeThreatRead
@@ -62,7 +62,7 @@ class NodeCreate(NodeBase):
 
 
 class NodeRead(NodeBase):
-    comments: List[CommentRead] = Field(description="A list of comments added to the node")
+    comments: List[NodeCommentRead] = Field(description="A list of comments added to the node")
 
     directives: List[NodeDirectiveRead] = Field(description="A list of directives added to the node")
 
