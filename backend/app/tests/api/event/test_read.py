@@ -9,12 +9,12 @@ from fastapi import status
 
 
 def test_get_invalid_uuid(client):
-    get = client.get("/api/alert/1")
+    get = client.get("/api/event/1")
     assert get.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_get_nonexistent_uuid(client):
-    get = client.get(f"/api/alert/{uuid.uuid4()}")
+    get = client.get(f"/api/event/{uuid.uuid4()}")
     assert get.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -23,7 +23,7 @@ def test_get_nonexistent_uuid(client):
 #
 
 
-# There is currently no get_all endpoint for alerts
+# There is currently no get_all endpoint for events
 # def test_get_all(client):
 #     # Create some objects
 #     client.post("/api/alert/", json={})
