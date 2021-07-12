@@ -5,8 +5,12 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 from sqlalchemy.orm.exc import NoResultFound
-from typing import List
+from typing import List, Union
 from uuid import UUID
+
+from db.schemas.observable import Observable
+from db.schemas.observable_type import ObservableType
+from db.schemas.user import User
 
 
 #
@@ -47,9 +51,57 @@ def read(uuid: UUID, db_table: DeclarativeMeta, db: Session):
     return result
 
 
+def read_by_uuids(uuids: List[UUID], db_table: DeclarativeMeta, db: Session):
+    """Returns a list of objects with the given UUIDs. Designed to be called only by the API
+    since it raises an HTTPException."""
+
+    # Return without performing a database query if the list of values is empty
+    if uuids == []:
+        return uuids
+
+    # Only search the database for unique UUIDs
+    uuids = list(set(uuids))
+
+    resources = db.execute(select(db_table).where(db_table.uuid.in_(uuids))).scalars().all()
+
+    for uuid in uuids:
+        if not any(uuid == r.uuid for r in resources):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"The {uuid} {db_table} does not exist",
+            )
+
+    return resources
+
+
+def read_observable(type: str, value: str, db: Session) -> Union[Observable, None]:
+    """Returns the Observable with the given type and value if it exists."""
+
+    return db.execute(
+        select(Observable).join(ObservableType).where(ObservableType.value == type, Observable.value == value)
+    ).scalars().one_or_none()
+
+
+def read_user_by_username(username: str, db: Session) -> User:
+    """Returns the User with the given username if it exists. Designed to be called only
+    by the API since it raises an HTTPException."""
+
+    try:
+        return db.execute(select(User).where(User.username == username)).scalars().one()
+    except NoResultFound:
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"The user {username} does not exist",
+            )
+
+
 def read_by_value(value: str, db_table: DeclarativeMeta, db: Session):
     """Returns an object from the given database table with the given value.
     Designed to be called only by the API since it raises an HTTPException."""
+
+    # Return early if the value is None
+    if not value:
+        return None
 
     try:
         return db.execute(select(db_table).where(db_table.value == value)).scalars().one()
@@ -66,9 +118,9 @@ def read_by_values(values: List[str], db_table: DeclarativeMeta, db: Session):
     """Returns a list of objects from the given database table with the given values.
     Designed to be called only by the API since it raises an HTTPException."""
 
-    # Return without performing a database query if the list of values is empty
-    if values == []:
-        return values
+    # Return without performing a database query if the list of values is empty or None
+    if not values:
+        return []
 
     # Only search the database for unique values
     values = list(set(values))

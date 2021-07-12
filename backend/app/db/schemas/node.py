@@ -28,4 +28,6 @@ class Node(Base):
 
     threats = relationship("NodeThreat", secondary=node_threat_mapping)
 
+    version = Column(UUID(as_uuid=True), nullable=False)
+
     __mapper_args__ = {"polymorphic_identity": "node", "polymorphic_on": node_type}

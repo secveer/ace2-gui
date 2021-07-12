@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field, StrictBool
+from pydantic import BaseModel, Field, Json, StrictBool
 from typing import List, Optional
 from uuid import UUID, uuid4
 
 from api.models import type_str, validators
+from api.models.node_directive import NodeDirectiveRead
+from api.models.node_tag import NodeTagRead
 from api.models.observable_type import ObservableTypeRead
 
 
@@ -11,6 +13,13 @@ class AnalysisModuleTypeBase(BaseModel):
 
     description: Optional[type_str] = Field(
         description="An optional human-readable description of the analysis module type"
+    )
+
+    extended_version: Optional[Json] = Field(
+        description="""An optional dictionary of arbitrary key/value pairs that
+        can be used to add additional version data to the module. Analysis
+        modules that use some kind of external data can use these fields to
+        include the version of the data that was used at the time of analysis."""
     )
 
     manual: StrictBool = Field(
@@ -24,9 +33,25 @@ class AnalysisModuleTypeBase(BaseModel):
         An empty list means it supports ALL observable types.""",
     )
 
+    required_directives: List[type_str] = Field(
+        default_factory=list,
+        description="""A list of directives an observable must have in order to be analyzed by this module. An empty
+        list means that no directives are required.""",
+    )
+
+    required_tags: List[type_str] = Field(
+        default_factory=list,
+        description="""A list of tags an observable must have in order to be analyzed by this module. An empty list
+        means that no tags are required.""",
+    )
+
     uuid: UUID = Field(default_factory=uuid4, description="The UUID of the analysis module type")
 
     value: type_str = Field(description="The value of the analysis module type")
+
+    version: type_str = Field(description="Version number of the analysis module type in SemVer format (ex: 1.0.0)")
+
+    _validate_version: classmethod = validators.version("version")
 
 
 class AnalysisModuleTypeCreate(AnalysisModuleTypeBase):
@@ -34,9 +59,26 @@ class AnalysisModuleTypeCreate(AnalysisModuleTypeBase):
 
 
 class AnalysisModuleTypeRead(AnalysisModuleTypeBase):
+    extended_version: Optional[dict] = Field(
+        description="""An optional dictionary of arbitrary key/value pairs that
+        can be used to add additional version data to the module. Analysis
+        modules that use some kind of external data can use these fields to
+        include the version of the data that was used at the time of analysis."""
+    )
+
     observable_types: List[ObservableTypeRead] = Field(
         description="""A list of observable types this analysis module type knows how to analyze.
         An empty list means it supports ALL observable types."""
+    )
+
+    required_directives: List[NodeDirectiveRead] = Field(
+        description="""A list of directives an observable must have in order to be analyzed by this module. An empty
+        list means that no directives are required.""",
+    )
+
+    required_tags: List[NodeTagRead] = Field(
+        description="""A list of tags an observable must have in order to be analyzed by this module. An empty list
+        means that no tags are required.""",
     )
 
     class Config:
@@ -44,15 +86,33 @@ class AnalysisModuleTypeRead(AnalysisModuleTypeBase):
 
 
 class AnalysisModuleTypeUpdate(AnalysisModuleTypeBase):
-    manual: Optional[StrictBool] = Field(
-        description="Whether or not this analysis module type runs in manual mode.",
-    )
+    manual: Optional[StrictBool] = Field(description="Whether or not this analysis module type runs in manual mode.")
 
     observable_types: Optional[List[type_str]] = Field(
         description="""A list of observable types this analysis module type knows how to analyze.
         An empty list means it supports ALL observable types.""",
     )
 
+    required_directives: Optional[List[type_str]] = Field(
+        description="""A list of directives an observable must have in order to be analyzed by this module. An empty
+        list means that no directives are required.""",
+    )
+
+    required_tags: Optional[List[type_str]] = Field(
+        description="""A list of tags an observable must have in order to be analyzed by this module. An empty list
+        means that no tags are required.""",
+    )
+
     value: Optional[type_str] = Field(description="The value of the analysis module type")
 
-    _prevent_none: classmethod = validators.prevent_none("manual", "observable_types", "value")
+    version: Optional[type_str] = Field(
+        description="Version number of the analysis module type in SemVer format (ex: 1.0.0)"
+    )
+
+    _prevent_none: classmethod = validators.prevent_none(
+        "manual",
+        "observable_types",
+        "required_directives",
+        "required_tags",
+        "value",
+    )

@@ -12,6 +12,8 @@ from api.routes import helpers
 from db import crud
 from db.database import get_db
 from db.schemas.analysis_module_type import AnalysisModuleType
+from db.schemas.node_directive import NodeDirective
+from db.schemas.node_tag import NodeTag
 from db.schemas.observable_type import ObservableType
 
 
@@ -42,6 +44,22 @@ def create_analysis_module_type(
             values=analysis_module_type.observable_types, db_table=ObservableType, db=db
         )
     new_analysis_module_type.observable_types = db_observable_types
+
+    # If required directives were given, get them from the database and use them in the new analysis module type
+    db_required_directives = []
+    if analysis_module_type.required_directives:
+        db_required_directives = crud.read_by_values(
+            values=analysis_module_type.required_directives, db_table=NodeDirective, db=db
+        )
+    new_analysis_module_type.required_directives = db_required_directives
+
+    # If required tags were given, get them from the database and use them in the new analysis module type
+    db_required_tags = []
+    if analysis_module_type.required_tags:
+        db_required_tags = crud.read_by_values(
+            values=analysis_module_type.required_tags, db_table=NodeTag, db=db
+        )
+    new_analysis_module_type.required_tags = db_required_tags
 
     # Save the new analysis module type to the database
     db.add(new_analysis_module_type)
@@ -93,6 +111,9 @@ def update_analysis_module_type(
     if "description" in update_data:
         db_analysis_module_type.description = update_data["description"]
 
+    if "extended_version" in update_data:
+        db_analysis_module_type.extended_version = update_data["extended_version"]
+
     if "manual" in update_data:
         db_analysis_module_type.manual = update_data["manual"]
 
@@ -103,6 +124,19 @@ def update_analysis_module_type(
         db_analysis_module_type.observable_types = crud.read_by_values(
             values=update_data["observable_types"], db_table=ObservableType, db=db
         )
+
+    if "required_directives" in update_data:
+        db_analysis_module_type.required_directives = crud.read_by_values(
+            values=update_data["required_directives"], db_table=NodeDirective, db=db
+        )
+
+    if "required_tags" in update_data:
+        db_analysis_module_type.required_tags = crud.read_by_values(
+            values=update_data["required_tags"], db_table=NodeTag, db=db
+        )
+
+    if "version" in update_data:
+        db_analysis_module_type.version = update_data["version"]
 
     crud.commit(db)
 

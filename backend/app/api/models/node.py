@@ -1,27 +1,90 @@
-from pydantic import BaseModel, Field, UUID4
-from typing import List, Optional
+from pydantic import BaseModel, Field
+from typing import Dict, List, Optional
+from uuid import UUID, uuid4
 
-from api.models.comment import Comment
-from api.models.directive import Directive
-from api.models.tag import Tag
-from api.models.threat import Threat
-from api.models.threat_actor import ThreatActor
+from api.models import type_str
+from api.models.comment import CommentRead
+from api.models.node_directive import NodeDirectiveRead
+from api.models.node_tag import NodeTagRead
+from api.models.node_threat import NodeThreatRead
+from api.models.node_threat_actor import NodeThreatActorRead
 
 
-class Node(BaseModel):
+class NodeBase(BaseModel):
     """Represents an individual node."""
 
-    comments: Optional[List[Comment]] = Field(description="A list of comments added to the node")
+    directives: List[type_str] = Field(
+        default_factory=list,
+        description="A list of directives to add to the node"
+    )
 
-    directives: Optional[List[Directive]] = Field(description="A list of directives applied to the node")
+    # TODO: Add a node_links_mapping table
+    # links: Optional[List[UUID]] = Field(
+    #     default_factory=list,
+    #     description="The list of node UUIDs linked to this node. Nodes that are linked receive the same tags."
+    # )
 
-    tags: Optional[List[Tag]] = Field(description="A list of tags assigned to the node")
+    # TODO: Add a node_relationships table and node_relationship_mapping table
+    # relationships: Optional[Dict[type_str, List[UUID]]] = Field(
+    #     default_factory=list,
+    #     description="""A mapping of relationships between this node and other nodes. The key is the name of the
+    #         relationship. The value for each key is a list of one or more node UUIDs related in this way."""
+    # )
 
-    threat_actor: Optional[ThreatActor] = Field(description="The threat actor assigned to the node")
+    tags: List[type_str] = Field(
+        default_factory=list,
+        description="A list of tags to add to the node"
+    )
 
-    threats: Optional[List[Threat]] = Field(description="A list of threats assigned to the node")
+    threat_actor: Optional[type_str] = Field(
+        description="The threat actor to add to the node"
+    )
 
-    uuid: UUID4 = Field(description="The unique ID of the analysis")
+    threats: List[type_str] = Field(
+        default_factory=list,
+        description="A list of threats to add to the node"
+    )
+
+    uuid: UUID = Field(
+        default_factory=uuid4,
+        description="The UUID of the node"
+    )
+
+    version: UUID = Field(
+        default_factory=uuid4,
+        description="""A version string that automatically changes every time the node is modified. The version
+            must match when updating."""
+    )
+
+
+class NodeCreate(NodeBase):
+    pass
+
+
+class NodeRead(NodeBase):
+    comments: List[CommentRead] = Field(description="A list of comments added to the node")
+
+    directives: List[NodeDirectiveRead] = Field(description="A list of directives added to the node")
+
+    tags: List[NodeTagRead] = Field(description="A list of tags added to the node")
+
+    threat_actor: Optional[NodeThreatActorRead] = Field(description="The threat actor added to the node")
+
+    threats: List[NodeThreatRead] = Field(description="A list of threats added to the node")
 
     class Config:
         orm_mode = True
+
+
+class NodeUpdate(NodeBase):
+    directives: Optional[List[type_str]] = Field(description="A list of directives applied to the node")
+
+    tags: Optional[List[type_str]] = Field(description="A list of tags to add to the node")
+
+    threats: Optional[List[type_str]] = Field(description="A list of threats to add to the node")
+
+    # In order to update any Node, you must pass in the version that you want to update. If the version does not
+    # match, then the update will fail.
+    version: UUID = Field(
+        description="""The version of the Node being updated. This must match its current version to succeed."""
+    )

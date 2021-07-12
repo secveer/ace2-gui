@@ -31,6 +31,7 @@ def test_create_invalid_fields(client, key, value):
     create_json[key] = value
     create = client.post("/api/alert/disposition/", json=create_json)
     assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert key in create.text
 
 
 @pytest.mark.parametrize(
@@ -65,6 +66,7 @@ def test_create_missing_required_fields(client, key):
     del create_json[key]
     create = client.post("/api/alert/disposition/", json=create_json)
     assert create.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert key in create.text
 
 
 #
