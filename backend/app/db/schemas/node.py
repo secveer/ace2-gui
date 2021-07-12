@@ -14,7 +14,7 @@ class Node(Base):
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, server_default=func.gen_random_uuid())
 
-    comments = relationship("Comment")
+    comments = relationship("NodeComment")
 
     directives = relationship("NodeDirective", secondary=node_directive_mapping)
 

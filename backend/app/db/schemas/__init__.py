@@ -10,7 +10,6 @@ from db.schemas.alert_tool import AlertTool
 from db.schemas.alert_tool_instance import AlertToolInstance
 from db.schemas.alert_type import AlertType
 from db.schemas.analysis_module_type import AnalysisModuleType
-from db.schemas.comment import Comment
 from db.schemas.event import Event
 from db.schemas.event_prevention_tool import EventPreventionTool
 from db.schemas.event_prevention_tool_mapping import event_prevention_tool_mapping
@@ -23,6 +22,7 @@ from db.schemas.event_type import EventType
 from db.schemas.event_vector import EventVector
 from db.schemas.event_vector_mapping import event_vector_mapping
 from db.schemas.node import Node
+from db.schemas.node_comment import NodeComment
 from db.schemas.node_directive import NodeDirective
 from db.schemas.node_directive_mapping import node_directive_mapping
 from db.schemas.node_history import NodeHistory
