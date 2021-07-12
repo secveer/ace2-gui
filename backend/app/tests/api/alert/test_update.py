@@ -25,9 +25,9 @@ from tests.api.node import (
         ("description", ""),
         ("disposition", 123),
         ("disposition", ""),
-        ("event", 123),
-        ("event", ""),
-        ("event", "abc"),
+        ("event_uuid", 123),
+        ("event_uuid", ""),
+        ("event_uuid", "abc"),
         ("event_time", None),
         ("event_time", ""),
         ("event_time", "Monday"),
@@ -75,7 +75,7 @@ def test_update_invalid_uuid(client):
     "key,value",
     [
         ("disposition", "abc"),
-        ("event", str(uuid.uuid4())),
+        ("event_uuid", str(uuid.uuid4())),
         ("owner", "johndoe"),
         ("queue", "abc"),
         ("tool", "abc"),
@@ -160,9 +160,51 @@ def test_update_disposition(client):
     assert get.json()["version"] != version
 
 
-def test_update_event(client):
-    # TODO: Write this test when the event endpoints are finished
-    pass
+def test_update_event_uuid(client):
+    # Create an alert queue and type
+    client.post("/api/alert/queue/", json={"value": "test_queue"})
+    client.post("/api/alert/type/", json={"value": "test_type"})
+
+    # Create an alert
+    version = str(uuid.uuid4())
+    create = client.post("/api/alert/", json={"version": version, "queue": "test_queue", "type": "test_type"})
+
+    # Read it back
+    get = client.get(create.headers["Content-Location"])
+    assert get.json()["event_uuid"] is None
+
+    # Create an event status
+    client.post("/api/event/status/", json={"value": "OPEN"})
+
+    # Create an event
+    event_uuid = str(uuid.uuid4())
+    initial_event_version = str(uuid.uuid4())
+    event_create = client.post("/api/event/", json={
+        "version": initial_event_version,
+        "name": "test",
+        "status": "OPEN",
+        "uuid": event_uuid,
+    })
+
+    # Update the alert to add it to the event
+    update = client.put(
+        create.headers["Content-Location"],
+        json={"event_uuid": event_uuid, "version": version}
+    )
+    assert update.status_code == status.HTTP_204_NO_CONTENT
+
+    # Read it back
+    get = client.get(create.headers["Content-Location"])
+    assert get.json()["event_uuid"] == event_uuid
+    assert get.json()["version"] != version
+
+    # Read the event back. By adding the alert to the event, you should be able to see the alert UUID in the event's
+    # alert_uuids list even though it was not explicitly added.
+    get_event = client.get(event_create.headers["Content-Location"])
+    assert get_event.json()["alert_uuids"] == [get.json()["uuid"]]
+
+    # Additionally, adding the alert to the event should trigger the event to have a new version.
+    assert get_event.json()["version"] != initial_event_version
 
 
 def test_update_owner(client):

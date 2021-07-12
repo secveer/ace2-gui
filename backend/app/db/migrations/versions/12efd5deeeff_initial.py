@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 00b9166d6362
+Revision ID: 12efd5deeeff
 Revises: 
-Create Date: 2021-07-09 15:53:28.920003
+Create Date: 2021-07-12 13:21:58.746185
 """
 
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic
-revision = '00b9166d6362'
+revision = '12efd5deeeff'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -260,15 +260,15 @@ def upgrade() -> None:
     op.create_index('node_uuid', 'comment', ['node_uuid'], unique=False)
     op.create_table('event',
     sa.Column('uuid', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('alert_time', sa.DateTime(), nullable=True),
-    sa.Column('contain_time', sa.DateTime(), nullable=True),
-    sa.Column('creation_time', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=True),
-    sa.Column('disposition_time', sa.DateTime(), nullable=True),
-    sa.Column('event_time', sa.DateTime(), nullable=True),
+    sa.Column('alert_time', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('contain_time', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('creation_time', sa.DateTime(timezone=True), server_default=sa.text("TIMEZONE('utc', CURRENT_TIMESTAMP)"), nullable=True),
+    sa.Column('disposition_time', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('event_time', sa.DateTime(timezone=True), nullable=True),
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('owner_uuid', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('ownership_time', sa.DateTime(), nullable=True),
-    sa.Column('remediation_time', sa.DateTime(), nullable=True),
+    sa.Column('ownership_time', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('remediation_time', sa.DateTime(timezone=True), nullable=True),
     sa.Column('risk_level_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('source_uuid', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('status_uuid', postgresql.UUID(as_uuid=True), nullable=True),
@@ -356,7 +356,18 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('uuid'),
     sa.UniqueConstraint('analysis_uuid')
     )
-    op.create_index('event_uuid', 'alert', ['event_uuid'], unique=False)
+    op.create_index(op.f('ix_alert_disposition_time'), 'alert', ['disposition_time'], unique=False)
+    op.create_index(op.f('ix_alert_disposition_user_uuid'), 'alert', ['disposition_user_uuid'], unique=False)
+    op.create_index(op.f('ix_alert_disposition_uuid'), 'alert', ['disposition_uuid'], unique=False)
+    op.create_index(op.f('ix_alert_event_time'), 'alert', ['event_time'], unique=False)
+    op.create_index(op.f('ix_alert_event_uuid'), 'alert', ['event_uuid'], unique=False)
+    op.create_index(op.f('ix_alert_insert_time'), 'alert', ['insert_time'], unique=False)
+    op.create_index(op.f('ix_alert_owner_uuid'), 'alert', ['owner_uuid'], unique=False)
+    op.create_index(op.f('ix_alert_queue_uuid'), 'alert', ['queue_uuid'], unique=False)
+    op.create_index(op.f('ix_alert_tool_instance_uuid'), 'alert', ['tool_instance_uuid'], unique=False)
+    op.create_index(op.f('ix_alert_tool_uuid'), 'alert', ['tool_uuid'], unique=False)
+    op.create_index(op.f('ix_alert_type_uuid'), 'alert', ['type_uuid'], unique=False)
+    op.create_index('name_trgm', 'alert', ['name'], unique=False, postgresql_ops={'name': 'gin_trgm_ops'}, postgresql_using='gin')
     op.create_table('event_prevention_tool_mapping',
     sa.Column('event_uuid', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('prevention_tool_uuid', postgresql.UUID(as_uuid=True), nullable=False),
@@ -429,7 +440,18 @@ def downgrade() -> None:
     op.drop_table('event_remediation_mapping')
     op.drop_index(op.f('ix_event_prevention_tool_mapping_event_uuid'), table_name='event_prevention_tool_mapping')
     op.drop_table('event_prevention_tool_mapping')
-    op.drop_index('event_uuid', table_name='alert')
+    op.drop_index('name_trgm', table_name='alert', postgresql_ops={'name': 'gin_trgm_ops'}, postgresql_using='gin')
+    op.drop_index(op.f('ix_alert_type_uuid'), table_name='alert')
+    op.drop_index(op.f('ix_alert_tool_uuid'), table_name='alert')
+    op.drop_index(op.f('ix_alert_tool_instance_uuid'), table_name='alert')
+    op.drop_index(op.f('ix_alert_queue_uuid'), table_name='alert')
+    op.drop_index(op.f('ix_alert_owner_uuid'), table_name='alert')
+    op.drop_index(op.f('ix_alert_insert_time'), table_name='alert')
+    op.drop_index(op.f('ix_alert_event_uuid'), table_name='alert')
+    op.drop_index(op.f('ix_alert_event_time'), table_name='alert')
+    op.drop_index(op.f('ix_alert_disposition_uuid'), table_name='alert')
+    op.drop_index(op.f('ix_alert_disposition_user_uuid'), table_name='alert')
+    op.drop_index(op.f('ix_alert_disposition_time'), table_name='alert')
     op.drop_table('alert')
     op.drop_index(op.f('ix_user_role_mapping_user_uuid'), table_name='user_role_mapping')
     op.drop_table('user_role_mapping')

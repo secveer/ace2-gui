@@ -63,7 +63,7 @@ class AlertRead(NodeRead, AlertBase):
 
     disposition_user: Optional[UserRead] = Field(description="The user who most recently dispositioned this alert")
 
-    event: Optional[UUID] = Field(description="The UUID of the event containing this alert")
+    event_uuid: Optional[UUID] = Field(description="The UUID of the event containing this alert")
 
     insert_time: datetime = Field(description="The time this alert was created")
 
@@ -91,7 +91,7 @@ class AlertUpdate(NodeUpdate, AlertBase):
     #     description="The username of the user who most recently dispositioned this alert"
     # )
 
-    event: Optional[UUID] = Field(description="The UUID of the event containing this alert")
+    event_uuid: Optional[UUID] = Field(description="The UUID of the event containing this alert")
 
     queue: Optional[type_str] = Field(description="The alert queue containing this alert")
 

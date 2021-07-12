@@ -23,10 +23,7 @@ def create_node(
     Helper function when creating a new Node that sets the attributes inherited from Node.
     """
 
-    if exclude:
-        db_node: Node = db_node_type(**node_create.dict(exclude=exclude))
-    else:
-        db_node: Node = db_node_type(**node_create.dict())
+    db_node: Node = db_node_type(**node_create.dict(exclude=exclude))
 
     if node_create.directives:
         db_node.directives = crud.read_by_values(values=node_create.directives, db_table=NodeDirective, db=db)

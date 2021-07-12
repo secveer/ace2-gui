@@ -1,7 +1,6 @@
-from datetime import datetime
 from fastapi import APIRouter, Depends, Request, Response
 from sqlalchemy.orm import Session
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from api.models.alert import AlertCreate, AlertRead, AlertUpdate
 from api.models.analysis import AnalysisCreate
@@ -38,9 +37,6 @@ def create_alert(
 ):
     # Create the new alert Node using the data from the request
     new_alert: Alert = create_node(node_create=alert, db_node_type=Alert, db=db)
-
-    # Set the automatic alert properties
-    new_alert.insert_time = datetime.utcnow()
 
     # Set the required alert properties
     new_alert.queue = crud.read_by_value(value=alert.queue, db_table=AlertQueue, db=db)
@@ -111,8 +107,11 @@ def update_alert(
     if "disposition" in update_data:
         db_alert.disposition = crud.read_by_value(value=update_data["disposition"], db_table=AlertDisposition, db=db)
 
-    if "event" in update_data:
-        db_alert.event = crud.read(uuid=update_data["event"], db_table=Event, db=db)
+    if "event_uuid" in update_data:
+        db_alert.event = crud.read(uuid=update_data["event_uuid"], db_table=Event, db=db)
+
+        # This counts as editing the event, so it should receive a new version.
+        db_alert.event.version = uuid4()
 
     if "event_time" in update_data:
         db_alert.event_time = update_data["event_time"]

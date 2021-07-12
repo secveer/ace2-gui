@@ -1,5 +1,6 @@
 from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
 from db.schemas.event_prevention_tool_mapping import event_prevention_tool_mapping
@@ -14,17 +15,19 @@ class Event(Node):
 
     uuid = Column(UUID(as_uuid=True), ForeignKey("node.uuid"), primary_key=True)
 
-    alert_time = Column(DateTime)
+    alert_time = Column(DateTime(timezone=True))
 
     alerts = relationship("Alert", primaryjoin="Alert.event_uuid == Event.uuid")
 
-    contain_time = Column(DateTime)
+    alert_uuids = association_proxy("alerts", "uuid")
 
-    creation_time = Column(DateTime, server_default=utcnow())
+    contain_time = Column(DateTime(timezone=True))
 
-    disposition_time = Column(DateTime)
+    creation_time = Column(DateTime(timezone=True), server_default=utcnow())
 
-    event_time = Column(DateTime)
+    disposition_time = Column(DateTime(timezone=True))
+
+    event_time = Column(DateTime(timezone=True))
 
     name = Column(String)
 
@@ -32,11 +35,11 @@ class Event(Node):
 
     owner = relationship("User", foreign_keys=[owner_uuid])
 
-    ownership_time = Column(DateTime)
+    ownership_time = Column(DateTime(timezone=True))
 
     prevention_tools = relationship("EventPreventionTool", secondary=event_prevention_tool_mapping)
 
-    remediation_time = Column(DateTime)
+    remediation_time = Column(DateTime(timezone=True))
 
     remediations = relationship("EventRemediation", secondary=event_remediation_mapping)
 
