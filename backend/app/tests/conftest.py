@@ -32,16 +32,15 @@ def db():
     Most tests will not need to use this fixture directly, as they will use it indirectly via the client fixture.
     """
 
-    # Connect to the database and begin a transaction.
+    # Connect to the database and begin a nested transaction.
     connection = engine.connect()
-    transaction = connection.begin()
+    connection.begin()
     session = Session(bind=connection)
 
     yield session
 
-    # Close the session, rollback the overall transaction, and close the connection.
+    # Close the session and the connection. The transaction is automatically rolled back.
     session.close()
-    transaction.rollback()
     connection.close()
 
 
