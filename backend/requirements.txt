@@ -6,6 +6,7 @@ passlib[bcrypt]==1.7.4
 psycopg2-binary==2.8.6
 pytest==6.2.3
 pytz==2021.1
+pyyaml==5.4.1
 requests==2.25.1
 semver==2.13.0
 SQLAlchemy==1.4.20
