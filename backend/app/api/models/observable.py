@@ -1,7 +1,7 @@
 from datetime import datetime
-from pydantic import BaseModel, Field, StrictBool
+from pydantic import BaseModel, Field, StrictBool, UUID4
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 from api.models.observable_type import ObservableTypeRead
@@ -21,17 +21,17 @@ class ObservableBase(BaseModel):
 
     type: type_str = Field(description="The type of the observable")
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the observable")
-
     value: type_str = Field(description="The value of the observable")
 
 
 class ObservableCreate(ObservableBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the observable")
 
 
 class ObservableRead(ObservableBase):
     type: ObservableTypeRead = Field(description="The type of the observable")
+
+    uuid: UUID4 = Field(description="The UUID of the observable")
 
     class Config:
         orm_mode = True

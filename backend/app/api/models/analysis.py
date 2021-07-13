@@ -1,6 +1,6 @@
-from pydantic import Field, Json
+from pydantic import Field, Json, UUID4
 from typing import List, Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 from api.models.analysis_module_type import AnalysisModuleTypeRead
@@ -10,7 +10,7 @@ from api.models.node import NodeBase, NodeCreate, NodeRead, NodeUpdate
 class AnalysisBase(NodeBase):
     """Represents an individual analysis that was performed."""
 
-    analysis_module_type: Optional[UUID] = Field(
+    analysis_module_type: Optional[UUID4] = Field(
         description="""The UUID of the analysis module type that was used to perform this analysis. This can be NULL in
             the case of manually created alerts."""
     )
@@ -29,11 +29,11 @@ class AnalysisBase(NodeBase):
 
     summary: Optional[type_str] = Field(description="A short summary/description of what this analysis did or found")
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the analysis")
-
 
 class AnalysisCreate(NodeCreate, AnalysisBase):
-    parent_observable_uuid: Optional[UUID] = Field(description="The UUID of the observable containing this analysis")
+    parent_observable_uuid: Optional[UUID4] = Field(description="The UUID of the observable containing this analysis")
+
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the analysis")
 
 
 class AnalysisRead(NodeRead, AnalysisBase):
@@ -43,11 +43,13 @@ class AnalysisRead(NodeRead, AnalysisBase):
 
     details: Optional[dict] = Field(description="A JSON representation of the details produced by the analysis")
 
-    discovered_observable_uuids: List[UUID] = Field(
+    discovered_observable_uuids: List[UUID4] = Field(
         description="A list of observable instances discovered while performing this analysis"
     )
 
-    parent_observable_uuid: Optional[UUID] = Field(description="The UUID of the observable containing this analysis")
+    parent_observable_uuid: Optional[UUID4] = Field(description="The UUID of the observable containing this analysis")
+
+    uuid: UUID4 = Field(description="The UUID of the analysis")
 
     _convert_association_list: classmethod = validators.convert_association_list("discovered_observable_uuids")
 

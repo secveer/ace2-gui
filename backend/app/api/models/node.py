@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, UUID4
 from typing import Dict, List, Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str
 from api.models.node_comment import NodeCommentRead
@@ -45,12 +45,7 @@ class NodeBase(BaseModel):
         description="A list of threats to add to the node"
     )
 
-    uuid: UUID = Field(
-        default_factory=uuid4,
-        description="The UUID of the node"
-    )
-
-    version: UUID = Field(
+    version: UUID4 = Field(
         default_factory=uuid4,
         description="""A version string that automatically changes every time the node is modified. The version
             must match when updating."""
@@ -58,7 +53,10 @@ class NodeBase(BaseModel):
 
 
 class NodeCreate(NodeBase):
-    pass
+    uuid: UUID4 = Field(
+        default_factory=uuid4,
+        description="The UUID of the node"
+    )
 
 
 class NodeRead(NodeBase):
@@ -71,6 +69,8 @@ class NodeRead(NodeBase):
     threat_actor: Optional[NodeThreatActorRead] = Field(description="The threat actor added to the node")
 
     threats: List[NodeThreatRead] = Field(description="A list of threats added to the node")
+
+    uuid: UUID4 = Field(description="The UUID of the node")
 
     class Config:
         orm_mode = True
@@ -85,6 +85,6 @@ class NodeUpdate(NodeBase):
 
     # In order to update any Node, you must pass in the version that you want to update. If the version does not
     # match, then the update will fail.
-    version: UUID = Field(
+    version: UUID4 = Field(
         description="""The version of the Node being updated. This must match its current version to succeed."""
     )

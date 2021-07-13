@@ -1,7 +1,7 @@
 from datetime import datetime
-from pydantic import Field
+from pydantic import Field, UUID4
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 from api.models.alert_disposition import AlertDispositionRead
@@ -45,11 +45,9 @@ class AlertBase(NodeBase):
 
     type: type_str = Field(description="The type of this alert")
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the alert")
-
 
 class AlertCreate(NodeCreate, AlertBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the alert")
 
 
 class AlertRead(NodeRead, AlertBase):
@@ -63,7 +61,7 @@ class AlertRead(NodeRead, AlertBase):
 
     disposition_user: Optional[UserRead] = Field(description="The user who most recently dispositioned this alert")
 
-    event_uuid: Optional[UUID] = Field(description="The UUID of the event containing this alert")
+    event_uuid: Optional[UUID4] = Field(description="The UUID of the event containing this alert")
 
     insert_time: datetime = Field(description="The time this alert was created")
 
@@ -79,6 +77,8 @@ class AlertRead(NodeRead, AlertBase):
 
     type: AlertTypeRead = Field(description="The type of this alert")
 
+    uuid: UUID4 = Field(description="The UUID of the alert")
+
     class Config:
         orm_mode = True
 
@@ -91,7 +91,7 @@ class AlertUpdate(NodeUpdate, AlertBase):
     #     description="The username of the user who most recently dispositioned this alert"
     # )
 
-    event_uuid: Optional[UUID] = Field(description="The UUID of the event containing this alert")
+    event_uuid: Optional[UUID4] = Field(description="The UUID of the event containing this alert")
 
     queue: Optional[type_str] = Field(description="The alert queue containing this alert")
 

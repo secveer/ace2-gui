@@ -1,7 +1,7 @@
 from datetime import datetime
-from pydantic import Field
+from pydantic import Field, UUID4
 from typing import List, Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 from api.models.node import NodeBase, NodeCreate, NodeRead, NodeUpdate
@@ -60,17 +60,15 @@ class EventBase(NodeBase):
 
     type: Optional[type_str] = Field(description="The type assigned to the event")
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the event")
-
     vectors: List[type_str] = Field(default_factory=list, description="A list of vectors assigned to the event")
 
 
 class EventCreate(NodeCreate, EventBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the event")
 
 
 class EventRead(NodeRead, EventBase):
-    alert_uuids: List[UUID] = Field(default_factory=list, description="A list of alert UUIDs contained in the event")
+    alert_uuids: List[UUID4] = Field(default_factory=list, description="A list of alert UUIDs contained in the event")
 
     creation_time: datetime = Field(description="The time the event was created")
 
@@ -91,6 +89,8 @@ class EventRead(NodeRead, EventBase):
     status: EventStatusRead = Field(description="The status assigned to the event")
 
     type: Optional[EventTypeRead] = Field(description="The type assigned to the event")
+
+    uuid: UUID4 = Field(description="The UUID of the event")
 
     vectors: List[EventVectorRead] = Field(description="A list of vectors assigned to the event")
 

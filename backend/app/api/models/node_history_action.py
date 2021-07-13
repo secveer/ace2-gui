@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, UUID4
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 
@@ -12,16 +12,16 @@ class NodeHistoryActionBase(BaseModel):
         description="An optional human-readable description of the node history action"
     )
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the node history action")
-
     value: type_str = Field(description="The value of the node history action")
 
 
 class NodeHistoryActionCreate(NodeHistoryActionBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the node history action")
 
 
 class NodeHistoryActionRead(NodeHistoryActionBase):
+    uuid: UUID4 = Field(description="The UUID of the node history action")
+
     class Config:
         orm_mode = True
 

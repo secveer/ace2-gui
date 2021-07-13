@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, UUID4
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 
@@ -13,16 +13,16 @@ class EventPreventionToolBase(BaseModel):
         description="An optional human-readable description of the event prevention tool"
     )
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the event prevention tool")
-
     value: type_str = Field(description="The value of the event prevention tool")
 
 
 class EventPreventionToolCreate(EventPreventionToolBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the event prevention tool")
 
 
 class EventPreventionToolRead(EventPreventionToolBase):
+    uuid: UUID4 = Field(description="The UUID of the event prevention tool")
+
     class Config:
         orm_mode = True
 

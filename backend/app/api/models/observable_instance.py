@@ -1,7 +1,7 @@
 from datetime import datetime
-from pydantic import Field
+from pydantic import Field, UUID4
 from typing import List, Optional
-from uuid import UUID
+from uuid import uuid4
 
 from api.models import type_str, validators
 from api.models.node import NodeBase, NodeCreate, NodeRead, NodeUpdate
@@ -11,7 +11,7 @@ from api.models.observable import ObservableRead
 class ObservableInstanceBase(NodeBase):
     """Represents an individual observable inside of an analysis."""
 
-    alert_uuid: UUID = Field(description="The UUID of the alert containing this observable instance")
+    alert_uuid: UUID4 = Field(description="The UUID of the alert containing this observable instance")
 
     context: Optional[type_str] = Field(
         description="""Optional context surrounding the observation. This is used to communicate additional information
@@ -19,14 +19,14 @@ class ObservableInstanceBase(NodeBase):
             the email.' or 'From address in the email.'"""
     )
 
-    parent_analysis_uuid: UUID = Field(description="The UUID of the analysis containing this observable instance")
+    parent_analysis_uuid: UUID4 = Field(description="The UUID of the analysis containing this observable instance")
 
-    performed_analysis_uuids: List[UUID] = Field(
+    performed_analysis_uuids: List[UUID4] = Field(
         default_factory=list,
         description="A list of analysis UUIDs that were performed on this observable instance"
     )
 
-    redirection_uuid: Optional[UUID] = Field(
+    redirection_uuid: Optional[UUID4] = Field(
         description="The UUID of another observable instance to which this one should point"
     )
 
@@ -41,11 +41,15 @@ class ObservableInstanceBase(NodeBase):
 class ObservableInstanceCreate(NodeCreate, ObservableInstanceBase):
     type: type_str = Field(description="The type of the observable instance")
 
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the observable instance")
+
     value: type_str = Field(description="The value of the observable instance")
 
 
 class ObservableInstanceRead(NodeRead, ObservableInstanceBase):
     observable: ObservableRead = Field(description="The observable represented by this instance")
+
+    uuid: UUID4 = Field(description="The UUID of the observable instance")
 
     class Config:
         orm_mode = True
@@ -61,11 +65,11 @@ class ObservableInstanceUpdate(NodeUpdate):
     )
 
     # UUIDs in this list will add to the existing list and will not replace it.
-    performed_analysis_uuids: Optional[List[UUID]] = Field(
+    performed_analysis_uuids: Optional[List[UUID4]] = Field(
         description="A list of analysis UUIDs that were performed on this observable instance"
     )
 
-    redirection_uuid: Optional[UUID] = Field(
+    redirection_uuid: Optional[UUID4] = Field(
         description="The UUID of another observable instance to which this one should point"
     )
 
