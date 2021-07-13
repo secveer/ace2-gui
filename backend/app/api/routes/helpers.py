@@ -31,6 +31,10 @@ def api_route_create(router: APIRouter, endpoint: Callable, path: str = "/"):
 #
 
 
+# The trailing slash is required due to how some of the API endpoints are organized. For instance, there is a
+# /user/ endpoint and a /user/role/ endpoint. If you were to drop the trailing slash and tried to access /user/role,
+# it would not know if you wanted to access the get_all_user_roles endpoint or were trying to access the "role" user,
+# which is invalid since you must supply a UUID in order to retrieve a user.
 def api_route_read_all(router: APIRouter, endpoint: Callable, response_model: BaseModel, path: str = "/"):
     router.add_api_route(
         path=path,
