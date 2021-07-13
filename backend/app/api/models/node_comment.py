@@ -1,6 +1,6 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
-from uuid import UUID, uuid4
+from pydantic import BaseModel, Field, UUID4
+from uuid import uuid4
 
 from api.models import type_str
 from api.models.user import UserRead
@@ -9,23 +9,23 @@ from api.models.user import UserRead
 class NodeCommentBase(BaseModel):
     """Represents a comment that can be added to a node."""
 
-    node_uuid: UUID = Field(description="The UUID of the node associated with this comment")
+    node_uuid: UUID4 = Field(description="The UUID of the node associated with this comment")
 
     user: type_str = Field(description="The username that created the comment")
-
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the comment")
 
     value: type_str = Field(description="The value of the comment")
 
 
 class NodeCommentCreate(NodeCommentBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the comment")
 
 
 class NodeCommentRead(NodeCommentBase):
     insert_time: datetime = Field(description="The time the comment was made")
 
     user: UserRead = Field(description="The user that created the comment")
+
+    uuid: UUID4 = Field(description="The UUID of the comment")
 
     class Config:
         orm_mode = True

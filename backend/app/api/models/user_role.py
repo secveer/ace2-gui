@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, UUID4
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 
@@ -10,16 +10,16 @@ class UserRoleBase(BaseModel):
 
     description: Optional[type_str] = Field(description="An optional human-readable description of the role")
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the role")
-
     value: type_str = Field(description="The value of the role")
 
 
 class UserRoleCreate(UserRoleBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the role")
 
 
 class UserRoleRead(UserRoleBase):
+    uuid: UUID4 = Field(description="The UUID of the role")
+
     class Config:
         orm_mode = True
 

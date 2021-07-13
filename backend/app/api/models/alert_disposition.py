@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, UUID4
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_int, type_str, validators
 
@@ -13,16 +13,16 @@ class AlertDispositionBase(BaseModel):
 
     rank: type_int = Field(description="An integer value used to sort the dispositions")
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the disposition")
-
     value: type_str = Field(description="The value of the disposition")
 
 
 class AlertDispositionCreate(AlertDispositionBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the disposition")
 
 
 class AlertDispositionRead(AlertDispositionBase):
+    uuid: UUID4 = Field(description="The UUID of the disposition")
+
     class Config:
         orm_mode = True
 

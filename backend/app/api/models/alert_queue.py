@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, UUID4
 from typing import Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 
@@ -10,16 +10,16 @@ class AlertQueueBase(BaseModel):
 
     description: Optional[type_str] = Field(description="An optional human-readable description of the alert queue")
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the alert queue")
-
     value: type_str = Field(description="The value of the alert queue")
 
 
 class AlertQueueCreate(AlertQueueBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the alert queue")
 
 
 class AlertQueueRead(AlertQueueBase):
+    uuid: UUID4 = Field(description="The UUID of the alert queue")
+
     class Config:
         orm_mode = True
 

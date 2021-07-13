@@ -1,6 +1,6 @@
-from pydantic import BaseModel, constr, EmailStr, Field, StrictBool
+from pydantic import BaseModel, constr, EmailStr, Field, StrictBool, UUID4
 from typing import List, Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_list_str, type_str, validators
 from api.models.alert_queue import AlertQueueRead
@@ -32,13 +32,13 @@ class UserBase(BaseModel):
 
     username: type_str = Field(description="The username used to sign into the application")
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the user")
-
     _validate_timezone: classmethod = validators.timezone("timezone")
 
 
 class UserCreate(UserBase):
     password: constr(strict=True, min_length=8) = Field(description="The password to use for the user")
+
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the user")
 
 
 class UserRead(UserBase):
@@ -47,6 +47,8 @@ class UserRead(UserBase):
     )
 
     roles: List[UserRoleRead] = Field(description="A list of roles assigned to the user")
+
+    uuid: UUID4 = Field(description="The UUID of the user")
 
     class Config:
         orm_mode = True

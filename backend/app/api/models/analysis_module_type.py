@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field, Json, StrictBool
+from pydantic import BaseModel, Field, Json, StrictBool, UUID4
 from typing import List, Optional
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from api.models import type_str, validators
 from api.models.node_directive import NodeDirectiveRead
@@ -45,8 +45,6 @@ class AnalysisModuleTypeBase(BaseModel):
         means that no tags are required.""",
     )
 
-    uuid: UUID = Field(default_factory=uuid4, description="The UUID of the analysis module type")
-
     value: type_str = Field(description="The value of the analysis module type")
 
     version: type_str = Field(description="Version number of the analysis module type in SemVer format (ex: 1.0.0)")
@@ -55,7 +53,7 @@ class AnalysisModuleTypeBase(BaseModel):
 
 
 class AnalysisModuleTypeCreate(AnalysisModuleTypeBase):
-    pass
+    uuid: UUID4 = Field(default_factory=uuid4, description="The UUID of the analysis module type")
 
 
 class AnalysisModuleTypeRead(AnalysisModuleTypeBase):
@@ -80,6 +78,8 @@ class AnalysisModuleTypeRead(AnalysisModuleTypeBase):
         description="""A list of tags an observable must have in order to be analyzed by this module. An empty list
         means that no tags are required.""",
     )
+
+    uuid: UUID4 = Field(description="The UUID of the analysis module type")
 
     class Config:
         orm_mode = True
