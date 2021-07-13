@@ -61,7 +61,7 @@ def api_route_update(router: APIRouter, endpoint: Callable, path: str = "/{uuid}
     router.add_api_route(
         path=path,
         endpoint=endpoint,
-        methods=["PUT"],
+        methods=["PATCH"],
         responses={
             status.HTTP_204_NO_CONTENT: {
                 "headers": {"Content-Location": {"description": "The path to retrieve the resource"}},

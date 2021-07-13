@@ -74,7 +74,7 @@ from tests.api.node import (
     ],
 )
 def test_update_invalid_fields(client, key, value):
-    update = client.put(f"/api/event/{uuid.uuid4()}", json={key: value, "version": str(uuid.uuid4())})
+    update = client.patch(f"/api/event/{uuid.uuid4()}", json={key: value, "version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert key in update.text
 
@@ -84,13 +84,13 @@ def test_update_invalid_fields(client, key, value):
     INVALID_UPDATE_FIELDS,
 )
 def test_update_invalid_node_fields(client, key, value):
-    update = client.put(f"/api/event/{uuid.uuid4()}", json={"version": str(uuid.uuid4()), key: value})
+    update = client.patch(f"/api/event/{uuid.uuid4()}", json={"version": str(uuid.uuid4()), key: value})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert key in update.text
 
 
 def test_update_invalid_uuid(client):
-    update = client.put("/api/event/1", json={"version": str(uuid.uuid4())})
+    update = client.patch("/api/event/1", json={"version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -117,7 +117,7 @@ def test_update_nonexistent_fields(client, key, value):
     assert create.status_code == status.HTTP_201_CREATED
 
     # Make sure you cannot update it to use a nonexistent field value
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={key: value, "version": version}
     )
@@ -138,7 +138,7 @@ def test_update_nonexistent_node_fields(client, key, value):
     assert create.status_code == status.HTTP_201_CREATED
 
     # Make sure you cannot update it to use a nonexistent node field value
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={key: value, "version": version}
     )
@@ -146,7 +146,7 @@ def test_update_nonexistent_node_fields(client, key, value):
 
 
 def test_update_nonexistent_uuid(client):
-    update = client.put(f"/api/event/{uuid.uuid4()}", json={"version": str(uuid.uuid4())})
+    update = client.patch(f"/api/event/{uuid.uuid4()}", json={"version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -185,7 +185,7 @@ def test_update_owner(client):
     client.post("/api/user/", json=create_json)
 
     # Update the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"owner": "johndoe", "version": version}
     )
@@ -213,7 +213,7 @@ def test_update_prevention_tools(client):
     client.post("/api/event/prevention_tool/", json={"value": "test"})
 
     # Update the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"prevention_tools": ["test"], "version": version}
     )
@@ -241,7 +241,7 @@ def test_update_remediations(client):
     client.post("/api/event/remediation/", json={"value": "test"})
 
     # Update the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"remediations": ["test"], "version": version}
     )
@@ -269,7 +269,7 @@ def test_update_risk_level(client):
     client.post("/api/event/risk_level/", json={"value": "test"})
 
     # Update the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"risk_level": "test", "version": version}
     )
@@ -297,7 +297,7 @@ def test_update_source(client):
     client.post("/api/event/source/", json={"value": "test"})
 
     # Update the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"source": "test", "version": version}
     )
@@ -325,7 +325,7 @@ def test_update_status(client):
     client.post("/api/event/status/", json={"value": "test"})
 
     # Update the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"status": "test", "version": version}
     )
@@ -353,7 +353,7 @@ def test_update_type(client):
     client.post("/api/event/type/", json={"value": "test"})
 
     # Update the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"type": "test", "version": version}
     )
@@ -381,7 +381,7 @@ def test_update_vectors(client):
     client.post("/api/event/vector/", json={"value": "test"})
 
     # Update the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"vectors": ["test"], "version": version}
     )
@@ -415,7 +415,7 @@ def test_update_valid_node_directives(client, values):
         client.post("/api/node/directive/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"directives": values, "version": version}
     )
@@ -449,7 +449,7 @@ def test_update_valid_node_tags(client, values):
         client.post("/api/node/tag/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"tags": values, "version": version}
     )
@@ -482,7 +482,7 @@ def test_update_valid_node_threat_actor(client, value):
         client.post("/api/node/threat_actor/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"threat_actor": value, "version": version}
     )
@@ -523,7 +523,7 @@ def test_update_valid_node_threats(client, values):
         client.post("/api/node/threat/", json={"types": ["test_type"], "value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"threats": values, "version": version}
     )
@@ -594,7 +594,7 @@ def test_update(client, key, initial_value, updated_value):
     assert get.json()[key] == initial_value
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"version": version, key: updated_value})
+    update = client.patch(create.headers["Content-Location"], json={"version": version, key: updated_value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back
