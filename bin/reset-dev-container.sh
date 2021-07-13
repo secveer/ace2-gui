@@ -9,5 +9,5 @@ bin/initialize-dev-environment.py
 # Build the new development environment
 docker-compose -f docker-compose-dev.yml build
 
-# Start the development environment and perform any Alembic database migrations
-bin/db-upgrade.sh
+# Start the development environment
+docker-compose -f docker-compose-dev.yml up -d
