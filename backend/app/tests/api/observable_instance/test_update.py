@@ -40,7 +40,7 @@ from tests.api.node import (
     ],
 )
 def test_update_invalid_fields(client, key, value):
-    update = client.put(f"/api/observable/instance/{uuid.uuid4()}", json={key: value, "version": str(uuid.uuid4())})
+    update = client.patch(f"/api/observable/instance/{uuid.uuid4()}", json={key: value, "version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert key in update.text
 
@@ -50,13 +50,13 @@ def test_update_invalid_fields(client, key, value):
     INVALID_UPDATE_FIELDS,
 )
 def test_update_invalid_node_fields(client, key, value):
-    update = client.put(f"/api/observable/instance/{uuid.uuid4()}", json={"version": str(uuid.uuid4()), key: value})
+    update = client.patch(f"/api/observable/instance/{uuid.uuid4()}", json={"version": str(uuid.uuid4()), key: value})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert key in update.text
 
 
 def test_update_invalid_uuid(client):
-    update = client.put("/api/observable/instance/1", json={"version": str(uuid.uuid4())})
+    update = client.patch("/api/observable/instance/1", json={"version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -80,7 +80,7 @@ def test_update_nonexistent_performed_analysis_uuids(client):
     assert create.status_code == status.HTTP_201_CREATED
 
     # Make sure you cannot update it to use a nonexistent analysis UUID
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"performed_analysis_uuids": [str(uuid.uuid4())], "version": version}
     )
@@ -107,7 +107,7 @@ def test_update_nonexistent_redirection_uuid(client):
     assert create.status_code == status.HTTP_201_CREATED
 
     # Make sure you cannot update it to use a nonexistent redirection UUID
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"redirection_uuid": str(uuid.uuid4()), "version": version}
     )
@@ -137,7 +137,7 @@ def test_update_nonexistent_node_fields(client, key, value):
     create = client.post("/api/observable/instance/", json=create_json)
 
     # Make sure you cannot update it to use a nonexistent node field value
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={key: value, "version": version}
     )
@@ -145,7 +145,7 @@ def test_update_nonexistent_node_fields(client, key, value):
 
 
 def test_update_nonexistent_uuid(client):
-    update = client.put(f"/api/observable/instance/{uuid.uuid4()}", json={"version": str(uuid.uuid4())})
+    update = client.patch(f"/api/observable/instance/{uuid.uuid4()}", json={"version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -185,7 +185,7 @@ def test_update_performed_analysis_uuids(client):
     initial_version = get_analysis.json()["version"]
 
     # Update the performed analyses
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"performed_analysis_uuids": [child_analysis_uuid], "version": version}
     )
@@ -241,7 +241,7 @@ def test_update_redirection_uuid(client):
     client.post("/api/observable/instance/", json=create2_json)
 
     # Update the redirection UUID
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"redirection_uuid": redirection_uuid, "version": version}
     )
@@ -285,7 +285,7 @@ def test_update_valid_node_directives(client, values):
         client.post("/api/node/directive/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"directives": values, "version": version}
     )
@@ -329,7 +329,7 @@ def test_update_valid_node_tags(client, values):
         client.post("/api/node/tag/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"tags": values, "version": version}
     )
@@ -372,7 +372,7 @@ def test_update_valid_node_threat_actor(client, value):
         client.post("/api/node/threat_actor/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"threat_actor": value, "version": version}
     )
@@ -423,7 +423,7 @@ def test_update_valid_node_threats(client, values):
         client.post("/api/node/threat/", json={"types": ["test_type"], "value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"threats": values, "version": version}
     )
@@ -472,7 +472,7 @@ def test_update(client, key, initial_value, updated_value):
     assert get.json()[key] == initial_value
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"version": version, key: updated_value})
+    update = client.patch(create.headers["Content-Location"], json={"version": version, key: updated_value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back

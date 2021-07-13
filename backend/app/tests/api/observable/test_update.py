@@ -27,12 +27,12 @@ from fastapi import status
     ],
 )
 def test_update_invalid_fields(client, key, value):
-    update = client.put(f"/api/observable/{uuid.uuid4()}", json={key: value})
+    update = client.patch(f"/api/observable/{uuid.uuid4()}", json={key: value})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_update_invalid_uuid(client):
-    update = client.put("/api/observable/1", json={"types": ["test_type"], "value": "test"})
+    update = client.patch("/api/observable/1", json={"types": ["test_type"], "value": "test"})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -45,12 +45,12 @@ def test_update_duplicate_type_value(client):
     create = client.post("/api/observable/", json={"type": "test_type", "value": "test2"})
 
     # Ensure you cannot update an observable to have a duplicate type+value combination
-    update = client.put(create.headers["Content-Location"], json={"value": "test"})
+    update = client.patch(create.headers["Content-Location"], json={"value": "test"})
     assert update.status_code == status.HTTP_409_CONFLICT
 
 
 def test_update_nonexistent_uuid(client):
-    update = client.put(f"/api/observable/{uuid.uuid4()}", json={"type": "test_type", "value": "test"})
+    update = client.patch(f"/api/observable/{uuid.uuid4()}", json={"type": "test_type", "value": "test"})
     assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -73,7 +73,7 @@ def test_update_valid_type(client):
     assert get.json()["type"]["value"] == "test_type"
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"type": "test_type2"})
+    update = client.patch(create.headers["Content-Location"], json={"type": "test_type2"})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back
@@ -118,7 +118,7 @@ def test_update(client, key, initial_value, updated_value):
         assert get.json()[key] == initial_value
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={key: updated_value})
+    update = client.patch(create.headers["Content-Location"], json={key: updated_value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back

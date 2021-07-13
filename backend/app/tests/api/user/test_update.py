@@ -51,12 +51,12 @@ from db.schemas.user import User
     ],
 )
 def test_update_invalid_fields(client, key, value):
-    update = client.put(f"/api/user/{uuid.uuid4()}", json={key: value})
+    update = client.patch(f"/api/user/{uuid.uuid4()}", json={key: value})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_update_invalid_uuid(client):
-    update = client.put("/api/user/1", json={"value": "test"})
+    update = client.patch("/api/user/1", json={"value": "test"})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -97,12 +97,12 @@ def test_update_duplicate_unique_fields(client, key):
     create2 = client.post("/api/user/", json=create2_json)
 
     # Ensure you cannot update a unique field to a value that already exists
-    update = client.put(create2.headers["Content-Location"], json={key: create1_json[key]})
+    update = client.patch(create2.headers["Content-Location"], json={key: create1_json[key]})
     assert update.status_code == status.HTTP_409_CONFLICT
 
 
 def test_update_nonexistent_uuid(client):
-    update = client.put(f"/api/user/{uuid.uuid4()}", json={"value": "test"})
+    update = client.patch(f"/api/user/{uuid.uuid4()}", json={"value": "test"})
     assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -144,7 +144,7 @@ def test_update_valid_alert_queue(client, value):
     client.post("/api/alert/queue/", json={"value": value})
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"default_alert_queue": value})
+    update = client.patch(create.headers["Content-Location"], json={"default_alert_queue": value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back
@@ -189,7 +189,7 @@ def test_update_valid_roles(client, value):
         client.post("/api/user/role/", json={"value": role})
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"roles": value})
+    update = client.patch(create.headers["Content-Location"], json={"roles": value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back
@@ -238,7 +238,7 @@ def test_update(client, key, initial_value, updated_value):
     assert get.json()[key] == initial_value
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={key: updated_value})
+    update = client.patch(create.headers["Content-Location"], json={key: updated_value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back
@@ -283,7 +283,7 @@ def test_update_password(client, db, initial_value, updated_value):
     assert verify_password(initial_value, initial_hash) is True
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"password": updated_value})
+    update = client.patch(create.headers["Content-Location"], json={"password": updated_value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Manually retrieve the user from the database so we have the updated password hash

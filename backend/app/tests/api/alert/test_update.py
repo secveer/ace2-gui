@@ -51,7 +51,7 @@ from tests.api.node import (
     ],
 )
 def test_update_invalid_fields(client, key, value):
-    update = client.put(f"/api/alert/{uuid.uuid4()}", json={key: value, "version": str(uuid.uuid4())})
+    update = client.patch(f"/api/alert/{uuid.uuid4()}", json={key: value, "version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert key in update.text
 
@@ -61,13 +61,13 @@ def test_update_invalid_fields(client, key, value):
     INVALID_UPDATE_FIELDS,
 )
 def test_update_invalid_node_fields(client, key, value):
-    update = client.put(f"/api/alert/{uuid.uuid4()}", json={"version": str(uuid.uuid4()), key: value})
+    update = client.patch(f"/api/alert/{uuid.uuid4()}", json={"version": str(uuid.uuid4()), key: value})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert key in update.text
 
 
 def test_update_invalid_uuid(client):
-    update = client.put("/api/alert/1", json={"version": str(uuid.uuid4())})
+    update = client.patch("/api/alert/1", json={"version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
@@ -93,7 +93,7 @@ def test_update_nonexistent_fields(client, key, value):
     create = client.post("/api/alert/", json={"version": version, "queue": "test_queue", "type": "test_type"})
 
     # Make sure you cannot update it to use a nonexistent field value
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={key: value, "version": version}
     )
@@ -114,7 +114,7 @@ def test_update_nonexistent_node_fields(client, key, value):
     create = client.post("/api/alert/", json={"version": version, "queue": "test_queue", "type": "test_type"})
 
     # Make sure you cannot update it to use a nonexistent node field value
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={key: value, "version": version}
     )
@@ -122,7 +122,7 @@ def test_update_nonexistent_node_fields(client, key, value):
 
 
 def test_update_nonexistent_uuid(client):
-    update = client.put(f"/api/alert/{uuid.uuid4()}", json={"version": str(uuid.uuid4())})
+    update = client.patch(f"/api/alert/{uuid.uuid4()}", json={"version": str(uuid.uuid4())})
     assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -148,7 +148,7 @@ def test_update_disposition(client):
     client.post("/api/alert/disposition/", json={"rank": 1, "value": "test"})
 
     # Update the disposition
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"disposition": "test", "version": version}
     )
@@ -187,7 +187,7 @@ def test_update_event_uuid(client):
     })
 
     # Update the alert to add it to the event
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"event_uuid": event_uuid, "version": version}
     )
@@ -235,7 +235,7 @@ def test_update_owner(client):
     client.post("/api/user/", json=create_json)
 
     # Update the owner
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"owner": "johndoe", "version": version}
     )
@@ -264,7 +264,7 @@ def test_update_queue(client):
     client.post("/api/alert/queue/", json={"value": "test_queue2"})
 
     # Update the disposition
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"queue": "test_queue2", "version": version}
     )
@@ -293,7 +293,7 @@ def test_update_tool(client):
     client.post("/api/alert/tool/", json={"value": "test"})
 
     # Update the tool
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"tool": "test", "version": version}
     )
@@ -322,7 +322,7 @@ def test_update_tool_instance(client):
     client.post("/api/alert/tool/instance/", json={"value": "test"})
 
     # Update the tool instance
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"tool_instance": "test", "version": version}
     )
@@ -351,7 +351,7 @@ def test_update_type(client):
     client.post("/api/alert/type/", json={"value": "test_type2"})
 
     # Update the disposition
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"type": "test_type2", "version": version}
     )
@@ -386,7 +386,7 @@ def test_update_valid_node_directives(client, values):
         client.post("/api/node/directive/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"directives": values, "version": version}
     )
@@ -421,7 +421,7 @@ def test_update_valid_node_tags(client, values):
         client.post("/api/node/tag/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"tags": values, "version": version}
     )
@@ -455,7 +455,7 @@ def test_update_valid_node_threat_actor(client, value):
         client.post("/api/node/threat_actor/", json={"value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"threat_actor": value, "version": version}
     )
@@ -497,7 +497,7 @@ def test_update_valid_node_threats(client, values):
         client.post("/api/node/threat/", json={"types": ["test_type"], "value": value})
 
     # Update the node
-    update = client.put(
+    update = client.patch(
         create.headers["Content-Location"],
         json={"threats": values, "version": version}
     )
@@ -545,7 +545,7 @@ def test_update(client, key, initial_value, updated_value):
     assert get.json()[key] == initial_value
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"version": version, key: updated_value})
+    update = client.patch(create.headers["Content-Location"], json={"version": version, key: updated_value})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read it back

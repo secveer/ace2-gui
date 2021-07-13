@@ -18,18 +18,18 @@ from fastapi import status
     ],
 )
 def test_update_invalid_fields(client, key, value):
-    update = client.put(f"/api/node/comment/{uuid.uuid4()}", json={key: value})
+    update = client.patch(f"/api/node/comment/{uuid.uuid4()}", json={key: value})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert key in update.text
 
 
 def test_update_invalid_uuid(client):
-    update = client.put("/api/node/comment/1", json={"value": "test"})
+    update = client.patch("/api/node/comment/1", json={"value": "test"})
     assert update.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 def test_update_nonexistent_uuid(client):
-    update = client.put(f"/api/node/comment/{uuid.uuid4()}", json={"value": "test"})
+    update = client.patch(f"/api/node/comment/{uuid.uuid4()}", json={"value": "test"})
     assert update.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -79,7 +79,7 @@ def test_update_duplicate_node_uuid_value(client):
     assert create2.status_code == status.HTTP_201_CREATED
 
     # Make sure you cannot update a comment on a node to one that already exists
-    update = client.put(create2.headers["Content-Location"], json={"value": create_json["value"]})
+    update = client.patch(create2.headers["Content-Location"], json={"value": create_json["value"]})
     assert update.status_code == status.HTTP_409_CONFLICT
 
 
@@ -131,7 +131,7 @@ def test_update(client):
     assert get_node.json()["comments"][0]["value"] == "test"
 
     # Update it
-    update = client.put(create.headers["Content-Location"], json={"value": "updated"})
+    update = client.patch(create.headers["Content-Location"], json={"value": "updated"})
     assert update.status_code == status.HTTP_204_NO_CONTENT
 
     # Read the node back to make sure it shows the updated comment
