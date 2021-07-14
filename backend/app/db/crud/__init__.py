@@ -33,7 +33,7 @@ def create(obj: BaseModel, db_table: DeclarativeMeta, db: Session) -> UUID:
 #
 
 
-def read_all(db_table: DeclarativeMeta, db: Session):
+def read_all(db_table: DeclarativeMeta, db: Session) -> List:
     """Returns all objects from the given database table."""
 
     return db.execute(select(db_table)).scalars().all()

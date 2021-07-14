@@ -11,6 +11,7 @@ import string
 def generate_password(min_length: int = 23, max_length: int = 32) -> str:
     return "".join(random.choices(string.ascii_letters, k=random.randint(min_length, max_length)))
 
+
 def main():
     # Set up the environment variables that are needed for the application
     database_hostname = "db"
@@ -33,8 +34,10 @@ PGADMIN_DEFAULT_PASSWORD={database_admin_password}"""
 
     # Write the backend .env file
     with open("backend/.env", "w") as f:
-        text = f"DATABASE_URL={database_url}"
+        text = f"""DATABASE_URL={database_url}
+ACE_DEV=true"""
         f.write(text)
+
 
 if __name__ == "__main__":
     main()
